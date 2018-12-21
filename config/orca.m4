@@ -30,20 +30,28 @@ AC_CHECK_LIB(gpopt, gpopt_init, [], [AC_MSG_ERROR([library 'gpopt' is required f
 AC_LANG_POP([C++])
 ]
 )
-
 AC_DEFUN([PGAC_CHECK_ORCA_VERSION],
 [
 AC_MSG_CHECKING([[Checking ORCA version]])
+orca_version=`cat <ORCA_VERSION`
 AC_LANG_PUSH([C++])
 AC_RUN_IFELSE([AC_LANG_PROGRAM([[
 #include "gpopt/version.h"
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 ]],
 [
-return strncmp("3.35.", GPORCA_VERSION_STRING, 5);
+FILE *fp = fopen("ORCA_VERSION", "r");
+char version_from_file@<:@20@:>@;
+fgets(version_from_file, 20, fp);
+fclose(fp);
+
+return strncmp(version_from_file, GPORCA_VERSION_STRING, strlen(GPORCA_VERSION_STRING)-1);
+
 ])],
 [AC_MSG_RESULT([[ok]])],
-[AC_MSG_ERROR([Your ORCA version is expected to be 3.35.XXX])]
+[AC_MSG_ERROR([Your ORCA version is expected to be [$orca_version]])]
 )
 AC_LANG_POP([C++])
 ])# PGAC_CHECK_ORCA_VERSION
