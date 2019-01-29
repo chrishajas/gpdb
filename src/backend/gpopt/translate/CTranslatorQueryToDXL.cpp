@@ -3147,6 +3147,7 @@ CTranslatorQueryToDXL::NoteDistributionPolicyOpclasses
 		bool contains_default_hashops = false;
 		bool contains_legacy_hashops = false;
 		bool contains_nondefault_hashops = false;
+		Oid *opclasses = policy->opclasses;
 
 		for (int i = 0; i < policy_nattrs; i++)
 		{
@@ -3155,7 +3156,7 @@ CTranslatorQueryToDXL::NoteDistributionPolicyOpclasses
 			Oid opfamily;
 			Oid hashfunc;
 
-			opfamily = gpdb::GetOpclassFamily(policy->opclasses[i]);
+			opfamily = gpdb::GetOpclassFamily(opclasses[i]);
 			hashfunc = gpdb::GetHashProcInOpfamily(opfamily, typeoid);
 
 			if (gpdb::IsLegacyCdbHashFunction(hashfunc))
@@ -3166,7 +3167,7 @@ CTranslatorQueryToDXL::NoteDistributionPolicyOpclasses
 			{
 				Oid default_opclass = gpdb::GetDefaultDistributionOpclassForType(typeoid);
 
-				if (policy->opclasses[i] == default_opclass)
+				if (opclasses[i] == default_opclass)
 					contains_default_hashops = true;
 				else
 					contains_nondefault_hashops = true;
