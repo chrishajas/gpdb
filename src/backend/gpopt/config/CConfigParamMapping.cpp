@@ -374,6 +374,12 @@ CConfigParamMapping::SConfigMappingElem CConfigParamMapping::m_elements[] =
 		&optimizer_force_agg_skew_avoidance,
 		false, // m_negate_param
 		GPOS_WSZ_LIT("Always pick a plan for aggregate distinct that minimizes skew.")
+		},
+                {
+		EopttraceEnableNewDP,
+		&optimizer_enable_new_dp,
+		false, // m_negate_param
+		GPOS_WSZ_LIT("Enable new dp transform and disable old dp transform.")
 		}
 };
 
@@ -492,6 +498,16 @@ CConfigParamMapping::PackConfigParamInBitset
 	{
 		// disable index scan if the corresponding GUC is turned off
 		traceflag_bitset->ExchangeSet(GPOPT_DISABLE_XFORM_TF(CXform::ExfIndexGet2IndexScan));
+	}
+
+	if (!optimizer_enable_new_dp)
+	{
+		traceflag_bitset->ExchangeSet(GPOPT_DISABLE_XFORM_TF(CXform::ExfExpandNAryJoinDynamicProgramming));
+	}
+
+	if (optimizer_enable_new_dp)
+	{
+		traceflag_bitset->ExchangeSet(GPOPT_DISABLE_XFORM_TF(CXform::ExfExpandNAryJoinDP));
 	}
 
 	CBitSet *join_heuristic_bitset = NULL;

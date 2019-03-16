@@ -580,6 +580,7 @@ bool		optimizer_array_constraints;
 bool		optimizer_cte_inlining;
 bool		optimizer_enable_space_pruning;
 bool		optimizer_enable_associativity;
+bool		optimizer_enable_new_dp;
 
 /* Analyze related GUCs for Optimizer */
 bool		optimizer_analyze_root_partition;
@@ -3323,6 +3324,17 @@ struct config_bool ConfigureNamesBool_gp[] =
 		&optimizer_enable_associativity,
 		false, NULL, NULL
 	},
+
+	{
+		{"optimizer_enable_new_dp", PGC_USERSET, DEVELOPER_OPTIONS,
+			gettext_noop("Enable new dp transform and disable old dp transform"),
+			NULL,
+			GUC_NO_SHOW_ALL | GUC_NOT_IN_SAMPLE
+		},
+		&optimizer_enable_new_dp,
+		false, NULL, NULL
+
+            },
 
 	{
 		{"verify_gpfdists_cert", PGC_USERSET, EXTERNAL_TABLES,
