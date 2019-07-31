@@ -653,7 +653,6 @@ extract_nodes_walker(Node *node, extract_context *context)
 		 * In case the caller wants non-subquery version,
 		 * still we need to walk through its expressions.
 		 */
-		if (!context->descendIntoSubqueries)
 		{
 			if (extract_nodes_walker((Node *) subplan->testexpr,
 									 context))
