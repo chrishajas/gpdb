@@ -710,22 +710,6 @@ InitializeMemoryAccount(MemoryAccount *newAccount, long maxLimit, MemoryOwnerTyp
 
 	newAccount->allocated = 0;
 
-	/*
-	 * Every call to ORCA to optimize a query maps to a new short living memory
-	 * account. However, the nature of Orca's memory usage is that it holds data
-	 * in a cache. Thus, GetOptimizerOutstandingMemoryBalance() returns the
-	 * current amount of memory that Orca has not yet freed according to the
-	 * Memory Accounting framework. Each new Orca memory account will start off
-	 * its 'allocated' amount from the outstanding amount. This approach ensures
-	 * that when Orca does release memory it allocated during an earlier
-	 * generation that the accounting math does not lead to an underflow but
-	 * properly accounts for the outstanding amount.
-	 */
-	if (ownerType == MEMORY_OWNER_TYPE_Optimizer)
-	{
-		//elog(DEBUG2, "Rolling over previous outstanding Optimizer allocated memory %lu", GetOptimizerOutstandingMemoryBalance());
-		//newAccount->allocated = GetOptimizerOutstandingMemoryBalance();
-	}
 	newAccount->freed = 0;
 	newAccount->peak = 0;
 	newAccount->relinquishedMemory = 0;
@@ -1561,14 +1545,6 @@ MemoryAccounting_GetOrCreateNestedExecutorAccount()
  * GetOrCreateOptimizerAccount
  *    Returns the MemoryAccountId for the 'Optimizer' account. Creates the
  *    mainOptimizerAccount if it does not already exist.
- *
- *    ORCA has a metadata cache that persists between calls to create a plan.
- *    This memory is tracked in the memory accounting system using a global
- *    OptimizerOutstandingMemoryBalance. Any time we create an Optimizer
- *    account we initialize the memory to the
- *    OptimizerOutstandingMemoryBalance, if we create more than one optimizer
- *    account, this memory will be double accounted for. Therefore, restrict
- *    the memory accounting system to only creating one Optimizer account.
  */
 MemoryAccountIdType
 MemoryAccounting_GetOrCreateOptimizerAccount()

@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2019 Pivotal, Inc.
 //
 //	@filename:
 //		CMemoryContextPool.h
@@ -50,44 +50,6 @@ namespace gpos
 
 			// prepare the memory pool to be deleted
 			void TearDown();
-
-			// return total allocated size
-			virtual
-			ULLONG TotalAllocatedSize() const
-			{
-			  //return m_memory_pool_statistics.TotalAllocatedSize();
-			  return 0;
-			}
-
-#ifdef GPOS_DEBUG
-
-			// check if the memory pool keeps track of live objects
-			virtual
-			BOOL SupportsLiveObjectWalk() const
-			{
-				return false;
-			}
-
-			// walk the live objects
-			virtual
-			void WalkLiveObjects(gpos::IMemoryVisitor *visitor)
-			{
-			}
-
-			// check if statistics tracking is supported
-			virtual
-			BOOL SupportsStatistics() const
-			{
-				return true;
-			}
-
-			// return the current statistics
-			virtual
-			void UpdateStatistics(CMemoryPoolStatistics &memory_pool_statistics)
-			{
-			}
-
-#endif // GPOS_DEBUG
 
 	};
 }

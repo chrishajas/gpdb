@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2019 Pivotal, Inc.
 //
 //	@filename:
 //		CMemoryContextPoolManager.cpp
@@ -44,9 +44,7 @@ CMemoryContextPoolManager::CMemoryContextPoolManager()
 //		Dtor.
 //
 //---------------------------------------------------------------------------
-CMemoryContextPoolManager::~CMemoryContextPoolManager()
-{
-}
+CMemoryContextPoolManager::~CMemoryContextPoolManager();
 
 CMemoryPool *
 CMemoryContextPoolManager::Create(CMemoryPoolManager::AllocType alloc_type)

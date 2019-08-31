@@ -236,27 +236,6 @@ test__CreateMemoryAccountImpl__ActiveVsParent(void **state)
 	assert_true(tempChildAccount->parentId != ActiveMemoryAccountId);
 }
 
-static void
-test__MemoryAccounting_Optimizer_Oustanding_Balance_Rollover(void **state)
-{
-	MemoryAccountIdType optimizerAccountId = CreateMemoryAccountImpl(0, MEMORY_OWNER_TYPE_Optimizer, ActiveMemoryAccountId);
-	MemoryAccountIdType tempParentAccountId = CreateMemoryAccountImpl(0, MEMORY_OWNER_TYPE_Exec_Hash, optimizerAccountId);
-
-	MemoryAccounting_SwitchAccount(optimizerAccountId);
-	Ext_OptimizerAlloc(1);
-	assert_true(GetOptimizerOutstandingMemoryBalance()==1);
-
-	MemoryAccounting_SwitchAccount(tempParentAccountId);
-	MemoryAccount *currentAccount = MemoryAccounting_ConvertIdToAccount(tempParentAccountId);
-	assert_true(currentAccount->allocated == 0);
-
-	MemoryAccountIdType optimizerAccountId2 = CreateMemoryAccountImpl(0, MEMORY_OWNER_TYPE_Optimizer, tempParentAccountId);
-	MemoryAccounting_SwitchAccount(optimizerAccountId2);
-	currentAccount = MemoryAccounting_ConvertIdToAccount(optimizerAccountId2);
-	assert_true(currentAccount->allocated == GetOptimizerOutstandingMemoryBalance() );
-
-}
-
 /*
  * Checks whether the regular account creation charges the overhead
  * in the MemoryAccountMemoryAccount and SharedChunkHeadersMemoryAccount.
@@ -1365,7 +1344,6 @@ main(int argc, char* argv[])
 		unit_test_setup_teardown(test__MemoryAccounting_CombinedAccountArrayToExplain__Validate, SetupMemoryDataStructures, TeardownMemoryDataStructures),
 		unit_test_setup_teardown(test__ConvertIdToUniversalArrayIndex__Validate, SetupMemoryDataStructures, TeardownMemoryDataStructures),
 		unit_test_setup_teardown(test__MemoryAccounting_GetAccountCurrentBalance__ResetPeakBalance, SetupMemoryDataStructures, TeardownMemoryDataStructures),
-		unit_test_setup_teardown(test__MemoryAccounting_Optimizer_Oustanding_Balance_Rollover, SetupMemoryDataStructures, TeardownMemoryDataStructures),
 	};
 
 	return run_tests(tests);

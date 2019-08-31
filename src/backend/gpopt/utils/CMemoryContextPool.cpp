@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2019 Pivotal, Inc.
 //
 //	@filename:
 //		CMemoryContextPool.cpp
@@ -66,8 +66,8 @@ void *
 CMemoryContextPool::Allocate
 	(
 	const ULONG bytes,
-	const CHAR *file,
-	const ULONG line
+	const CHAR *,
+	const ULONG
 	)
 {
 	return MemoryContextAlloc(m_cxt, bytes);
