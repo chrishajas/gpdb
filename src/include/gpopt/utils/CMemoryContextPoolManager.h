@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2019 Pivotal, Inc.
 //
 //	@filename:
 //		CMemoryContextPoolManager.h
@@ -49,34 +49,7 @@ namespace gpos
 
 			// delete memory pools and release manager
 			void Shutdown()
-			{
-			}
-
-#ifdef GPOS_DEBUG
-
-			// check if the memory pool keeps track of live objects
-			BOOL SupportsLiveObjectWalk() const
-			{
-				return false;
-			}
-
-			// walk the live objects
-			void WalkLiveObjects(gpos::IMemoryVisitor *visitor) const
-			{
-			}
-
-			// check if statistics tracking is supported
-			BOOL SupportsStatistics() const
-			{
-				return true;
-			}
-
-			// return the current statistics
-			void UpdateStatistics(CMemoryPoolStatistics &memory_pool_statistics)
-			{
-			}
-
-#endif // GPOS_DEBUG
+			{}
 
 	};
 }
