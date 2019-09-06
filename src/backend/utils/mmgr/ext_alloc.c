@@ -35,24 +35,13 @@ uint64 OptimizerOutstandingMemoryBalance = 0;
 void*
 Ext_OptimizerAlloc(size_t size)
 {
-#ifdef USE_ASSERT_CHECKING
-	MemoryAccount *account = MemoryAccounting_ConvertIdToAccount(ActiveMemoryAccountId);
-	Assert(account->ownerType == MEMORY_OWNER_TYPE_Optimizer);
-#endif
-
-	MemoryAccounting_Allocate(ActiveMemoryAccountId, size);
-	OptimizerOutstandingMemoryBalance += size;
-	return gp_malloc(size);
+	return MemoryContextAlloc(TopMemoryContext, size);
 }
 
 void
 Ext_OptimizerFree(void *ptr)
 {
-	void *malloc_pointer = UserPtr_GetVmemPtr(ptr);
-	size_t freed_size = VmemPtr_GetUserPtrSize((VmemHeader*) malloc_pointer);
-	MemoryAccounting_Free(ActiveMemoryAccountId, freed_size);
-	OptimizerOutstandingMemoryBalance -= freed_size;
-	gp_free(ptr);
+	pfree(ptr);
 }
 
 uint64
