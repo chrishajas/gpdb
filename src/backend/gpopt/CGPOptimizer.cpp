@@ -164,8 +164,8 @@ CGPOptimizer::InitGPOPT ()
   void (*gpos_free)(void *) = NULL;
   if (optimizer_use_gpdb_allocators)
   {
-	gpos_alloc = palloc;
-	gpos_free = pfree;
+	gpos_alloc = gpdb::OptimizerAlloc;
+	gpos_free = gpdb::OptimizerFree;
   }
   struct gpos_init_params params =
 	{gpos_alloc, gpos_free, gpdb::IsAbortRequested};
