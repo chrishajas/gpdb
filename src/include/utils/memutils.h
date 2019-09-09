@@ -187,6 +187,7 @@ extern PGDLLIMPORT MemoryContext MemoryAccountMemoryContext;
 extern PGDLLIMPORT MemoryContext MemoryAccountDebugContext;
 extern PGDLLIMPORT MemoryContext DispatcherContext;
 extern PGDLLIMPORT MemoryContext InterconnectContext;
+extern PGDLLIMPORT MemoryContext OptimizerContext;
 
 /* This is a transient link to the active portal's memory context: */
 extern PGDLLIMPORT MemoryContext PortalContext;

@@ -77,6 +77,7 @@
 #include "utils/timeout.h"
 #include "utils/tqual.h"
 
+#include "utils/memutils.h"
 #include "utils/resource_manager.h"
 #include "utils/session_state.h"
 
@@ -641,6 +642,12 @@ InitPostgres(const char *in_dbname, Oid dboid, const char *username,
 	/* Initialize GPOPT */
 	START_MEMORY_ACCOUNT(MemoryAccounting_CreateAccount(0, MEMORY_OWNER_TYPE_Optimizer));
 	{
+		elog(INFO, "Creating opt context");
+		OptimizerContext = AllocSetContextCreate(TopMemoryContext,
+											 "GPORCA memory pool",
+											 ALLOCSET_DEFAULT_MINSIZE,
+											 ALLOCSET_DEFAULT_INITSIZE,
+											 ALLOCSET_DEFAULT_MAXSIZE);
 		InitGPOPT();
 	}
 	END_MEMORY_ACCOUNT();

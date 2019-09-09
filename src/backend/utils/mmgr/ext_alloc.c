@@ -16,7 +16,9 @@
 #include "utils/memaccounting.h"
 #include "utils/memaccounting_private.h"
 #include "utils/ext_alloc.h"
+#include "utils/memutils.h"
 
+extern MemoryContext OptimizerContext;
 /*
  * This variable is used to track memory that is not freed by Orca during a
  * single short living Optimizer account.
@@ -35,12 +37,16 @@ uint64 OptimizerOutstandingMemoryBalance = 0;
 void*
 Ext_OptimizerAlloc(size_t size)
 {
-	return MemoryContextAlloc(TopMemoryContext, size);
+	//elog(INFO, "allocate %zu", size);
+
+	return MemoryContextAlloc(OptimizerContext, size);
 }
 
 void
 Ext_OptimizerFree(void *ptr)
 {
+	//StandardChunkHeader* header = (StandardChunkHeader *) ((char *) ptr - STANDARDCHUNKHEADERSIZE);
+	//elog(INFO, "free %zu", header->size);
 	pfree(ptr);
 }
 

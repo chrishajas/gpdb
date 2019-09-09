@@ -32,6 +32,7 @@
 #include "portability/instr_time.h"
 #include "utils/guc.h"
 #include "utils/lsyscache.h"
+#include "nodes/memnodes.h"
 
 /* GPORCA entry point */
 extern PlannedStmt * GPOPTOptimizedPlan(Query *parse, bool *had_unexpected_failure);
@@ -73,6 +74,7 @@ log_optimizer(PlannedStmt *plan, bool fUnexpectedFailure)
 	}
 }
 
+extern MemoryContext OptimizerContext;
 
 /*
  * optimize_query
@@ -143,6 +145,10 @@ optimize_query(Query *parse, ParamListInfo boundParams)
 
 	log_optimizer(result, fUnexpectedFailure);
 
+	uint64 nBlocks, nChunks, currentAvailable, allAllocated, allFreed, maxHeld;
+	OptimizerContext->methods.stats(OptimizerContext, &nBlocks, &nChunks,
+					  &currentAvailable, &allAllocated, &allFreed, &maxHeld);
+	elog(INFO, "Curr available: %lu, allAllocated: %lu, allFreed: %lu, maxHeld: %lu", currentAvailable, allAllocated, allFreed, maxHeld);
 	CHECK_FOR_INTERRUPTS();
 
 	/*
