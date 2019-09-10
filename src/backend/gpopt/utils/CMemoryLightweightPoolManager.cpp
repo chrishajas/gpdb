@@ -3,10 +3,10 @@
 //	Copyright (C) 2019 Pivotal, Inc.
 //
 //	@filename:
-//		CMemoryContextPoolManager.cpp
+//		CMemoryLightweightPoolManager.cpp
 //
 //	@doc:
-//		CMemoryContextPoolManager implementation that uses PostgreSQL
+//		CMemoryLightweightPoolManager implementation that uses PostgreSQL
 //		memory contexts.
 //
 //---------------------------------------------------------------------------
@@ -17,20 +17,20 @@ extern "C" {
 #include "utils/memutils.h"
 }
 
-#include "gpopt/utils/CMemoryContextPool.h"
-#include "gpopt/utils/CMemoryContextPoolManager.h"
+#include "gpopt/utils/CMemoryLightweightPool.h"
+#include "gpopt/utils/CMemoryLightweightPoolManager.h"
 
 using namespace gpos;
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CMemoryContextPoolManager::CMemoryContextPoolManager
+//		CMemoryLightweightPoolManager::CMemoryLightweightPoolManager
 //
 //	@doc:
 //		Ctor.
 //
 //---------------------------------------------------------------------------
-CMemoryContextPoolManager::CMemoryContextPoolManager()
+CMemoryLightweightPoolManager::CMemoryLightweightPoolManager()
 {
 	m_global_memory_pool = Create(EatTracker);
 }
@@ -38,30 +38,31 @@ CMemoryContextPoolManager::CMemoryContextPoolManager()
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CMemoryContextPoolManager::~CMemoryContextPoolManager
+//		CMemoryLightweightPoolManager::~CMemoryLightweightPoolManager
 //
 //	@doc:
 //		Dtor.
 //
 //---------------------------------------------------------------------------
-CMemoryContextPoolManager::~CMemoryContextPoolManager();
+CMemoryLightweightPoolManager::~CMemoryLightweightPoolManager()
+{}
 
 CMemoryPool *
-CMemoryContextPoolManager::Create(CMemoryPoolManager::AllocType alloc_type)
+CMemoryLightweightPoolManager::Create(CMemoryPoolManager::AllocType alloc_type)
 {
 	/*
 	 * We use the same implementation for all "kinds" of pools.
 	 * 'alloc_type' is ignored.
 	 */
-	return new CMemoryContextPool();
+	return new CMemoryLightweightPool();
 }
 
 
 void
-CMemoryContextPoolManager::Destroy(CMemoryPool *mp)
+CMemoryLightweightPoolManager::Destroy(CMemoryPool *mp)
 {
 	mp->TearDown();
-	delete (CMemoryContextPool *) mp;
+	delete (CMemoryLightweightPool *) mp;
 }
 
 // EOF

@@ -3,10 +3,10 @@
 //	Copyright (C) 2019 Pivotal, Inc.
 //
 //	@filename:
-//		CMemoryContextPool.cpp
+//		CMemoryLightweightPool.cpp
 //
 //	@doc:
-//		CMemoryPoolTracker implementation that uses PostgreSQL memory
+//		CMemoryLightweightPool implementation that uses PostgreSQL memory
 //		contexts.
 //
 //---------------------------------------------------------------------------
@@ -19,19 +19,19 @@ extern "C" {
 
 #include "gpos/memory/CMemoryPool.h"
 
-#include "gpopt/utils/CMemoryContextPool.h"
+#include "gpopt/utils/CMemoryLightweightPool.h"
 
 using namespace gpos;
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CMemoryContextPool::CMemoryContextPool
+//		CMemoryLightweightPool::CMemoryLightweightPool
 //
 //	@doc:
 //		Ctor.
 //
 //---------------------------------------------------------------------------
-CMemoryContextPool::CMemoryContextPool()
+CMemoryLightweightPool::CMemoryLightweightPool()
 {
 	m_cxt = AllocSetContextCreate(TopMemoryContext,
 				      "GPORCA memory pool",
@@ -43,27 +43,27 @@ CMemoryContextPool::CMemoryContextPool()
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CMemoryContextPool::~CMemoryContextPool
+//		CMemoryLightweightPool::~CMemoryLightweightPool
 //
 //	@doc:
 //		Dtor.
 //
 //---------------------------------------------------------------------------
-CMemoryContextPool::~CMemoryContextPool()
+CMemoryLightweightPool::~CMemoryLightweightPool()
 {
 }
 
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CMemoryPoolTracker::Allocate
+//		CMemoryLightweightPool:Allocate
 //
 //	@doc:
 //		Allocate memory.
 //
 //---------------------------------------------------------------------------
 void *
-CMemoryContextPool::Allocate
+CMemoryLightweightPool::Allocate
 	(
 	const ULONG bytes,
 	const CHAR *,
@@ -75,14 +75,14 @@ CMemoryContextPool::Allocate
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CMemoryPoolTracker::Free
+//		CMemoryLightweightPool::Free
 //
 //	@doc:
 //		Free memory.
 //
 //---------------------------------------------------------------------------
 void
-CMemoryContextPool::Free
+CMemoryLightweightPool::Free
 	(
 	void *ptr
 	)
@@ -93,7 +93,7 @@ CMemoryContextPool::Free
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CMemoryPoolTracker::TearDown
+//		CMemoryLightweightPool::TearDown
 //
 //	@doc:
 //		Prepare the memory pool to be deleted;
@@ -101,7 +101,7 @@ CMemoryContextPool::Free
 //
 //---------------------------------------------------------------------------
 void
-CMemoryContextPool::TearDown()
+CMemoryLightweightPool::TearDown()
 {
 	MemoryContextDelete(m_cxt);
 }
