@@ -51,6 +51,12 @@ namespace gpos
 			// prepare the memory pool to be deleted
 			void TearDown();
 
+			// return total allocated size
+			ULLONG TotalAllocatedSize() const
+			{
+				return 0;
+			}
+
 	};
 }
 
