@@ -3,10 +3,10 @@
 //	Copyright (C) 2019 Pivotal, Inc.
 //
 //	@filename:
-//		CMemoryContextPoolManager.cpp
+//		CMemoryPoolPallocManager.cpp
 //
 //	@doc:
-//		CMemoryContextPoolManager implementation that uses PostgreSQL
+//		CMemoryPoolPallocManager implementation that uses PostgreSQL
 //		memory contexts.
 //
 //---------------------------------------------------------------------------
@@ -17,20 +17,20 @@ extern "C" {
 #include "utils/memutils.h"
 }
 
-#include "gpopt/utils/CMemoryContextPool.h"
-#include "gpopt/utils/CMemoryContextPoolManager.h"
+#include "gpopt/utils/CMemoryPoolPalloc.h"
+#include "gpopt/utils/CMemoryPoolPallocManager.h"
 
 using namespace gpos;
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CMemoryContextPoolManager::CMemoryContextPoolManager
+//		CMemoryPoolPallocManager::CMemoryPoolPallocManager
 //
 //	@doc:
 //		Ctor.
 //
 //---------------------------------------------------------------------------
-CMemoryContextPoolManager::CMemoryContextPoolManager()
+CMemoryPoolPallocManager::CMemoryPoolPallocManager()
 {
 	m_global_memory_pool = Create(EatTracker);
 }
@@ -38,31 +38,31 @@ CMemoryContextPoolManager::CMemoryContextPoolManager()
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CMemoryContextPoolManager::~CMemoryContextPoolManager
+//		CMemoryPoolPallocManager::~CMemoryPoolPallocManager
 //
 //	@doc:
 //		Dtor.
 //
 //---------------------------------------------------------------------------
-CMemoryContextPoolManager::~CMemoryContextPoolManager()
+CMemoryPoolPallocManager::~CMemoryPoolPallocManager()
 {}
 
 CMemoryPool *
-CMemoryContextPoolManager::Create(CMemoryPoolManager::AllocType alloc_type)
+CMemoryPoolPallocManager::Create(CMemoryPoolManager::AllocType alloc_type)
 {
 	/*
 	 * We use the same implementation for all "kinds" of pools.
 	 * 'alloc_type' is ignored.
 	 */
-	return new CMemoryContextPool();
+	return new CMemoryPoolPalloc();
 }
 
 
 void
-CMemoryContextPoolManager::Destroy(CMemoryPool *mp)
+CMemoryPoolPallocManager::Destroy(CMemoryPool *mp)
 {
 	mp->TearDown();
-	delete (CMemoryContextPool *) mp;
+	delete (CMemoryPoolPalloc *) mp;
 }
 
 // EOF

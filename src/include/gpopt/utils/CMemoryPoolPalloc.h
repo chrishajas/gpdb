@@ -3,7 +3,7 @@
 //	Copyright (C) 2019 Pivotal, Inc.
 //
 //	@filename:
-//		CMemoryContextPool.h
+//		CMemoryPoolPalloc.h
 //
 //	@doc:
 //		Bridge between PostgreSQL memory contexts and GPORCA memory pools.
@@ -12,8 +12,8 @@
 //
 //---------------------------------------------------------------------------
 
-#ifndef GPDXL_CMemoryContextPool_H
-#define GPDXL_CMemoryContextPool_H
+#ifndef GPDXL_CMemoryPoolPalloc_H
+#define GPDXL_CMemoryPoolPalloc_H
 
 #include "gpos/base.h"
 
@@ -22,7 +22,7 @@
 namespace gpos
 {
 	// Memory pool that maps to a Postgres MemoryContext.
-	class CMemoryContextPool : public CMemoryPool
+	class CMemoryPoolPalloc : public CMemoryPool
 	{
 		private:
 
@@ -31,11 +31,11 @@ namespace gpos
 		public:
 
 			// ctor
-			CMemoryContextPool();
+			CMemoryPoolPalloc();
 
 			// dtor
 			virtual
-			~CMemoryContextPool();
+			~CMemoryPoolPalloc();
 
 			// allocate memory
 			void *Allocate
@@ -60,6 +60,6 @@ namespace gpos
 	};
 }
 
-#endif // !GPDXL_CMemoryContextPool_H
+#endif // !GPDXL_CMemoryPoolPalloc_H
 
 // EOF

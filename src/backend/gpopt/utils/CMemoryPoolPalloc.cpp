@@ -3,7 +3,7 @@
 //	Copyright (C) 2019 Pivotal, Inc.
 //
 //	@filename:
-//		CMemoryContextPool.cpp
+//		CMemoryPoolPalloc.cpp
 //
 //	@doc:
 //		CMemoryPoolTracker implementation that uses PostgreSQL memory
@@ -19,19 +19,19 @@ extern "C" {
 
 #include "gpos/memory/CMemoryPool.h"
 
-#include "gpopt/utils/CMemoryContextPool.h"
+#include "gpopt/utils/CMemoryPoolPalloc.h"
 
 using namespace gpos;
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CMemoryContextPool::CMemoryContextPool
+//		CMemoryPoolPalloc::CMemoryPoolPalloc
 //
 //	@doc:
 //		Ctor.
 //
 //---------------------------------------------------------------------------
-CMemoryContextPool::CMemoryContextPool()
+CMemoryPoolPalloc::CMemoryPoolPalloc()
 {
 	m_cxt = AllocSetContextCreate(TopMemoryContext,
 				      "GPORCA memory pool",
@@ -43,13 +43,13 @@ CMemoryContextPool::CMemoryContextPool()
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CMemoryContextPool::~CMemoryContextPool
+//		CMemoryPoolPalloc::~CMemoryPoolPalloc
 //
 //	@doc:
 //		Dtor.
 //
 //---------------------------------------------------------------------------
-CMemoryContextPool::~CMemoryContextPool()
+CMemoryPoolPalloc::~CMemoryPoolPalloc()
 {
 }
 
@@ -63,7 +63,7 @@ CMemoryContextPool::~CMemoryContextPool()
 //
 //---------------------------------------------------------------------------
 void *
-CMemoryContextPool::Allocate
+CMemoryPoolPalloc::Allocate
 	(
 	const ULONG bytes,
 	const CHAR *,
@@ -82,7 +82,7 @@ CMemoryContextPool::Allocate
 //
 //---------------------------------------------------------------------------
 void
-CMemoryContextPool::Free
+CMemoryPoolPalloc::Free
 	(
 	void *ptr
 	)
@@ -101,7 +101,7 @@ CMemoryContextPool::Free
 //
 //---------------------------------------------------------------------------
 void
-CMemoryContextPool::TearDown()
+CMemoryPoolPalloc::TearDown()
 {
 	MemoryContextDelete(m_cxt);
 }
