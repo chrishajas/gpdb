@@ -22,33 +22,19 @@ extern "C" {
 
 using namespace gpos;
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CMemoryPoolPallocManager::CMemoryPoolPallocManager
-//
-//	@doc:
-//		Ctor.
-//
-//---------------------------------------------------------------------------
+// ctor
 CMemoryPoolPallocManager::CMemoryPoolPallocManager(CMemoryPool *internal)
 	: CMemoryPoolManager(internal)
 {
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CMemoryPoolPallocManager::~CMemoryPoolPallocManager
-//
-//	@doc:
-//		Dtor.
-//
-//---------------------------------------------------------------------------
+// dtor
 CMemoryPoolPallocManager::~CMemoryPoolPallocManager()
 {}
 
+// create new memory pool
 CMemoryPool *
-CMemoryPoolPallocManager::New(AllocType alloc_type)
+CMemoryPoolPallocManager::NewMemoryPool(AllocType alloc_type)
 {
 	return GPOS_NEW(GetInternalMemoryPool()) CMemoryPoolPalloc();
 }
