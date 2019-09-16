@@ -231,9 +231,6 @@ MemoryAccounting_DeclareDone(void);
 extern uint64
 MemoryAccounting_RequestQuotaIncrease(void);
 
-extern MemoryAccountExplain *
-MemoryAccounting_ExplainCurrentOptimizerAccountInfo(void);
-
 extern MemoryAccountIdType
 MemoryAccounting_CreateMainExecutor(void);
 
