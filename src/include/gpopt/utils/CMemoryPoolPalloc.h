@@ -8,8 +8,6 @@
 //	@doc:
 //		Bridge between PostgreSQL memory contexts and GPORCA memory pools.
 //
-//	@test:
-//
 //---------------------------------------------------------------------------
 
 #ifndef GPDXL_CMemoryPoolPalloc_H
@@ -51,7 +49,7 @@ namespace gpos
 			// prepare the memory pool to be deleted
 			void TearDown();
 
-			// return total allocated size
+			// return total allocated size include management overhead
 			ULLONG TotalAllocatedSize() const;
 
 	};

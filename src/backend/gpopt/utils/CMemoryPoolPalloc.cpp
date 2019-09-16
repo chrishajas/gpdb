@@ -22,14 +22,7 @@ extern "C" {
 
 using namespace gpos;
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CMemoryPoolPalloc::CMemoryPoolPalloc
-//
-//	@doc:
-//		Ctor.
-//
-//---------------------------------------------------------------------------
+// ctor
 CMemoryPoolPalloc::CMemoryPoolPalloc()
 	: m_cxt(NULL)
 {
@@ -40,28 +33,11 @@ CMemoryPoolPalloc::CMemoryPoolPalloc()
 								  ALLOCSET_DEFAULT_MAXSIZE);
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CMemoryPoolPalloc::~CMemoryPoolPalloc
-//
-//	@doc:
-//		Dtor.
-//
-//---------------------------------------------------------------------------
+// dtor
 CMemoryPoolPalloc::~CMemoryPoolPalloc()
 {
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CMemoryPoolTracker::Allocate
-//
-//	@doc:
-//		Allocate memory.
-//
-//---------------------------------------------------------------------------
 void *
 CMemoryPoolPalloc::Allocate
 	(
@@ -73,14 +49,6 @@ CMemoryPoolPalloc::Allocate
 	return MemoryContextAlloc(m_cxt, bytes);
 }
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CMemoryPoolTracker::Free
-//
-//	@doc:
-//		Free memory.
-//
-//---------------------------------------------------------------------------
 void
 CMemoryPoolPalloc::Free
 	(
@@ -90,27 +58,18 @@ CMemoryPoolPalloc::Free
 	pfree(ptr);
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CMemoryPoolTracker::TearDown
-//
-//	@doc:
-//		Prepare the memory pool to be deleted;
-// 		this function is called only once so locking is not required;
-//
-//---------------------------------------------------------------------------
+// Prepare the memory pool to be deleted
 void
 CMemoryPoolPalloc::TearDown()
 {
 	MemoryContextDelete(m_cxt);
 }
 
+// Total allocated size including management overheads
 ULLONG
 CMemoryPoolPalloc::TotalAllocatedSize() const
 {
-	// FIGGY: Implement this.
-	return 0;
+	return MemoryContextGetCurrentSpace(m_cxt);
 }
 
 // EOF
