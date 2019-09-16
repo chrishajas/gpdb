@@ -106,4 +106,11 @@ CMemoryPoolPalloc::TearDown()
 	MemoryContextDelete(m_cxt);
 }
 
+ULLONG
+CMemoryPoolPalloc::TotalAllocatedSize() const
+{
+	// FIGGY: Implement this.
+	return 0;
+}
+
 // EOF

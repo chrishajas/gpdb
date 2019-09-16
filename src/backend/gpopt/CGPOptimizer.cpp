@@ -15,6 +15,7 @@
 
 #include "gpopt/CGPOptimizer.h"
 #include "gpopt/utils/COptTasks.h"
+#include "gpopt/utils/CMemoryPoolPalloc.h"
 #include "gpopt/utils/CMemoryPoolPallocManager.h"
 
 // the following headers are needed to reference optimizer library initializers
@@ -162,17 +163,23 @@ CGPOptimizer::SerializeDXLPlan
 void
 CGPOptimizer::InitGPOPT ()
 {
-  // Use GPORCA's default allocators
-  void *gpos_memorypool_manager = NULL;
-  if (optimizer_use_gpdb_allocators)
-  {
-	gpos_memorypool_manager = new CMemoryPoolPallocManager();
-  }
-  struct gpos_init_params params =
-	{gpos_memorypool_manager, gpdb::IsAbortRequested};
-  gpos_init(&params);
-  gpdxl_init();
-  gpopt_init();
+	// Use GPORCA's default allocators
+	void *gpos_memorypool_manager = NULL;
+
+	if (optimizer_use_gpdb_allocators)
+	{
+		void *alloc_internal = gpos::clib::Malloc(sizeof(CMemoryPoolPalloc));
+		CMemoryPool *internal_mp = new(alloc_internal) CMemoryPoolPalloc();
+
+		gpos_memorypool_manager =
+			GPOS_NEW(internal_mp) CMemoryPoolPallocManager(internal_mp);
+	}
+
+	struct gpos_init_params params = {gpos_memorypool_manager, gpdb::IsAbortRequested};
+
+	gpos_init(&params);
+	gpdxl_init();
+	gpopt_init();
 }
 
 //---------------------------------------------------------------------------

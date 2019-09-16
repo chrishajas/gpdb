@@ -36,21 +36,11 @@ namespace gpos
 		public:
 
 			// ctor
-			CMemoryPoolPallocManager();
+			CMemoryPoolPallocManager(CMemoryPool *internal);
 
-			// create new memory pool
-			CMemoryPool *Create
-				(
-				CMemoryPoolManager::AllocType alloc_type
-				);
-
-			// release memory pool
-			void Destroy(CMemoryPool *);
-
-			// delete memory pools and release manager
-			void Shutdown()
-			{}
-
+			// FIGGY: Write a blog post about what only this needs to be overridden
+			// FIGGY: Maybe remove the cpp file also?
+			virtual CMemoryPool *New(AllocType alloc_type);
 	};
 }
 

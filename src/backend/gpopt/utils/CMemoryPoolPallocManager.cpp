@@ -30,9 +30,9 @@ using namespace gpos;
 //		Ctor.
 //
 //---------------------------------------------------------------------------
-CMemoryPoolPallocManager::CMemoryPoolPallocManager()
+CMemoryPoolPallocManager::CMemoryPoolPallocManager(CMemoryPool *internal)
+	: CMemoryPoolManager(internal)
 {
-	m_global_memory_pool = Create(EatTracker);
 }
 
 
@@ -48,21 +48,8 @@ CMemoryPoolPallocManager::~CMemoryPoolPallocManager()
 {}
 
 CMemoryPool *
-CMemoryPoolPallocManager::Create(CMemoryPoolManager::AllocType alloc_type)
+CMemoryPoolPallocManager::New(AllocType alloc_type)
 {
-	/*
-	 * We use the same implementation for all "kinds" of pools.
-	 * 'alloc_type' is ignored.
-	 */
-	return new CMemoryPoolPalloc();
+	return GPOS_NEW(GetInternalMemoryPool()) CMemoryPoolPalloc();
 }
-
-
-void
-CMemoryPoolPallocManager::Destroy(CMemoryPool *mp)
-{
-	mp->TearDown();
-	delete (CMemoryPoolPalloc *) mp;
-}
-
 // EOF

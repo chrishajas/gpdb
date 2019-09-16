@@ -52,10 +52,7 @@ namespace gpos
 			void TearDown();
 
 			// return total allocated size
-			ULLONG TotalAllocatedSize() const
-			{
-				return 0;
-			}
+			ULLONG TotalAllocatedSize() const;
 
 	};
 }
