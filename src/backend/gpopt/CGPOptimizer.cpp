@@ -193,9 +193,9 @@ CGPOptimizer::InitGPOPT ()
 void
 CGPOptimizer::TerminateGPOPT ()
 {
-  gpopt_terminate();
-  gpdxl_terminate();
-  gpos_terminate();
+	gpopt_terminate();
+	gpdxl_terminate();
+	gpos_terminate();
 }
 
 //---------------------------------------------------------------------------
