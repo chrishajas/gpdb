@@ -96,7 +96,6 @@ typedef enum MemoryOwnerType
 	MEMORY_OWNER_TYPE_Parser,
 	MEMORY_OWNER_TYPE_Planner,
 	MEMORY_OWNER_TYPE_PlannerHook,
-	MEMORY_OWNER_TYPE_Optimizer,
 	MEMORY_OWNER_TYPE_Dispatcher,
 	MEMORY_OWNER_TYPE_Serializer,
 	MEMORY_OWNER_TYPE_Deserializer,
@@ -240,9 +239,6 @@ MemoryAccounting_CreateMainExecutor(void);
 
 extern MemoryAccountIdType
 MemoryAccounting_GetOrCreateNestedExecutorAccount(void);
-
-extern MemoryAccountIdType
-MemoryAccounting_GetOrCreateOptimizerAccount(void);
 
 /*
  * MemoryAccounting_GetOrCreatePlannerAccount creates a memory account for
