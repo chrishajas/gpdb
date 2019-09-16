@@ -40,7 +40,7 @@ namespace gpos
 
 			// FIGGY: Write a blog post about what only this needs to be overridden
 			// FIGGY: Maybe remove the cpp file also?
-			virtual CMemoryPool *NewMemoryPool(AllocType alloc_type);
+			virtual CMemoryPool *NewMemoryPool();
 	};
 }
 

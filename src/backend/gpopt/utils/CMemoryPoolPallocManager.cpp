@@ -34,7 +34,7 @@ CMemoryPoolPallocManager::~CMemoryPoolPallocManager()
 
 // create new memory pool
 CMemoryPool *
-CMemoryPoolPallocManager::NewMemoryPool(AllocType alloc_type)
+CMemoryPoolPallocManager::NewMemoryPool()
 {
 	return GPOS_NEW(GetInternalMemoryPool()) CMemoryPoolPalloc();
 }
