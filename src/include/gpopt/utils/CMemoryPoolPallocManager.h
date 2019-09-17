@@ -8,8 +8,6 @@
 //	@doc:
 //		Bridge between PostgreSQL memory contexts and GPORCA memory pools.
 //
-//	@test:
-//
 //---------------------------------------------------------------------------
 
 #ifndef GPDXL_CMemoryPoolPallocManager_H
@@ -24,11 +22,7 @@ namespace gpos
 	// memory pool manager that uses GPDB memory contexts
 	class CMemoryPoolPallocManager : public CMemoryPoolManager
 	{
-		protected:
-
-			// dtor
-			virtual
-			~CMemoryPoolPallocManager();
+		private:
 
 			// private no copy ctor
 			CMemoryPoolPallocManager(const CMemoryPoolPallocManager&);
@@ -39,7 +33,6 @@ namespace gpos
 			CMemoryPoolPallocManager(CMemoryPool *internal);
 
 			// FIGGY: Write a blog post about what only this needs to be overridden
-			// FIGGY: Maybe remove the cpp file also?
 			virtual CMemoryPool *NewMemoryPool();
 	};
 }

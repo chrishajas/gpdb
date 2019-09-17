@@ -33,11 +33,6 @@ CMemoryPoolPalloc::CMemoryPoolPalloc()
 								  ALLOCSET_DEFAULT_MAXSIZE);
 }
 
-// dtor
-CMemoryPoolPalloc::~CMemoryPoolPalloc()
-{
-}
-
 void *
 CMemoryPoolPalloc::Allocate
 	(

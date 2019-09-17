@@ -31,10 +31,6 @@ namespace gpos
 			// ctor
 			CMemoryPoolPalloc();
 
-			// dtor
-			virtual
-			~CMemoryPoolPalloc();
-
 			// allocate memory
 			void *Allocate
 				(

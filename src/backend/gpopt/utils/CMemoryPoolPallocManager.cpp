@@ -28,10 +28,6 @@ CMemoryPoolPallocManager::CMemoryPoolPallocManager(CMemoryPool *internal)
 {
 }
 
-// dtor
-CMemoryPoolPallocManager::~CMemoryPoolPallocManager()
-{}
-
 // create new memory pool
 CMemoryPool *
 CMemoryPoolPallocManager::NewMemoryPool()
