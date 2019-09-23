@@ -34,11 +34,12 @@ CMemoryPoolPalloc::CMemoryPoolPalloc()
 }
 
 void *
-CMemoryPoolPalloc::Allocate
+CMemoryPoolPalloc::NewImpl
 	(
 	const ULONG bytes,
 	const CHAR *,
-	const ULONG
+	const ULONG,
+	CMemoryPool::EAllocationType
 	)
 {
 	return MemoryContextAlloc(m_cxt, bytes);
@@ -66,5 +67,13 @@ CMemoryPoolPalloc::TotalAllocatedSize() const
 {
 	return MemoryContextGetCurrentSpace(m_cxt);
 }
+
+ULONG
+CMemoryPoolPalloc::SizeOfAlloc(const void *ptr)
+{
+	// FIGGY
+	return 0;
+}
+
 
 // EOF

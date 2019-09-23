@@ -34,4 +34,18 @@ CMemoryPoolPallocManager::NewMemoryPool()
 {
 	return GPOS_NEW(GetInternalMemoryPool()) CMemoryPoolPalloc();
 }
+
+void
+CMemoryPoolPallocManager::DeleteImpl(void* ptr, CMemoryPool::EAllocationType)
+{
+	CMemoryPoolPalloc::Free(ptr);
+}
+
+ULONG
+CMemoryPoolPallocManager::SizeOfAlloc(const void* ptr)
+{
+	CMemoryPoolPalloc::SizeOfAlloc(ptr);
+}
+
+
 // EOF

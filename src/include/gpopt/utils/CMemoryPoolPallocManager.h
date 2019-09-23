@@ -34,6 +34,10 @@ namespace gpos
 			CMemoryPoolPallocManager(CMemoryPool *internal);
 
 			virtual CMemoryPool *NewMemoryPool();
+
+			void DeleteImpl(void* ptr, CMemoryPool::EAllocationType eat);
+
+			ULONG SizeOfAlloc(const void* ptr);
 	};
 }
 

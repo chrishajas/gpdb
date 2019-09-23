@@ -33,21 +33,24 @@ namespace gpos
 			CMemoryPoolPalloc();
 
 			// allocate memory
-			void *Allocate
+			void *NewImpl
 				(
 				const ULONG bytes,
 				const CHAR *file,
-				const ULONG line
+				const ULONG line,
+				CMemoryPool::EAllocationType eat
 				);
 
 			// free memory
-			void Free(void *ptr);
+			static void Free(void *ptr);
 
 			// prepare the memory pool to be deleted
 			void TearDown();
 
 			// return total allocated size include management overhead
 			ULLONG TotalAllocatedSize() const;
+
+			static ULONG SizeOfAlloc(const void *ptr);
 
 	};
 }
