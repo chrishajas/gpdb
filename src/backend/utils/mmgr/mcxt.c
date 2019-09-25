@@ -490,6 +490,15 @@ GetMemoryChunkContext(void *pointer)
 	return header->sharedHeader->context;
 }
 
+Size
+GetAllocSize(const void *pointer)
+{
+	StandardChunkHeader *header;
+
+	header = (StandardChunkHeader *)
+		((char *) pointer - STANDARDCHUNKHEADERSIZE);
+	return header->size;
+}
 /*
  * MemoryContextGetParent
  *		Get the parent context (if any) of the specified context

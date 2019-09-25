@@ -213,6 +213,7 @@ extern bool MemoryContextIsEmpty(MemoryContext context);
 
 /* Statistics */
 extern Size MemoryContextGetCurrentSpace(MemoryContext context);
+extern Size GetAllocSize(const void *pointer);
 extern Size MemoryContextGetPeakSpace(MemoryContext context);
 extern Size MemoryContextSetPeakSpace(MemoryContext context, Size nbytes);
 extern char *MemoryContextName(MemoryContext context, MemoryContext relativeTo,

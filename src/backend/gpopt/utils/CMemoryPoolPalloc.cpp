@@ -72,7 +72,7 @@ ULONG
 CMemoryPoolPalloc::SizeOfAlloc(const void *ptr)
 {
 	// FIGGY
-	return 0;
+	return GetAllocSize(ptr);
 }
 
 
