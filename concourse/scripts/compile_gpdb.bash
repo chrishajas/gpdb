@@ -169,6 +169,8 @@ function _main() {
 
   # Copy .ant dir
   mv gphdfs_dist/.ant /root/
+  mv gphdfs_dist/dist/*.jar ${GPDB_SRC_PATH}/gpAux/extensions/gphdfs/dist/
+  mv gphdfs_dist/dist/*.tar ${GPDB_SRC_PATH}/gpAux/extensions/gphdfs/
 
 
   case "${TARGET_OS}" in
