@@ -24,6 +24,11 @@ run:
         install_python_hacks
     '"
 
+    ssh -n mdw "
+        source /usr/local/greenplum-db-devel/greenplum_path.sh
+        MASTER_DATA_DIRECTORY='${data/gpdata/master/gpseg-1}' gpstop -a
+    "
+
     # setting sysctl settings
     while read LINE; do
         host=$(echo $LINE | awk '{ print $3 }')
@@ -64,6 +69,12 @@ run:
             sysctl -w vm.dirty_bytes=4294967296
         '"
     done <cluster_env_files/etc_hostfile
+
+    ssh -n mdw "
+        source /usr/local/greenplum-db-devel/greenplum_path.sh
+        MASTER_DATA_DIRECTORY='${data/gpdata/master/gpseg-1}' gpstart -a
+    "
+
 
     ssh -t mdw "
         source /home/gpadmin/gpdb_src/concourse/scripts/common.bash
