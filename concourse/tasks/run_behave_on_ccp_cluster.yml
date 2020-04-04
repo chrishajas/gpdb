@@ -26,7 +26,7 @@ run:
 
     ssh -n mdw "
         source /usr/local/greenplum-db-devel/greenplum_path.sh
-        MASTER_DATA_DIRECTORY='${data/gpdata/master/gpseg-1}' gpstop -a
+        MASTER_DATA_DIRECTORY='/data/gpdata/master/gpseg-1' gpstop -a
     "
 
     # setting sysctl settings
@@ -72,7 +72,7 @@ run:
 
     ssh -n mdw "
         source /usr/local/greenplum-db-devel/greenplum_path.sh
-        MASTER_DATA_DIRECTORY='${data/gpdata/master/gpseg-1}' gpstart -a
+        MASTER_DATA_DIRECTORY='/data/gpdata/master/gpseg-1' gpstart -a
     "
 
 
