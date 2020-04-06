@@ -24,9 +24,11 @@ run:
         install_python_hacks
     '"
 
+    # ensure cluster is stopped
     ssh -n mdw "
         source /usr/local/greenplum-db-devel/greenplum_path.sh
-        MASTER_DATA_DIRECTORY='/data/gpdata/master/gpseg-1' gpstop -a
+        export MASTER_DATA_DIRECTORY='/data/gpdata/master/gpseg-1'
+        if [ -d $MASTER_DATA_DIRECTORY ]; then gpstop -a; fi
     "
 
     # setting sysctl settings
@@ -70,9 +72,11 @@ run:
         '"
     done <cluster_env_files/etc_hostfile
 
+    # start cluster back up
     ssh -n mdw "
         source /usr/local/greenplum-db-devel/greenplum_path.sh
-        MASTER_DATA_DIRECTORY='/data/gpdata/master/gpseg-1' gpstart -a
+        export MASTER_DATA_DIRECTORY='/data/gpdata/master/gpseg-1'
+        if [ -d $MASTER_DATA_DIRECTORY ]; then gpstart -a; fi
     "
 
 
