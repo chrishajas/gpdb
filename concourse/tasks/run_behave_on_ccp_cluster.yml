@@ -28,7 +28,7 @@ run:
     ssh -n mdw "
         source /usr/local/greenplum-db-devel/greenplum_path.sh
         export MASTER_DATA_DIRECTORY='/data/gpdata/master/gpseg-1'
-        if [ -d $MASTER_DATA_DIRECTORY ]; then gpstop -a; fi
+        if [ -d \$MASTER_DATA_DIRECTORY ]; then gpstop -a; fi
     "
 
     # setting sysctl settings
@@ -76,7 +76,7 @@ run:
     ssh -n mdw "
         source /usr/local/greenplum-db-devel/greenplum_path.sh
         export MASTER_DATA_DIRECTORY='/data/gpdata/master/gpseg-1'
-        if [ -d $MASTER_DATA_DIRECTORY ]; then gpstart -a; fi
+        if [ -d \$MASTER_DATA_DIRECTORY ]; then gpstart -a; fi
     "
 
 
