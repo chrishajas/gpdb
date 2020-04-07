@@ -157,25 +157,25 @@ SET
 61: BEGIN;
 BEGIN
 61: SELECT * FROM eat_memory_on_qd_small;
- hold_memory
+ hold_memory 
 -------------
- 0
+ 0           
 (1 row)
 SELECT * FROM memory_result;
- rsgname        | ismaster | avg_mem
+ rsgname        | ismaster | avg_mem 
 ----------------+----------+---------
- rg_bypass_test | 0        | 0.0
- rg_bypass_test | 1        | 12.0
+ rg_bypass_test | 0        | 0.0     
+ rg_bypass_test | 1        | 12.0    
 (2 rows)
 61: SELECT * FROM eat_memory_on_qd_large;
 ERROR:  Out of memory
 DETAIL:  Resource group memory limit reached
 CONTEXT:  SQL function "hold_memory" statement 1
 SELECT * FROM memory_result;
- rsgname        | ismaster | avg_mem
+ rsgname        | ismaster | avg_mem 
 ----------------+----------+---------
- rg_bypass_test | 0        | 0.0
- rg_bypass_test | 1        | 0.0
+ rg_bypass_test | 0        | 0.0     
+ rg_bypass_test | 1        | 0.0     
 (2 rows)
 61: ABORT;
 ABORT
