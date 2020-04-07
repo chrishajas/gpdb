@@ -238,7 +238,7 @@ BEGIN
 SELECT 1 FROM memory_result where avg_mem > 10 and ismaster = 1;
  ?column? 
 ----------
-        1 
+ 1        
 (1 row)
 61q: ... <quitting>
 
