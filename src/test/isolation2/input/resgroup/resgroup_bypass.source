@@ -134,7 +134,7 @@ SELECT * FROM memory_result;
 SELECT * FROM memory_result;
 61: ABORT;
 61: BEGIN;
-SELECT * FROM memory_result;
+SELECT 1 FROM memory_result where avg_mem > 10 and ismaster = 1;
 61q:
 
 --
