@@ -1265,8 +1265,9 @@ CJoinOrderDPv2::EnumerateDP()
 			}
 			else
 			{
-				// beyond that, use greedy (keep only one group per level)
-				number_of_allowed_groups = 1;
+				// beyond that, use greedy (keep only one group of DP per level, plus the other greedy alternatives)
+				// This should be 1 plus the number of alternatives considered in IsGreedy(), otherwise we won't get the DP alternative
+				number_of_allowed_groups = 4;
 			}
 
 			// add a KHeap to this level, so that we can collect the k best expressions
@@ -1702,6 +1703,13 @@ CJoinOrderDPv2::OsPrintProperty(IOstream &os, SExpressionProperties &props) cons
 			if (!is_first)
 				os << ", ";
 			os << "Mincard";
+			is_first = false;
+		}
+		if (props.Satisfies(EJoinOrderGreedyAvoidXProd))
+		{
+			if (!is_first)
+				os << ", ";
+			os << "GreedyAvoidXProd";
 			is_first = false;
 		}
 		if (props.Satisfies(EJoinOrderStats))
