@@ -360,6 +360,8 @@ namespace gpopt
 				// cost of the expression
 				CDouble m_cost;
 
+				CDouble m_cost_penalty;
+
 				SExpressionInfo(
 								CExpression *expr,
 								const SGroupAndExpression &left_child_expr_info,
@@ -369,7 +371,8 @@ namespace gpopt
 								   m_left_child_expr(left_child_expr_info),
 								   m_right_child_expr(right_child_expr_info),
 								   m_properties(properties),
-								   m_cost(0.0)
+								   m_cost(0.0),
+								   m_cost_penalty(0.0)
 				{
 				}
 
@@ -378,7 +381,8 @@ namespace gpopt
 								SExpressionProperties &properties
 								) : m_expr(expr),
 									m_properties(properties),
-									m_cost(0.0)
+									m_cost(0.0),
+									m_cost_penalty(0.0)
 				{
 				}
 
@@ -388,7 +392,10 @@ namespace gpopt
 				}
 
 				// cost (use -1 for greedy solutions to ensure we keep all of them)
-				CDouble DCost() { return m_properties.IsGreedy() ? -1.0 : m_cost; }
+				CDouble DCost() { return m_properties.IsGreedy() ? -1.0 : m_cost + m_cost_penalty; }
+
+				CDouble TotalCost() { return m_cost + m_cost_penalty; }
+
 				BOOL ChildrenAreEqual(const SExpressionInfo &other) const
 				{ return m_left_child_expr == other.m_left_child_expr && m_right_child_expr == other.m_right_child_expr; }
 			};
