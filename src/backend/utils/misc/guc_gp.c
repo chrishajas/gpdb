@@ -4355,7 +4355,7 @@ struct config_real ConfigureNamesReal_gp[] =
 			GUC_NO_SHOW_ALL | GUC_NOT_IN_SAMPLE
 		},
 		&optimizer_damping_factor_join,
-		0.01, 0.0, 1.0,
+		0.00, 0.0, 1.0,
 		NULL, NULL, NULL
 	},
 	{
@@ -4817,7 +4817,7 @@ struct config_enum ConfigureNamesEnum_gp[] =
 			GUC_NOT_IN_SAMPLE
 		},
 		&optimizer_join_order,
-		JOIN_ORDER_EXHAUSTIVE_SEARCH, optimizer_join_order_options,
+		JOIN_ORDER_EXHAUSTIVE2_SEARCH, optimizer_join_order_options,
 		NULL, NULL, NULL
 	},
 
