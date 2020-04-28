@@ -1357,10 +1357,15 @@ CJoinOrderDPv2::FindLowestCardTwoWayJoin()
 	for (ULONG ul=0; ul<level_2->m_groups->Size(); ul++)
 	{
 		SGroupInfo *group_2 = (*level_2->m_groups)[ul];
-
-		if (NULL == min_card_group || group_2->m_cardinality < min_card)
+		CDouble group_2_cardinality = group_2->m_cardinality;
+		BOOL isCrossProd = (*(*group_2->m_best_expr_info_array)[0]->m_expr)[2]->Pop()->Eopid() == COperator::EopScalarConst;
+		if (isCrossProd)
 		{
-			min_card = group_2->m_cardinality;
+			group_2_cardinality = group_2_cardinality * 1e12;
+		}
+		if (NULL == min_card_group || group_2_cardinality < min_card)
+		{
+			min_card = group_2_cardinality;
 			min_card_group = group_2;
 		}
 	}
