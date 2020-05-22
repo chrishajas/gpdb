@@ -63,34 +63,17 @@ def fail_on_error(status):
 
 def main():
     parser = optparse.OptionParser()
-    parser.add_option("--build_type", dest="build_type", default="RELEASE")
     parser.add_option("--mode", choices=['orca', 'planner'])
-    parser.add_option("--compiler", dest="compiler")
-    parser.add_option("--cxxflags", dest="cxxflags")
     parser.add_option("--output_dir", dest="output_dir", default=INSTALL_DIR)
     parser.add_option("--configure-option", dest="configure_option", action="append",
                       help="Configure flags, ex --configure_option=--disable-orca --configure_option=--disable-gpcloud")
-    parser.add_option("--gcc-env-file", dest="gcc_env_file", help="GCC env file to be sourced")
-    parser.add_option("--orca-in-gpdb-install-location", dest="orca_in_gpdb_install_location", action="store_true",
-                      help="Install ORCA header and library files in GPDB install directory")
     parser.add_option("--action", choices=['build', 'test'], dest="action", default='build',
                       help="Build GPDB or Run Install Check")
-    parser.add_option("--gpdb_name", dest="gpdb_name")
     (options, args) = parser.parse_args()
 
     gpBuild = GpBuild(options.mode)
     status = print_compiler_version()
     fail_on_error(status)
-
-    # optional gcc env file to be source before executing configure, make, make install commands
-    gpBuild.set_gcc_env_file(options.gcc_env_file)
-
-    install_dir = INSTALL_DIR if options.orca_in_gpdb_install_location else DEPENDENCY_INSTALL_DIR
-    if options.action == 'test':
-        # if required, install orca and xerces library & header
-        # in the install directory of gpdb to avoid packaging from multiple directories
-        status = gpBuild.install_dependency(options.gpdb_name, INSTALL_DIR)
-        fail_on_error(status)
 
     # install any dependencies specified on the command line
     status = install_dependencies(gpBuild, args, install_dir)

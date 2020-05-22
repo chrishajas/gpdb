@@ -1,0 +1,293 @@
+## ======================================================================
+## resources
+## ======================================================================
+resource_types:
+- name: gcs
+  type: docker-image
+  source:
+    repository: frodenas/gcs-resource
+
+resources:
+- name: gporca-commits-to-test
+  type: git
+  source:
+    branch: {{branch_name}}
+    uri: https://github.com/greenplum-db/gporca-pipeline-misc
+
+- name: gpdb6-centos7-build
+  type: docker-image
+  source:
+    repository: pivotaldata/gpdb6-centos7-build
+
+- name: gpdb6-centos7-test
+  type: docker-image
+  source:
+    repository: pivotaldata/gpdb6-centos7-test
+
+- name: libquicklz-centos7
+  type: gcs
+  source:
+    bucket: ((gcs-bucket))
+    json_key: ((concourse-gcs-resources-service-account-key))
+    regexp: gp-internal-artifacts/centos7/libquicklz-(1\.5\.0-.*)-1.el7.x86_64.rpm
+
+- name: libquicklz-devel-centos7
+  type: gcs
+  source:
+    bucket: ((gcs-bucket))
+    json_key: ((concourse-gcs-resources-service-account-key))
+    regexp: gp-internal-artifacts/centos7/libquicklz-devel-(1\.5\.0-.*)-1.el7.x86_64.rpm
+
+- name: libsigar-centos7
+  type: gcs
+  source:
+    bucket: ((gcs-bucket))
+    json_key: ((concourse-gcs-resources-service-account-key))
+    regexp: gp-internal-artifacts/centos7/sigar-rhel7_x86_64-(1\.6\.5-.*).targz
+
+- name: python-centos7
+  type: gcs
+  source:
+    bucket: ((gcs-bucket))
+    json_key: ((concourse-gcs-resources-service-account-key))
+    regexp: gp-internal-artifacts/centos7/python-(2\.7\.12-.*).tar.gz
+
+# FIXME: make gcs
+- name: bin_gpdb_centos7
+  type: s3
+  source:
+    access_key_id: {{s3_access_key_id}}
+    bucket: {{gporca-concourse-bucket-dev}}
+    region_name: us-west-2
+    secret_access_key: {{s3_secret_access_key}}
+    versioned_file: bin_gpdb_centos7.tar.gz
+
+# FIXME: make gcs
+- name: bin_gpdb_baseline_centos7
+  type: s3
+  source:
+    access_key_id: {{s3_access_key_id}}
+    bucket: {{gporca-concourse-bucket-dev}}
+    region_name: us-west-2
+    secret_access_key: {{s3_secret_access_key}}
+    versioned_file: bin_gpdb_baseline_centos7.tar.gz
+
+- name: gpdb_main_src  # used for yml task files
+  type: git
+  source:
+    branch: 6X_STABLE
+    ignore_paths:
+    - README.md
+    - LICENSE
+    - COPYRIGHT
+    - .gitignore
+    uri: https://github.com/greenplum-db/gpdb
+
+- name: gpdb_baseline_src  # used for baseline build
+  type: git
+  source:
+    branch: 6X_STABLE
+    paths:
+    - src/backend/gporca/*
+    uri: https://github.com/greenplum-db/gpdb
+
+# FIXME: make gcs
+- name: explain_test_suite
+  type: s3
+  source:
+    access_key_id: {{s3_access_key_id}}
+    bucket: {{gporca-concourse-bucket-dev}}
+    region_name: us-west-2
+    secret_access_key: {{s3_secret_access_key}}
+    versioned_file: {{explain_workload_tar}}
+
+# FIXME: make gcs
+- name: explain_output_branch
+  type: s3
+  source:
+    access_key_id: {{s3_access_key_id}}
+    bucket: {{gporca-concourse-bucket-dev}}
+    region_name: us-west-2
+    secret_access_key: {{s3_secret_access_key}}
+    versioned_file: explain_output_branch.tar.gz
+
+# FIXME: make gcs
+- name: explain_output_baseline
+  type: s3
+  source:
+    access_key_id: {{s3_access_key_id}}
+    bucket: {{gporca-concourse-bucket-dev}}
+    region_name: us-west-2
+    secret_access_key: {{s3_secret_access_key}}
+    versioned_file: explain_output_baseline.tar.gz
+
+# FIXME: make gcs
+- name: explain_test_results
+  type: s3
+  source:
+    access_key_id: {{s3_access_key_id}}
+    bucket: {{gporca-concourse-bucket-dev}}
+    region_name: us-west-2
+    secret_access_key: {{s3_secret_access_key}}
+    versioned_file: {{explain_workload_results}}
+
+jobs:
+- name: compile_branch
+  max_in_flight: 10
+  plan:
+  - in_parallel:
+    - get: gporca-commits-to-test
+      trigger: true
+      version: every
+    - get: gpdb6-centos7-build
+    - get: libquicklz-installer
+      resource: libquicklz-centos7
+    - get: libquicklz-devel-installer
+      resource: libquicklz-devel-centos7
+    - get: libsigar-installer
+      resource: libsigar-centos7
+    - get: python-tarball
+      resource: python-centos7
+  - do:
+    - task: init gpdb_src
+      image: gpdb6-centos7-build
+      config:
+        platform: linux
+        run:
+          path: bash
+          args:
+          - -c
+          - |
+            BRANCH=$(cut -d, -f1 gporca-commits-to-test/gpdb_remote_info.txt)
+            REMOTE=$(cut -d, -f2 gporca-commits-to-test/gpdb_remote_info.txt)
+            git clone -b $BRANCH --single-branch $REMOTE gpdb_src &&
+            cd gpdb_src &&
+            git fetch https://github.com/greenplum-db/gpdb.git --tags &&
+            git submodule update --init --recursive
+        inputs: [{ name: gporca-commits-to-test }]
+        outputs: [{ name: gpdb_src }]
+    - task: compile_gpdb_centos7
+      file: gpdb_src/concourse/tasks/compile_gpdb.yml
+      image: gpdb6-centos7-build
+      params:
+        CONFIGURE_FLAGS: {{configure_flags}}
+        TARGET_OS: centos
+        TARGET_OS_VERSION: 7
+      timeout: 30m
+  - in_parallel:
+      steps:
+      - put: bin_gpdb_centos7_branch
+        params:
+          file: package_gpdb/bin_gpdb.tar.gz
+
+- name: compile_baseline
+  plan:
+  - in_parallel:
+      steps:
+      - get: gpdb_src
+      - get: gpdb6-centos7-build
+      - get: libquicklz-installer
+        resource: libquicklz-centos7
+      - get: libquicklz-devel-installer
+        resource: libquicklz-devel-centos7
+      - get: libsigar-installer
+        resource: libsigar-centos7
+      - get: python-tarball
+        resource: python-centos7
+  - task: compile_gpdb
+    image: gpdb6-centos7-build
+    file: gpdb_src/concourse/tasks/compile_gpdb.yml
+    params:
+      CONFIGURE_FLAGS: {{configure_flags_with_extensions}}
+      TARGET_OS: centos
+      TARGET_OS_VERSION: 7
+      RC_BUILD_TYPE_GCS: ((rc-build-type-gcs))
+  - in_parallel:
+      steps:
+      - put: bin_gpdb_centos7
+        params:
+          file: package_gpdb_baseline/bin_gpdb.tar.gz
+
+- name: test_explain_suite
+  max_in_flight: 1
+  plan:
+  - in_parallel:
+    - get: gporca-commits-to-test
+      passed:
+      - compile_branch
+    - get: bin_gpdb
+      passed:
+      - compile_branch
+      resource: bin_gpdb_centos7
+      trigger: true
+    - get: gpdb_main_src
+      passed:
+      - compile_branch
+      params:
+        submodules: none
+    - get: explain_test_suite
+  - task: run_explain_suite
+    file: gpdb_main_src/concourse/tasks/run_explain_suite.yml
+    params:
+      MODE: orca
+      ACTION: test_explain_suite
+      CONFIGURE_OPTION: --disable-gpcloud --enable-debug-extensions
+    timeout: 90m
+  - put: explain_output_branch
+    params:
+      file: icg_output/explain_ouput.tar.gz
+
+- name: test_explain_suite_baseline
+  plan:
+  - in_parallel:
+    - get: gporca-commits-to-test
+      passed:
+      - compile_baseline
+    - get: bin_gpdb
+      resource: bin_gpdb_baseline_centos7
+      passed:
+      - compile_baseline
+      trigger: true
+    - get: gpdb_main_src
+      passed:
+      - compile_baseline
+      params:
+        submodules: none
+    - get: explain_test_suite
+  - task: run_explain_suite_baseline
+    timeout: 64m
+    file: gpdb_main_src/concourse/tasks/run_explain_suite.yml
+    params:
+      MODE: orca
+      ACTION: test_explain_suite
+      CONFIGURE_OPTION: --disable-gpcloud --enable-debug-extensions
+    timeout: 90m
+  - put: explain_output_baseline
+    params:
+      file: icg_output/explain_ouput.tar.gz
+
+- name: diff_explain_results_with_baseline
+  plan:
+  - in_parallel:
+    - get: gporca-commits-to-test
+      passed:
+      - test_explain_suite
+    - get: gpdb_main_src
+      passed:
+      - test_explain_suite
+      params:
+        submodules: none
+    - get: explain_output_branch
+      passed:
+      - test_explain_suite
+      trigger: true
+    - get: explain_output_baseline
+      passed:
+      - test_explain_suite_baseline
+  - task: diff_explain_results_with_baseline
+    timeout: 64m
+    file: gpdb_main_src/concourse/tasks/diff_explain_results_with_baseline.yml
+    ensure:
+      put: explain_test_results
+      params:
+        file: diffs/explain_test_results.tar.gz
