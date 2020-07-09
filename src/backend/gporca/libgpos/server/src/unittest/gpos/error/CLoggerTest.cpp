@@ -36,7 +36,7 @@ CLoggerTest::EresUnittest()
 {
 	CUnittest rgut[] =
 		{
-		GPOS_UNITTEST_FUNC(CLoggerTest::EresUnittest_Basic),
+		//GPOS_UNITTEST_FUNC(CLoggerTest::EresUnittest_Basic),
 		GPOS_UNITTEST_FUNC(CLoggerTest::EresUnittest_LoggerSyslog),
 		};
 
