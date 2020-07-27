@@ -5639,7 +5639,7 @@ struct config_string ConfigureNamesString_gp[] =
 			GUC_NOT_IN_SAMPLE
 		},
 		&optimizer_join_order_str,
-		"exhaustive", assign_optimizer_join_order_options, NULL, NULL
+		"exhaustive2", assign_optimizer_join_order_options, NULL, NULL
 	},
 
 	/* End-of-list marker */
