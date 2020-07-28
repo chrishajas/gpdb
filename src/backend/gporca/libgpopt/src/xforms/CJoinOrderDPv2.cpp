@@ -846,8 +846,8 @@ void
 CJoinOrderDPv2::PopulateDPEInfo
 	(
 	SExpressionInfo *join_expr_info,
-	SGroupInfo *part_selector_group_info,
-	SGroupInfo *part_table_group_info
+	SGroupInfo *part_table_group_info,
+	SGroupInfo *part_selector_group_info
 	)
 {
 	SGroupInfoArray *atom_groups = GetGroupsForLevel(1);
@@ -880,7 +880,7 @@ CJoinOrderDPv2::PopulateDPEInfo
 				join_expr_info->m_contain_PS->ExchangeSet(iter_pt.Bit());
 				while(iter_ps.Advance())
 				{
-					// if the left group has a potential PS, ensure that one of the right group's atoms is a logical select
+					// if the part selector group has a potential PS, ensure that one of the group's atoms is a logical select
 					if ((*(*atom_groups)[iter_ps.Bit()]->m_best_expr_info_array)[0]->m_expr->Pop()->Eopid() == COperator::EopLogicalSelect)
 					{
 						SExpressionInfo *atom_ps = (*(*atom_groups)[iter_ps.Bit()]->m_best_expr_info_array)[0];
