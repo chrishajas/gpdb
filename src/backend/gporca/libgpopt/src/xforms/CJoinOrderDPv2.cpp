@@ -97,7 +97,7 @@ CJoinOrderDPv2::CJoinOrderDPv2
 	m_top_k_part_expressions = GPOS_NEW(mp) CKHeap<SExpressionInfoArray, SExpressionInfo>
 										(
 										 mp,
-										 1
+										 1 /* keep top 1 expression */
 										);
 
 	m_mp = mp;
@@ -853,15 +853,24 @@ CJoinOrderDPv2::PopulateDPEInfo
 	SGroupInfoArray *atom_groups = GetGroupsForLevel(1);
 
 	CBitSetIter iter_pt(*part_table_group_info->m_atoms);
-	iter_pt.Advance();
-	SGroupInfo *pt_atom = (*atom_groups)[iter_pt.Bit()];
-	CPartKeysArray *partition_keys = (*pt_atom->m_best_expr_info_array)[0]->m_atom_part_keys_array;
-	if (partition_keys != NULL && partition_keys->Size() > 0)
+	SGroupInfo *pt_atom = NULL;
+	CPartKeysArray *partition_keys = NULL;
+	while(iter_pt.Advance())
 	{
+		pt_atom = (*atom_groups)[iter_pt.Bit()];
+		partition_keys = (*pt_atom->m_best_expr_info_array)[0]->m_atom_part_keys_array;
+		if (partition_keys != NULL && partition_keys->Size() > 0){
+			break;
+		}
+	}
+	if (NULL != partition_keys)
+	{
+		GPOS_ASSERT(NULL != pt_atom);
+		GPOS_ASSERT(NULL != partition_keys && partition_keys->Size() > 0);
 		CExpression *join_expr = join_expr_info->m_expr;
-		CExpression *scaler_expr = (*join_expr)[join_expr->Arity() - 1];
+		CExpression *scalar_expr = (*join_expr)[join_expr->Arity() - 1];
 
-		CColRefSet *join_expr_cols = scaler_expr->DeriveUsedColumns();
+		CColRefSet *join_expr_cols = scalar_expr->DeriveUsedColumns();
 		for (ULONG i =0; i < partition_keys->Size(); i++){
 			CPartKeys *part_keys = (*partition_keys)[i];
 			// If the join expr overlaps the partition key, then we consider the expression as having a possible PS for that PT
@@ -893,7 +902,7 @@ CJoinOrderDPv2::PopulateDPEInfo
 						}
 
 						// Adjust the cost of the expression for each partition selector
-						join_expr_info->m_cost_adj_PS = join_expr_info->m_cost_adj_PS - ((percent_reduction * pt_atom->m_cardinality) + broadcast_penalty);
+						join_expr_info->m_cost_adj_PS = join_expr_info->m_cost_adj_PS - (percent_reduction * pt_atom->m_cardinality) + broadcast_penalty;
 					}
 				}
 				break;
