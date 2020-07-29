@@ -1,3 +1,9 @@
+resource_types:
+- name: git-lfs
+  type: docker-image
+  source:
+     repository: concourse/git-resource
+
 ## ======================================================================
 ## resources
 ## ======================================================================
@@ -11,8 +17,16 @@ resources:
 - name: gporca-commits-to-test
   type: git
   source:
-    branch: {{branch_name}}
-    uri: https://github.com/greenplum-db/gporca-pipeline-misc
+    branch: 6X_explain_test
+    private_key: {{slack-trigger-git-key}}
+    uri: {{slack-trigger-git-remote}}
+
+- name: gp_workloads
+  type: git-lfs
+  source:
+    branch: master
+    private_key: {{gp_workloads_deploy_key}}
+    uri: {{gp_workloads-git-remote}}
 
 - name: gpdb6-centos7-build
   type: docker-image
@@ -52,84 +66,55 @@ resources:
     json_key: ((concourse-gcs-resources-service-account-key))
     regexp: gp-internal-artifacts/centos7/python-(2\.7\.12-.*).tar.gz
 
-# FIXME: make gcs
 - name: bin_gpdb_centos7
-  type: s3
+  type: gcs
   source:
-    access_key_id: {{s3_access_key_id}}
-    bucket: {{gporca-concourse-bucket-dev}}
-    region_name: us-west-2
-    secret_access_key: {{s3_secret_access_key}}
-    versioned_file: bin_gpdb_centos7.tar.gz
+    bucket: ((qpa-gcs-bucket))
+    json_key: ((qpa-concourse-gcs-service-account-key))
+    versioned_file: ((pipeline-name))/bin_gpdb_centos7/bin_gpdb.tar.gz
 
-# FIXME: make gcs
 - name: bin_gpdb_baseline_centos7
-  type: s3
+  type: gcs
   source:
-    access_key_id: {{s3_access_key_id}}
-    bucket: {{gporca-concourse-bucket-dev}}
-    region_name: us-west-2
-    secret_access_key: {{s3_secret_access_key}}
-    versioned_file: bin_gpdb_baseline_centos7.tar.gz
+    bucket: ((qpa-gcs-bucket))
+    json_key: ((qpa-concourse-gcs-service-account-key))
+    versioned_file: ((pipeline-name))/bin_gpdb_centos7/bin_gpdb_baseline.tar.gz
 
 - name: gpdb_main_src  # used for yml task files
   type: git
   source:
     branch: 6X_STABLE
-    ignore_paths:
-    - README.md
-    - LICENSE
-    - COPYRIGHT
-    - .gitignore
+    paths:
+    - concourse/**
+    - src/backend/gporca/concourse/**
     uri: https://github.com/greenplum-db/gpdb
 
 - name: gpdb_baseline_src  # used for baseline build
   type: git
   source:
     branch: 6X_STABLE
-    paths:
-    - src/backend/gporca/*
     uri: https://github.com/greenplum-db/gpdb
 
-# FIXME: make gcs
-- name: explain_test_suite
-  type: s3
-  source:
-    access_key_id: {{s3_access_key_id}}
-    bucket: {{gporca-concourse-bucket-dev}}
-    region_name: us-west-2
-    secret_access_key: {{s3_secret_access_key}}
-    versioned_file: {{explain_workload_tar}}
-
-# FIXME: make gcs
 - name: explain_output_branch
-  type: s3
+  type: gcs
   source:
-    access_key_id: {{s3_access_key_id}}
-    bucket: {{gporca-concourse-bucket-dev}}
-    region_name: us-west-2
-    secret_access_key: {{s3_secret_access_key}}
-    versioned_file: explain_output_branch.tar.gz
+    bucket: ((qpa-gcs-bucket))
+    json_key: ((qpa-concourse-gcs-service-account-key))
+    versioned_file: ((pipeline-name))/bin_gpdb_centos7/explain_output_branch.tar.gz
 
-# FIXME: make gcs
 - name: explain_output_baseline
-  type: s3
+  type: gcs
   source:
-    access_key_id: {{s3_access_key_id}}
-    bucket: {{gporca-concourse-bucket-dev}}
-    region_name: us-west-2
-    secret_access_key: {{s3_secret_access_key}}
-    versioned_file: explain_output_baseline.tar.gz
+    bucket: ((qpa-gcs-bucket))
+    json_key: ((qpa-concourse-gcs-service-account-key))
+    versioned_file: ((pipeline-name))/bin_gpdb_centos7/explain_output_baseline.tar.gz
 
-# FIXME: make gcs
 - name: explain_test_results
-  type: s3
+  type: gcs
   source:
-    access_key_id: {{s3_access_key_id}}
-    bucket: {{gporca-concourse-bucket-dev}}
-    region_name: us-west-2
-    secret_access_key: {{s3_secret_access_key}}
-    versioned_file: {{explain_workload_results}}
+    bucket: ((qpa-gcs-bucket))
+    json_key: ((qpa-concourse-gcs-service-account-key))
+    versioned_file: ((pipeline-name))/bin_gpdb_centos7/explain_workload_results.tar.gz
 
 jobs:
 - name: compile_branch
@@ -149,7 +134,7 @@ jobs:
     - get: python-tarball
       resource: python-centos7
   - do:
-    - task: init gpdb_src
+    - task: init_gpdb_src
       image: gpdb6-centos7-build
       config:
         platform: linux
@@ -173,7 +158,6 @@ jobs:
         CONFIGURE_FLAGS: {{configure_flags}}
         TARGET_OS: centos
         TARGET_OS_VERSION: 7
-      timeout: 30m
   - in_parallel:
       steps:
       - put: bin_gpdb_centos7_branch
@@ -225,7 +209,11 @@ jobs:
       - compile_branch
       params:
         submodules: none
-    - get: explain_test_suite
+    - get: gp_workloads
+      params:
+        disable_git_lfs: true
+        depth: 1
+
   - task: run_explain_suite
     file: gpdb_main_src/concourse/tasks/run_explain_suite.yml
     params:
@@ -253,7 +241,6 @@ jobs:
       - compile_baseline
       params:
         submodules: none
-    - get: explain_test_suite
   - task: run_explain_suite_baseline
     timeout: 64m
     file: gpdb_main_src/concourse/tasks/run_explain_suite.yml
