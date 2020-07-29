@@ -6,13 +6,26 @@ image_resource:
 inputs:
   - name: bin_gpdb
   - name: gpdb_src
+  - name: gporca-commits-to-test
 params:
   MODE:
   ACTION:
   CONFIGURE_OPTION:
+  WORKLOAD:
+  GUCS:
 run:
   path: sh
   args:
   - -exc
   - |
     gpdb_src/concourse/scripts/build_gpdb.py ${MODE} ${ACTION} ${CONFIGURE_OPTION}
+    #  - |
+    #    readarray -d ';' -t workloads_to_run <<< `cat workload.txt`
+    #    for $i in "${workloads_to_run[@]}"
+    #    do
+    #      if [[ $i == "all" || $i == ${WORKLOAD} ]]
+    #      then
+    #        gpdb_src/concourse/scripts/build_gpdb.py ${MODE} ${ACTION} ${CONFIGURE_OPTION}
+    #        break
+    #      fi
+    #    done

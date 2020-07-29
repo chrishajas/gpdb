@@ -33,11 +33,6 @@ resources:
   source:
     repository: pivotaldata/gpdb6-centos7-build
 
-- name: gpdb6-centos7-test
-  type: docker-image
-  source:
-    repository: pivotaldata/gpdb6-centos7-test
-
 - name: libquicklz-centos7
   type: gcs
   source:
@@ -66,14 +61,14 @@ resources:
     json_key: ((concourse-gcs-resources-service-account-key))
     regexp: gp-internal-artifacts/centos7/python-(2\.7\.12-.*).tar.gz
 
-- name: bin_gpdb_centos7
+- name: bin_gpdb_centos7_branch
   type: gcs
   source:
     bucket: ((qpa-gcs-bucket))
     json_key: ((qpa-concourse-gcs-service-account-key))
     versioned_file: ((pipeline-name))/bin_gpdb_centos7/bin_gpdb.tar.gz
 
-- name: bin_gpdb_baseline_centos7
+- name: bin_gpdb_centos7_baseline
   type: gcs
   source:
     bucket: ((qpa-gcs-bucket))
@@ -83,11 +78,11 @@ resources:
 - name: gpdb_main_src  # used for yml task files
   type: git
   source:
-    branch: 6X_STABLE
+    branch: explain_pipeline
     paths:
     - concourse/**
     - src/backend/gporca/concourse/**
-    uri: https://github.com/greenplum-db/gpdb
+    uri: https://github.com/chrishajas/gpdb
 
 - name: gpdb_baseline_src  # used for baseline build
   type: git
@@ -145,10 +140,10 @@ jobs:
           - |
             BRANCH=$(cut -d, -f1 gporca-commits-to-test/gpdb_remote_info.txt)
             REMOTE=$(cut -d, -f2 gporca-commits-to-test/gpdb_remote_info.txt)
-            git clone -b $BRANCH --single-branch $REMOTE gpdb_src &&
+            git clone -b $BRANCH --depth 1 $REMOTE gpdb_src &&
             cd gpdb_src &&
             git fetch https://github.com/greenplum-db/gpdb.git --tags &&
-            git submodule update --init --recursive
+            git submodule update --init --recursive --depth 1
         inputs: [{ name: gporca-commits-to-test }]
         outputs: [{ name: gpdb_src }]
     - task: compile_gpdb_centos7
@@ -168,7 +163,8 @@ jobs:
   plan:
   - in_parallel:
       steps:
-      - get: gpdb_src
+      - get: gporca-commits-to-test
+      - get: gpdb_baseline_src
       - get: gpdb6-centos7-build
       - get: libquicklz-installer
         resource: libquicklz-centos7
@@ -180,7 +176,7 @@ jobs:
         resource: python-centos7
   - task: compile_gpdb
     image: gpdb6-centos7-build
-    file: gpdb_src/concourse/tasks/compile_gpdb.yml
+    file: gpdb_baseline_src/concourse/tasks/compile_gpdb.yml
     params:
       CONFIGURE_FLAGS: {{configure_flags_with_extensions}}
       TARGET_OS: centos
@@ -188,11 +184,11 @@ jobs:
       RC_BUILD_TYPE_GCS: ((rc-build-type-gcs))
   - in_parallel:
       steps:
-      - put: bin_gpdb_centos7
+      - put: bin_gpdb_centos7_baseline
         params:
           file: package_gpdb_baseline/bin_gpdb.tar.gz
 
-- name: test_explain_suite
+- name: run_explain_suite_tpcds
   max_in_flight: 1
   plan:
   - in_parallel:
@@ -202,43 +198,39 @@ jobs:
     - get: bin_gpdb
       passed:
       - compile_branch
-      resource: bin_gpdb_centos7
+      resource: bin_gpdb_centos7_branch
       trigger: true
     - get: gpdb_main_src
-      passed:
-      - compile_branch
       params:
         submodules: none
     - get: gp_workloads
       params:
         disable_git_lfs: true
         depth: 1
-
   - task: run_explain_suite
     file: gpdb_main_src/concourse/tasks/run_explain_suite.yml
     params:
       MODE: orca
       ACTION: test_explain_suite
+      WORKLOAD: tpcds
       CONFIGURE_OPTION: --disable-gpcloud --enable-debug-extensions
     timeout: 90m
   - put: explain_output_branch
     params:
       file: icg_output/explain_ouput.tar.gz
 
-- name: test_explain_suite_baseline
+- name: run_explain_suite_tpcds_baseline
   plan:
   - in_parallel:
     - get: gporca-commits-to-test
       passed:
       - compile_baseline
     - get: bin_gpdb
-      resource: bin_gpdb_baseline_centos7
+      resource: bin_gpdb_centos7_baseline
       passed:
       - compile_baseline
       trigger: true
     - get: gpdb_main_src
-      passed:
-      - compile_baseline
       params:
         submodules: none
   - task: run_explain_suite_baseline
@@ -258,19 +250,19 @@ jobs:
   - in_parallel:
     - get: gporca-commits-to-test
       passed:
-      - test_explain_suite
+      - run_explain_suite_tpcds
     - get: gpdb_main_src
       passed:
-      - test_explain_suite
+      - run_explain_suite_tpcds
       params:
         submodules: none
     - get: explain_output_branch
       passed:
-      - test_explain_suite
+      - run_explain_suite_tpcds
       trigger: true
     - get: explain_output_baseline
       passed:
-      - test_explain_suite_baseline
+      - run_explain_suite_tpcds_baseline
   - task: diff_explain_results_with_baseline
     timeout: 64m
     file: gpdb_main_src/concourse/tasks/diff_explain_results_with_baseline.yml
