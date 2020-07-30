@@ -152,6 +152,7 @@ jobs:
         CONFIGURE_FLAGS: {{configure_flags}}
         TARGET_OS: centos
         TARGET_OS_VERSION: 7
+        SKIP_UNITTESTS: true
   - in_parallel:
       steps:
       - put: bin_gpdb_centos7_branch
@@ -180,7 +181,7 @@ jobs:
       CONFIGURE_FLAGS: {{configure_flags}}
       TARGET_OS: centos
       TARGET_OS_VERSION: 7
-      RC_BUILD_TYPE_GCS: ((rc-build-type-gcs))
+      SKIP_UNITTESTS: true
   - in_parallel:
       steps:
       - put: bin_gpdb_centos7_baseline
