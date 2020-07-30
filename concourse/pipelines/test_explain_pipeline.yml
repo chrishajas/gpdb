@@ -1,9 +1,3 @@
-resource_types:
-- name: git-lfs
-  type: docker-image
-  source:
-     repository: concourse/git-resource
-
 ## ======================================================================
 ## resources
 ## ======================================================================
@@ -12,6 +6,11 @@ resource_types:
   type: docker-image
   source:
     repository: frodenas/gcs-resource
+
+- name: git-lfs
+  type: docker-image
+  source:
+     repository: concourse/git-resource
 
 resources:
 - name: gporca-commits-to-test
@@ -64,15 +63,15 @@ resources:
 - name: bin_gpdb_centos7_branch
   type: gcs
   source:
-    bucket: ((qpa-gcs-bucket))
-    json_key: ((qpa-concourse-gcs-service-account-key))
+    bucket: ((gcs-bucket-intermediates))
+    json_key: ((concourse-gcs-resources-service-account-key))
     versioned_file: ((pipeline-name))/bin_gpdb_centos7/bin_gpdb.tar.gz
 
 - name: bin_gpdb_centos7_baseline
   type: gcs
   source:
-    bucket: ((qpa-gcs-bucket))
-    json_key: ((qpa-concourse-gcs-service-account-key))
+    bucket: ((gcs-bucket-intermediates))
+    json_key: ((concourse-gcs-resources-service-account-key))
     versioned_file: ((pipeline-name))/bin_gpdb_centos7/bin_gpdb_baseline.tar.gz
 
 - name: gpdb_main_src  # used for yml task files
@@ -93,22 +92,22 @@ resources:
 - name: explain_output_branch
   type: gcs
   source:
-    bucket: ((qpa-gcs-bucket))
-    json_key: ((qpa-concourse-gcs-service-account-key))
+    bucket: ((gcs-bucket-intermediates))
+    json_key: ((concourse-gcs-resources-service-account-key))
     versioned_file: ((pipeline-name))/bin_gpdb_centos7/explain_output_branch.tar.gz
 
 - name: explain_output_baseline
   type: gcs
   source:
-    bucket: ((qpa-gcs-bucket))
-    json_key: ((qpa-concourse-gcs-service-account-key))
+    bucket: ((gcs-bucket-intermediates))
+    json_key: ((concourse-gcs-resources-service-account-key))
     versioned_file: ((pipeline-name))/bin_gpdb_centos7/explain_output_baseline.tar.gz
 
 - name: explain_test_results
   type: gcs
   source:
-    bucket: ((qpa-gcs-bucket))
-    json_key: ((qpa-concourse-gcs-service-account-key))
+    bucket: ((gcs-bucket))
+    json_key: ((concourse-gcs-resources-service-account-key))
     versioned_file: ((pipeline-name))/bin_gpdb_centos7/explain_workload_results.tar.gz
 
 jobs:
@@ -143,7 +142,7 @@ jobs:
             git clone -b $BRANCH --depth 1 $REMOTE gpdb_src &&
             cd gpdb_src &&
             git fetch https://github.com/greenplum-db/gpdb.git --tags &&
-            git submodule update --init --recursive --depth 1
+            git submodule update --init --recursive
         inputs: [{ name: gporca-commits-to-test }]
         outputs: [{ name: gpdb_src }]
     - task: compile_gpdb_centos7
@@ -178,7 +177,7 @@ jobs:
     image: gpdb6-centos7-build
     file: gpdb_baseline_src/concourse/tasks/compile_gpdb.yml
     params:
-      CONFIGURE_FLAGS: {{configure_flags_with_extensions}}
+      CONFIGURE_FLAGS: {{configure_flags}}
       TARGET_OS: centos
       TARGET_OS_VERSION: 7
       RC_BUILD_TYPE_GCS: ((rc-build-type-gcs))
