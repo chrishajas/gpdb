@@ -1,8 +1,12 @@
 import subprocess
 from GpdbBuildBase import GpdbBuildBase
 
-INSTALL_DIR="/usr/local/gpdb"
+INSTALL_DIR="/usr/local/greenplum-db-devel"
 
+def fail_on_error(status):
+    import sys
+    if status:
+        sys.exit(status)
 
 class GpBuild(GpdbBuildBase):
     def __init__(self, mode="orca"):

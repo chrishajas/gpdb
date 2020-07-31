@@ -216,7 +216,6 @@ jobs:
     params:
       MODE: orca
       ACTION: test_explain_suite
-      CONFIGURE_OPTION: --disable-gpcloud
   - put: explain_output_branch
     params:
       file: icg_output/explain_ouput.tar.gz
@@ -245,7 +244,6 @@ jobs:
     params:
       MODE: orca
       WORKLOAD: tpcds_1t
-      CONFIGURE_OPTION: --disable-gpcloud
   - put: explain_output_baseline
     params:
       file: icg_output/explain_ouput.tar.gz

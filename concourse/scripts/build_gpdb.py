@@ -9,7 +9,7 @@ import sys
 
 from builds.GpBuild import GpBuild
 
-INSTALL_DIR = "/usr/local/gpdb"
+INSTALL_DIR = "/usr/local/greenplum-db-devel"
 
 def print_compiler_version():
     status = subprocess.call(["g++", "--version"])
