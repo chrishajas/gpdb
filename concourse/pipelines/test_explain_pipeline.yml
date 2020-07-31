@@ -215,7 +215,7 @@ jobs:
     file: gpdb_src/concourse/tasks/run_explain_suite.yml
     params:
       MODE: orca
-      ACTION: test_explain_suite
+      WORKLOAD: tpcds_1t
   - put: explain_output_branch
     params:
       file: icg_output/explain_ouput.tar.gz
