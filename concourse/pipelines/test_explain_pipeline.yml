@@ -151,7 +151,6 @@ jobs:
       file: gpdb_src/concourse/tasks/compile_gpdb.yml
       image: gpdb6-centos7-build
       params:
-        CONFIGURE_FLAGS: {{configure_flags}}
         TARGET_OS: centos
         TARGET_OS_VERSION: 7
         SKIP_UNITTESTS: true
@@ -181,7 +180,6 @@ jobs:
     image: gpdb6-centos7-build
     file: gpdb_src/concourse/tasks/compile_gpdb.yml
     params:
-      CONFIGURE_FLAGS: {{configure_flags}}
       TARGET_OS: centos
       TARGET_OS_VERSION: 7
       SKIP_UNITTESTS: true
