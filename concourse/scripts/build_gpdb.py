@@ -10,17 +10,6 @@ import sys
 from builds.GpBuild import GpBuild
 
 INSTALL_DIR = "/usr/local/gpdb"
-DEPENDENCY_INSTALL_DIR = "/usr/local"
-
-
-def copy_installed(output_dir):
-    if os.path.normpath(INSTALL_DIR) != os.path.normpath(output_dir):
-        status = subprocess.call("mkdir -p " + output_dir, shell=True)
-        if status:
-            return status
-        return subprocess.call("cp -r %s/*  %s" % (INSTALL_DIR, output_dir), shell=True)
-    return
-
 
 def print_compiler_version():
     status = subprocess.call(["g++", "--version"])
@@ -74,14 +63,7 @@ def main():
     status = print_compiler_version()
     fail_on_error(status)
 
-
-    configure_option = []
-    if options.configure_option:
-        configure_option.extend(options.configure_option)
-
-    gpBuild.append_configure_options(configure_option)
-
-    status = gpBuild.configure()
+    status = gpBuild.install_dependency("bin_gpdb", INSTALL_DIR)
     fail_on_error(status)
 
     status = create_gpadmin_user()
