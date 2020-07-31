@@ -216,7 +216,7 @@ jobs:
       WORKLOAD: tpcds_1t
   - put: explain_output_branch
     params:
-      file: icg_output/explain_ouput.tar.gz
+      file: output/explain_ouput.tar.gz
 
 - name: run_explain_suite_tpcds_baseline
   plan:
@@ -244,7 +244,7 @@ jobs:
       WORKLOAD: tpcds_1t
   - put: explain_output_baseline
     params:
-      file: icg_output/explain_ouput.tar.gz
+      file: output/explain_ouput.tar.gz
 
 - name: diff_explain_results_with_baseline
   plan:

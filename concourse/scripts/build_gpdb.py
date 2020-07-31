@@ -25,7 +25,7 @@ def create_gpadmin_user():
         return status
 
 def tar_explain_output():
-    status = subprocess.call(["tar", "czvf", "icg_output/explain_ouput.tar.gz", "out/"])
+    status = subprocess.call(["tar", "czvf", "output/explain_ouput.tar.gz", "out/"])
     return status
 
 def copy_output():
@@ -37,8 +37,8 @@ def copy_output():
                   "----------------------------------------------------------------------")
             with open(diff_file, 'r') as fin:
                 print fin.read()
-    shutil.copyfile("gpdb_src/src/test/regress/regression.diffs", "icg_output/regression.diffs")
-    shutil.copyfile("gpdb_src/src/test/regress/regression.out", "icg_output/regression.out")
+    shutil.copyfile("gpdb_src/src/test/regress/regression.diffs", "output/regression.diffs")
+    shutil.copyfile("gpdb_src/src/test/regress/regression.out", "output/regression.out")
 
 
 def fail_on_error(status):

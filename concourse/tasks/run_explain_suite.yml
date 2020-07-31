@@ -8,6 +8,8 @@ inputs:
   - name: gpdb_src
   - name: gp_workloads
   - name: gporca-commits-to-test
+outputs:
+  - name: output
 params:
   MODE:
   CONFIGURE_OPTION:
