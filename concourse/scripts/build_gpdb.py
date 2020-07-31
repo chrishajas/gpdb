@@ -52,13 +52,6 @@ def copy_output():
     shutil.copyfile("gpdb_src/src/test/regress/regression.out", "icg_output/regression.out")
 
 
-def install_dependencies(ci_common, dependencies, install_dir):
-    for dependency in dependencies:
-        status = ci_common.install_dependency(dependency, install_dir)
-        if status:
-            return status
-
-
 def fail_on_error(status):
     if status:
         sys.exit(status)
@@ -81,58 +74,22 @@ def main():
     status = print_compiler_version()
     fail_on_error(status)
 
-    # install any dependencies specified on the command line
-    status = install_dependencies(gpBuild, args, install_dir)
-    fail_on_error(status)
 
     configure_option = []
     if options.configure_option:
         configure_option.extend(options.configure_option)
 
-    # add DEPENDENCY_INSTALL_LOC and INSTALL_DIR paths to configure options
-    configure_option.append(
-        '"--with-libs={0} {1}"'.format(os.path.join(DEPENDENCY_INSTALL_DIR, "lib"), os.path.join(INSTALL_DIR, "lib")))
-    configure_option.append('"--with-includes={0} {1}"'.format(os.path.join(DEPENDENCY_INSTALL_DIR, "include"),
-                                                               os.path.join(INSTALL_DIR, "include")))
     gpBuild.append_configure_options(configure_option)
 
     status = gpBuild.configure()
     fail_on_error(status)
 
-    # compile and install gpdb
-    if options.action == 'build':
-        status = gpBuild.make()
-        fail_on_error(status)
-
-        status = gpBuild.make_install()
-        fail_on_error(status)
-
-        status = gpBuild.unittest()
-        fail_on_error(status)
-
-        status = copy_installed(options.output_dir)
-        fail_on_error(status)
-    # run install-check tests
-    elif options.action == 'test':
-        status = create_gpadmin_user()
-        fail_on_error(status)
-        if os.getenv("TEST_SUITE", "icg") == 'icw':
-            status = gpBuild.install_check('world')
-        else:
-            status = gpBuild.install_check()
-        if status:
-            copy_output()
-        return status
-
-    elif options.action == 'test_explain_suite':
-        status = create_gpadmin_user()
-        fail_on_error(status)
-        status = gpBuild.run_explain_test_suite(options.dbexists)
-        fail_on_error(status)
-        status = tar_explain_output()
-        fail_on_error(status)
-        return 0
-
+    status = create_gpadmin_user()
+    fail_on_error(status)
+    status = gpBuild.run_explain_test_suite(options.dbexists)
+    fail_on_error(status)
+    status = tar_explain_output()
+    fail_on_error(status)
     return 0
 
 
