@@ -140,7 +140,7 @@ jobs:
           - |
             BRANCH=$(cut -d, -f1 gporca-commits-to-test/gpdb_remote_info.txt)
             REMOTE=$(cut -d, -f2 gporca-commits-to-test/gpdb_remote_info.txt)
-            git clone -b $BRANCH --depth 1 $REMOTE gpdb_src &&
+            git clone -b $BRANCH --depth 100 $REMOTE gpdb_src &&
             cd gpdb_src &&
             git fetch https://github.com/greenplum-db/gpdb.git --tags &&
             git submodule update --init --recursive
@@ -158,7 +158,7 @@ jobs:
       steps:
       - put: bin_gpdb_centos7_branch
         params:
-          file: package_gpdb/bin_gpdb.tar.gz
+          file: gpdb_artifacts/bin_gpdb.tar.gz
 
 - name: compile_baseline
   plan:
@@ -188,7 +188,7 @@ jobs:
       steps:
       - put: bin_gpdb_centos7_baseline
         params:
-          file: package_gpdb_baseline/bin_gpdb.tar.gz
+          file: gpdb_artifacts/bin_gpdb.tar.gz
 
 - name: run_explain_suite_tpcds
   max_in_flight: 1
@@ -204,7 +204,7 @@ jobs:
       trigger: true
     - get: gpdb_main_src
       params:
-        submodules: none
+        depth: 100
     - get: gp_workloads
       params:
         disable_git_lfs: true
