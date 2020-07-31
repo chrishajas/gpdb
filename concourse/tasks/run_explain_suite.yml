@@ -6,6 +6,7 @@ image_resource:
 inputs:
   - name: bin_gpdb
   - name: gpdb_src
+  - name: gp_workloads
   - name: gporca-commits-to-test
 params:
   MODE:
@@ -18,9 +19,9 @@ run:
   args:
   - -exc
   - |
-    cp -r ${WORKLOAD}/sql sql
-    cp ${WORKLOAD}/schema_6X.sql schema.sql
-    cp ${WORKLOAD}/stats_6X.sql schema.sql
+    cp -r gp_workloads/${WORKLOAD}/sql sql
+    cp gp_workloads/${WORKLOAD}/schema_6X.sql schema.sql
+    cp gp_workloads/${WORKLOAD}/stats_6X.sql schema.sql
 
     gpdb_src/concourse/scripts/build_gpdb.py ${MODE} ${ACTION} ${CONFIGURE_OPTION}
     #  - |

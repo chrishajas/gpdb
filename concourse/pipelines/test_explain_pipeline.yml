@@ -203,7 +203,8 @@ jobs:
       - compile_branch
       resource: bin_gpdb_centos7_branch
       trigger: true
-    - get: gpdb_main_src
+    - get: gpdb_src
+      resource: gpdb_main_src
       params:
         depth: 100
     - get: gp_workloads
@@ -211,7 +212,7 @@ jobs:
         disable_git_lfs: true
         depth: 1
   - task: run_explain_suite
-    file: gpdb_main_src/concourse/tasks/run_explain_suite.yml
+    file: gpdb_src/concourse/tasks/run_explain_suite.yml
     params:
       MODE: orca
       ACTION: test_explain_suite
@@ -232,11 +233,16 @@ jobs:
       passed:
       - compile_baseline
       trigger: true
-    - get: gpdb_main_src
+    - get: gpdb_src
+      resource: gpdb_main_src
       params:
         submodules: none
+    - get: gp_workloads
+      params:
+        disable_git_lfs: true
+        depth: 1
   - task: run_explain_suite_baseline
-    file: gpdb_main_src/concourse/tasks/run_explain_suite.yml
+    file: gpdb_src/concourse/tasks/run_explain_suite.yml
     params:
       MODE: orca
       ACTION: test_explain_suite
@@ -252,7 +258,8 @@ jobs:
       passed:
       - run_explain_suite_tpcds
       - run_explain_suite_tpcds_baseline
-    - get: gpdb_main_src
+    - get: gpdb_src
+      resource: gpdb_main_src
       passed:
       - run_explain_suite_tpcds
       params:
@@ -262,7 +269,7 @@ jobs:
       trigger: true
     - get: explain_output_baseline
   - task: diff_explain_results_with_baseline
-    file: gpdb_main_src/concourse/tasks/diff_explain_results_with_baseline.yml
+    file: gpdb_src/concourse/tasks/diff_explain_results_with_baseline.yml
     ensure:
       put: explain_test_results
       params:
