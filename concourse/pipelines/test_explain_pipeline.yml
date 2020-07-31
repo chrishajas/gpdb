@@ -253,16 +253,18 @@ jobs:
       passed:
       - run_explain_suite_tpcds
       - run_explain_suite_tpcds_baseline
+      trigger: true
     - get: gpdb_src
       resource: gpdb_main_src
-      passed:
-      - run_explain_suite_tpcds
       params:
         submodules: none
     - get: explain_output
       resource: explain_output_branch
-      trigger: true
+      passed:
+      - run_explain_suite_tpcds
     - get: explain_output_baseline
+      passed:
+      - run_explain_suite_tpcds_baseline
   - task: diff_explain_results_with_baseline
     file: gpdb_src/concourse/tasks/diff_explain_results_with_baseline.yml
     ensure:

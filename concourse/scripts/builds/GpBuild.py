@@ -76,6 +76,9 @@ class GpBuild(GpdbBuildBase):
         return subprocess.call([runcmd], shell=True, stdout=stdout, stderr=stderr)
 
     def run_explain_test_suite(self, dbexists):
+        cmd = `echo \\\timing >> ~/.psqlrc`
+        self.run_cmd(cmd, "gpdb_src")
+
         source_env_cmd = ''
         if dbexists:
             source_env_cmd='source {0}/greenplum_path.sh && source ~/.bash_profile '.format(INSTALL_DIR)
