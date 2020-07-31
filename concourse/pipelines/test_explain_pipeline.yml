@@ -86,8 +86,9 @@ resources:
 - name: gpdb_baseline_src  # used for baseline build
   type: git
   source:
-    branch: 6X_STABLE
-    uri: https://github.com/greenplum-db/gpdb
+    # TEMP CHANGE BEFORE PUSH
+    branch: explain_pipeline
+    uri: https://github.com/chrishajas/gpdb
 
 - name: explain_output_branch
   type: gcs
@@ -164,7 +165,8 @@ jobs:
   - in_parallel:
       steps:
       - get: gporca-commits-to-test
-      - get: gpdb_baseline_src
+      - get: gpdb_src
+        resource: gpdb_baseline_src
       - get: gpdb6-centos7-build
       - get: libquicklz-installer
         resource: libquicklz-centos7
@@ -176,7 +178,7 @@ jobs:
         resource: python-centos7
   - task: compile_gpdb
     image: gpdb6-centos7-build
-    file: gpdb_baseline_src/concourse/tasks/compile_gpdb.yml
+    file: gpdb_src/concourse/tasks/compile_gpdb.yml
     params:
       CONFIGURE_FLAGS: {{configure_flags}}
       TARGET_OS: centos
