@@ -105,7 +105,7 @@ class GpBuild(GpdbBuildBase):
                 # GUC name should match with name in gpdb 5X_STABLE branch
                 with open(output_fname, 'w') as fout:
                     print "Running query: " + fsql
-                    current_status = self._run_gpdb_command("env PGOPTIONS='-c optimizer_enable_full_join=on' psql -a -f sql/{}".format(fsql), stdout=fout, stderr=fout, source_env_cmd=source_env_cmd, print_command=True)
+                    current_status = self._run_gpdb_command("psql -a -f sql/{}".format(fsql), stdout=fout, stderr=fout, source_env_cmd=source_env_cmd, print_command=True)
                     if current_status != 0:
                         print "ERROR: {0}".format(current_status)
                     status = status if status != 0 else current_status
