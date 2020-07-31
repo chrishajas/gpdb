@@ -1,4 +1,5 @@
 import subprocess
+import os
 from GpdbBuildBase import GpdbBuildBase
 
 INSTALL_DIR="/usr/local/greenplum-db-devel"
@@ -64,13 +65,14 @@ class GpBuild(GpdbBuildBase):
             && source gpAux/gpdemo/gpdemo-env.sh && PGOPTIONS='-c optimizer={1}' \
             {2} \"".format(INSTALL_DIR, self.mode, make_command)], cwd="gpdb_src", shell=True)
 
-    def _run_gpdb_command(self, command, stdout=None, stderr=None, source_env_cmd=''):
+    def _run_gpdb_command(self, command, stdout=None, stderr=None, source_env_cmd='', print_command=True):
         cmd = "source {0}/greenplum_path.sh && source gpdb_src/gpAux/gpdemo/gpdemo-env.sh".format(INSTALL_DIR)
         if len(source_env_cmd) != 0:
             #over ride the command if requested
             cmd = source_env_cmd
         runcmd = "runuser gpadmin -c \"{0} && {1} \"".format(cmd, command)
-        print "Executing {}".format(runcmd)
+        if print_command:
+            print "Executing {}".format(runcmd)
         return subprocess.call([runcmd], shell=True, stdout=stdout, stderr=stderr)
 
     def run_explain_test_suite(self, dbexists):
@@ -102,8 +104,8 @@ class GpBuild(GpdbBuildBase):
                 output_fname = 'out/{}'.format(fsql.replace('.sql', '.out'))
                 # GUC name should match with name in gpdb 5X_STABLE branch
                 with open(output_fname, 'w') as fout:
-                    current_status = self._run_gpdb_command("env PGOPTIONS='-c optimizer_enable_full_join=on' psql -a -f sql/{}".format(fsql), stdout=fout, stderr=fout, source_env_cmd=source_env_cmd)
-                    print "status: {0}".format(current_status)
+                    print "Running query: " + fsql
+                    current_status = self._run_gpdb_command("env PGOPTIONS='-c optimizer_enable_full_join=on' psql -a -f sql/{}".format(fsql), stdout=fout, stderr=fout, source_env_cmd=source_env_cmd, print_command=False)
                     status = status if status != 0 else current_status
 
         return status
