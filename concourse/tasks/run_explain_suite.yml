@@ -18,6 +18,10 @@ run:
   args:
   - -exc
   - |
+    cp -r ${WORKLOAD}/sql sql
+    cp ${WORKLOAD}/schema_6X.sql schema.sql
+    cp ${WORKLOAD}/stats_6X.sql schema.sql
+
     gpdb_src/concourse/scripts/build_gpdb.py ${MODE} ${ACTION} ${CONFIGURE_OPTION}
     #  - |
     #    readarray -d ';' -t workloads_to_run <<< `cat workload.txt`

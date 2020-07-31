@@ -23,7 +23,8 @@ resources:
 - name: gp_workloads
   type: git-lfs
   source:
-    branch: master
+# TEMPORARY: FIXME BEFORE MERGE
+    branch: tpcds1t
     private_key: {{gp_workloads_deploy_key}}
     uri: {{gp_workloads-git-remote}}
 
@@ -107,7 +108,7 @@ resources:
 - name: explain_test_results
   type: gcs
   source:
-    bucket: ((gcs-bucket))
+    bucket: ((gcs-bucket-intermediates))
     json_key: ((concourse-gcs-resources-service-account-key))
     versioned_file: ((pipeline-name))/bin_gpdb_centos7/explain_workload_results.tar.gz
 
@@ -214,9 +215,8 @@ jobs:
     params:
       MODE: orca
       ACTION: test_explain_suite
-      WORKLOAD: tpcds
+      WORKLOAD: tpcds_1t
       CONFIGURE_OPTION: --disable-gpcloud --enable-debug-extensions
-    timeout: 90m
   - put: explain_output_branch
     params:
       file: icg_output/explain_ouput.tar.gz
@@ -236,13 +236,11 @@ jobs:
       params:
         submodules: none
   - task: run_explain_suite_baseline
-    timeout: 64m
     file: gpdb_main_src/concourse/tasks/run_explain_suite.yml
     params:
       MODE: orca
       ACTION: test_explain_suite
       CONFIGURE_OPTION: --disable-gpcloud --enable-debug-extensions
-    timeout: 90m
   - put: explain_output_baseline
     params:
       file: icg_output/explain_ouput.tar.gz
@@ -253,20 +251,17 @@ jobs:
     - get: gporca-commits-to-test
       passed:
       - run_explain_suite_tpcds
+      - run_explain_suite_tpcds_baseline
     - get: gpdb_main_src
       passed:
       - run_explain_suite_tpcds
       params:
         submodules: none
-    - get: explain_output_branch
-      passed:
-      - run_explain_suite_tpcds
+    - get: explain_output
+      resource: explain_output_branch
       trigger: true
     - get: explain_output_baseline
-      passed:
-      - run_explain_suite_tpcds_baseline
   - task: diff_explain_results_with_baseline
-    timeout: 64m
     file: gpdb_main_src/concourse/tasks/diff_explain_results_with_baseline.yml
     ensure:
       put: explain_test_results

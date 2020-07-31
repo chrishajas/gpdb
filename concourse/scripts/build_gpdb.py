@@ -35,6 +35,9 @@ def create_gpadmin_user():
     if status:
         return status
 
+def tar_explain_output():
+    status = subprocess.call(["tar", "czvf", "icg_output/explain_ouput.tar.gz", "out/"])
+    return status
 
 def copy_output():
     for dirpath, dirs, diff_files in os.walk('gpdb_src/'):
@@ -67,8 +70,11 @@ def main():
     parser.add_option("--output_dir", dest="output_dir", default=INSTALL_DIR)
     parser.add_option("--configure-option", dest="configure_option", action="append",
                       help="Configure flags, ex --configure_option=--disable-orca --configure_option=--disable-gpcloud")
-    parser.add_option("--action", choices=['build', 'test'], dest="action", default='build',
+    parser.add_option("--action", choices=['build', 'test', 'test_explain_suite'], dest="action", default='build',
                       help="Build GPDB or Run Install Check")
+    parser.add_option("--dbexists", dest="dbexists", action="store_true", default=False, help="create new demo cluster")
+    (options, args) = parser.parse_args()
+
     (options, args) = parser.parse_args()
 
     gpBuild = GpBuild(options.mode)
@@ -117,6 +123,15 @@ def main():
         if status:
             copy_output()
         return status
+
+    elif options.action == 'test_explain_suite':
+        status = create_gpadmin_user()
+        fail_on_error(status)
+        status = gpBuild.run_explain_test_suite(options.dbexists)
+        fail_on_error(status)
+        status = tar_explain_output()
+        fail_on_error(status)
+        return 0
 
     return 0
 
