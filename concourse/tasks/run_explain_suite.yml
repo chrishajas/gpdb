@@ -23,7 +23,7 @@ run:
 
     # Remember, this will only get run once, so we don't need to be idempotent
     #  - |
-    readarray -t workloads_to_run <<< `cat workload.txt`
+    readarray -t workloads_to_run <<< `cat gporca-commits-to-test/workload.txt`
     for i in "${workloads_to_run[@]}"
     do
       if [[ "${i}" = "all" || "${i}" = "${WORKLOAD}" ]]

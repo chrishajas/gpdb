@@ -214,9 +214,10 @@ jobs:
     params:
       MODE: orca
       WORKLOAD: tpcds_1t
-  - put: explain_output_branch
-    params:
-      file: output/explain_ouput.tar.gz
+  - try:
+    - put: explain_output_branch
+      params:
+        file: output/explain_ouput.tar.gz
 
 - name: run_explain_suite_tpcds_baseline
   plan:
@@ -242,9 +243,10 @@ jobs:
     params:
       MODE: orca
       WORKLOAD: tpcds_1t
-  - put: explain_output_baseline
-    params:
-      file: output/explain_ouput.tar.gz
+  -try:
+    - put: explain_output_baseline
+      params:
+        file: output/explain_ouput.tar.gz
 
 - name: diff_explain_results_with_baseline
   plan:
