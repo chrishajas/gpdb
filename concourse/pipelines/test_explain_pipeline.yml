@@ -161,28 +161,43 @@ jobs:
 - name: compile_baseline
   plan:
   - in_parallel:
-      steps:
-      - get: gporca-commits-to-test
-        trigger: true
-        version: every
-      - get: gpdb_src
-        resource: gpdb_baseline_src
-      - get: gpdb6-centos7-build
-      - get: libquicklz-installer
-        resource: libquicklz-centos7
-      - get: libquicklz-devel-installer
-        resource: libquicklz-devel-centos7
-      - get: libsigar-installer
-        resource: libsigar-centos7
-      - get: python-tarball
-        resource: python-centos7
-  - task: compile_gpdb
-    image: gpdb6-centos7-build
-    file: gpdb_src/concourse/tasks/compile_gpdb.yml
-    params:
-      TARGET_OS: centos
-      TARGET_OS_VERSION: 7
-      SKIP_UNITTESTS: true
+    - get: gporca-commits-to-test
+      trigger: true
+      version: every
+    - get: gpdb6-centos7-build
+    - get: libquicklz-installer
+      resource: libquicklz-centos7
+    - get: libquicklz-devel-installer
+      resource: libquicklz-devel-centos7
+    - get: libsigar-installer
+      resource: libsigar-centos7
+    - get: python-tarball
+      resource: python-centos7
+  - do:
+    - task: init_gpdb_src
+      image: gpdb6-centos7-build
+      config:
+        platform: linux
+        run:
+          path: bash
+          args:
+          - -c
+          - |
+            BRANCH=$(cut -d, -f1 gporca-commits-to-test/gpdb_gpdb_baseline_info.txt)
+            REMOTE=$(cut -d, -f2 gporca-commits-to-test/gpdb_baseline_info.txt)
+            git clone -b $BRANCH --depth 100 $REMOTE gpdb_src &&
+            cd gpdb_src &&
+            git fetch https://github.com/greenplum-db/gpdb.git --tags &&
+            git submodule update --init --recursive
+        inputs: [{ name: gporca-commits-to-test }]
+        outputs: [{ name: gpdb_src }]
+    - task: compile_gpdb_centos7
+      file: gpdb_src/concourse/tasks/compile_gpdb.yml
+      image: gpdb6-centos7-build
+      params:
+        TARGET_OS: centos
+        TARGET_OS_VERSION: 7
+        SKIP_UNITTESTS: true
   - in_parallel:
       steps:
       - put: bin_gpdb_centos7_baseline
