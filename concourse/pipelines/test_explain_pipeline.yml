@@ -233,10 +233,11 @@ jobs:
     params:
       MODE: orca
       WORKLOAD: tpcds_1t
-  - try:
-    - put: explain_output_branch
-      params:
-        file: output/explain_ouput.tar.gz
+    on_success:
+      try:
+        put: explain_output_tpcds_branch
+        params:
+          file: output/explain_ouput.tar.gz
 
 - name: run_explain_suite_tpcds_baseline
   max_in_flight: 1
@@ -263,12 +264,13 @@ jobs:
     params:
       MODE: orca
       WORKLOAD: tpcds_1t
-  -try:
-    - put: explain_output_baseline
-      params:
-        file: output/explain_ouput.tar.gz
+    on_success:
+      try:
+        put: explain_output_tpcds_baseline
+        params:
+          file: output/explain_ouput.tar.gz
 
-- name: diff_explain_results_with_baseline
+- name: diff_explain_results_tpcds_with_baseline
   plan:
   - in_parallel:
     - get: gporca-commits-to-test
@@ -280,16 +282,16 @@ jobs:
       resource: gpdb_main_src
       params:
         submodules: none
-    - get: explain_output
-      resource: explain_output_branch
+    - get: explain_output_tpcds
+      resource: explain_output_tpcds_branch
       passed:
       - run_explain_suite_tpcds
-    - get: explain_output_baseline
+    - get: explain_output_tpcds_baseline
       passed:
       - run_explain_suite_tpcds_baseline
-  - task: diff_explain_results_with_baseline
+  - task: diff_explain_results_tpcds_with_baseline
     file: gpdb_src/concourse/tasks/diff_explain_results_with_baseline.yml
     ensure:
-      put: explain_test_results
+      put: explain_test_tpcds_results
       params:
         file: diffs/explain_test_results.tar.gz
