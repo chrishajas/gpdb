@@ -112,6 +112,9 @@ resources:
     json_key: ((concourse-gcs-resources-service-account-key))
     versioned_file: ((pipeline-name))/bin_gpdb_centos7/explain_workload_results.tar.gz
 
+## ======================================================================
+## jobs
+## ======================================================================
 jobs:
 - name: compile_branch
   max_in_flight: 10
@@ -191,6 +194,10 @@ jobs:
         params:
           file: gpdb_artifacts/bin_gpdb.tar.gz
 
+## ======================================================================
+## TPC-DS workload
+## ======================================================================
+
 - name: run_explain_suite_tpcds
   max_in_flight: 1
   plan:
@@ -222,6 +229,7 @@ jobs:
         file: output/explain_ouput.tar.gz
 
 - name: run_explain_suite_tpcds_baseline
+  max_in_flight: 1
   plan:
   - in_parallel:
     - get: gporca-commits-to-test
