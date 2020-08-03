@@ -183,7 +183,7 @@ jobs:
           args:
           - -c
           - |
-            BRANCH=$(cut -d, -f1 gporca-commits-to-test/gpdb_gpdb_baseline_info.txt)
+            BRANCH=$(cut -d, -f1 gporca-commits-to-test/gpdb_baseline_info.txt)
             REMOTE=$(cut -d, -f2 gporca-commits-to-test/gpdb_baseline_info.txt)
             git clone -b $BRANCH --depth 100 $REMOTE gpdb_src &&
             cd gpdb_src &&
