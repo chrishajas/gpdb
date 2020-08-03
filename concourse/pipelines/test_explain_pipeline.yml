@@ -165,6 +165,8 @@ jobs:
   - in_parallel:
       steps:
       - get: gporca-commits-to-test
+        trigger: true
+        version: every
       - get: gpdb_src
         resource: gpdb_baseline_src
       - get: gpdb6-centos7-build

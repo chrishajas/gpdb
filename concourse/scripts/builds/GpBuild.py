@@ -76,8 +76,12 @@ class GpBuild(GpdbBuildBase):
         return subprocess.call([runcmd], shell=True, stdout=stdout, stderr=stderr)
 
     def run_explain_test_suite(self, dbexists):
-        cmd = 'echo \\\\timing >> /home/gpadmin/.psqlrc'
+        cmd = 'echo \\\\timing on>> /home/gpadmin/.psqlrc'
         self.run_cmd(cmd, "gpdb_src")
+
+        # set gucs
+        self._run_gpdb_command("cat gporca-commits-to-test/optional_gucs.txt >> $MASTER_DATA_DIRECTORY/postgresql.conf")
+        self._run_gpdb_command("gpstop -ar")
 
         source_env_cmd = ''
         if dbexists:
