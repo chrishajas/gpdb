@@ -98,7 +98,7 @@ class GpBuild(GpdbBuildBase):
                 fail_on_error(status)
 
         # set gucs
-        self._run_gpdb_command("cat gporca-commits-to-test/optional_gucs.txt >> $MASTER_DATA_DIRECTORY/postgresql.conf")
+        self.run_cmd("source gpdb_src/gpAux/gpdemo/gpdemo-env.sh && cat gporca-commits-to-test/optional_gucs.txt >> $MASTER_DATA_DIRECTORY/postgresql.conf", None)
         fail_on_error(status)
         self._run_gpdb_command("gpstop -ar")
         fail_on_error(status)
