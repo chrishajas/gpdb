@@ -79,10 +79,6 @@ class GpBuild(GpdbBuildBase):
         cmd = 'echo \\\\timing on>> /home/gpadmin/.psqlrc'
         self.run_cmd(cmd, "gpdb_src")
 
-        # set gucs
-        self._run_gpdb_command("cat gporca-commits-to-test/optional_gucs.txt >> $MASTER_DATA_DIRECTORY/postgresql.conf")
-        self._run_gpdb_command("gpstop -ar")
-
         source_env_cmd = ''
         if dbexists:
             source_env_cmd='source {0}/greenplum_path.sh && source ~/.bash_profile '.format(INSTALL_DIR)
@@ -100,6 +96,12 @@ class GpBuild(GpdbBuildBase):
                 with open("load_stats.txt", "r") as f:
                     print f.read()
                 fail_on_error(status)
+
+        # set gucs
+        self._run_gpdb_command("cat gporca-commits-to-test/optional_gucs.txt >> $MASTER_DATA_DIRECTORY/postgresql.conf")
+        fail_on_error(status)
+        self._run_gpdb_command("gpstop -ar")
+        fail_on_error(status)
 
         # Now run the queries !!
         os.mkdir('out')
