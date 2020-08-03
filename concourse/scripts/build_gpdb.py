@@ -11,13 +11,6 @@ from builds.GpBuild import GpBuild
 
 INSTALL_DIR = "/usr/local/greenplum-db-devel"
 
-def print_compiler_version():
-    status = subprocess.call(["g++", "--version"])
-    if status:
-        return status
-    return subprocess.call(["gcc", "--version"])
-
-
 def create_gpadmin_user():
     status = subprocess.call("gpdb_src/concourse/scripts/setup_gpadmin_user.bash")
     os.chmod('/bin/ping', os.stat('/bin/ping').st_mode | stat.S_ISUID)
@@ -27,19 +20,6 @@ def create_gpadmin_user():
 def tar_explain_output():
     status = subprocess.call(["tar", "czvf", "output/explain_ouput.tar.gz", "out/"])
     return status
-
-def copy_output():
-    for dirpath, dirs, diff_files in os.walk('gpdb_src/'):
-        if 'regression.diffs' in diff_files:
-            diff_file = dirpath + '/' + 'regression.diffs'
-            print("======================================================================\n" +
-                  "DIFF FILE: " + diff_file + "\n" +
-                  "----------------------------------------------------------------------")
-            with open(diff_file, 'r') as fin:
-                print fin.read()
-    shutil.copyfile("gpdb_src/src/test/regress/regression.diffs", "output/regression.diffs")
-    shutil.copyfile("gpdb_src/src/test/regress/regression.out", "output/regression.out")
-
 
 def fail_on_error(status):
     if status:
@@ -60,8 +40,6 @@ def main():
     (options, args) = parser.parse_args()
 
     gpBuild = GpBuild(options.mode)
-    status = print_compiler_version()
-    fail_on_error(status)
 
     status = gpBuild.install_dependency("bin_gpdb", INSTALL_DIR)
     fail_on_error(status)
