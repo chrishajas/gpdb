@@ -78,39 +78,34 @@ resources:
 - name: gpdb_main_src  # used for yml task files
   type: git
   source:
+    # TEMP CHANGE BEFORE PUSH
     branch: explain_pipeline
     paths:
     - concourse/**
     - src/backend/gporca/concourse/**
     uri: https://github.com/chrishajas/gpdb
 
-- name: gpdb_baseline_src  # used for baseline build
-  type: git
-  source:
-    # TEMP CHANGE BEFORE PUSH
-    branch: explain_pipeline
-    uri: https://github.com/chrishajas/gpdb
-
-- name: explain_output_branch
+## resources for TPC-DS
+- name: explain_output_tpcds_branch
   type: gcs
   source:
     bucket: ((gcs-bucket-intermediates))
     json_key: ((concourse-gcs-resources-service-account-key))
-    versioned_file: ((pipeline-name))/bin_gpdb_centos7/explain_output_branch.tar.gz
+    versioned_file: ((pipeline-name))/explain_tars/explain_output_branch.tar.gz
 
-- name: explain_output_baseline
+- name: explain_output_tpcds_baseline
   type: gcs
   source:
     bucket: ((gcs-bucket-intermediates))
     json_key: ((concourse-gcs-resources-service-account-key))
-    versioned_file: ((pipeline-name))/bin_gpdb_centos7/explain_output_baseline.tar.gz
+    versioned_file: ((pipeline-name))/explain_tars/explain_output_baseline.tar.gz
 
-- name: explain_test_results
+- name: explain_test_tpcds_results
   type: gcs
   source:
     bucket: ((gcs-bucket-intermediates))
     json_key: ((concourse-gcs-resources-service-account-key))
-    versioned_file: ((pipeline-name))/bin_gpdb_centos7/explain_workload_results.tar.gz
+    versioned_file: ((pipeline-name))/explain_output/explain_workload_results.tar.gz
 
 ## ======================================================================
 ## jobs
