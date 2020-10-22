@@ -3,10 +3,10 @@
 //	Copyright (C) 2011 EMC Corp.
 //
 //	@filename:
-//		CLogicalLeftOuterJoin.cpp
+//		CLogicalRightOuterJoin.cpp
 //
 //	@doc:
-//		Implementation of left outer join operator
+//		Implementation of right outer join operator
 //---------------------------------------------------------------------------
 
 #include "gpos/base.h"
@@ -15,20 +15,21 @@
 #include "gpopt/operators/CExpression.h"
 #include "gpopt/operators/CExpressionHandle.h"
 
-#include "gpopt/operators/CLogicalLeftOuterJoin.h"
+#include "gpopt/operators/CLogicalRightOuterJoin.h"
 
 using namespace gpopt;
 
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CLogicalLeftOuterJoin::CLogicalLeftOuterJoin
+//		CLogicalRightOuterJoin::CLogicalRightOuterJoin
 //
 //	@doc:
 //		ctor
 //
 //---------------------------------------------------------------------------
-CLogicalLeftOuterJoin::CLogicalLeftOuterJoin(CMemoryPool *mp) : CLogicalJoin(mp)
+CLogicalRightOuterJoin::CLogicalRightOuterJoin(CMemoryPool *mp)
+	: CLogicalJoin(mp)
 {
 	GPOS_ASSERT(NULL != mp);
 }
@@ -36,15 +37,15 @@ CLogicalLeftOuterJoin::CLogicalLeftOuterJoin(CMemoryPool *mp) : CLogicalJoin(mp)
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CLogicalLeftOuterJoin::DeriveMaxCard
+//		CLogicalRightOuterJoin::DeriveMaxCard
 //
 //	@doc:
 //		Derive max card
 //
 //---------------------------------------------------------------------------
 CMaxCard
-CLogicalLeftOuterJoin::DeriveMaxCard(CMemoryPool *,	 // mp
-									 CExpressionHandle &exprhdl) const
+CLogicalRightOuterJoin::DeriveMaxCard(CMemoryPool *,  // mp
+									  CExpressionHandle &exprhdl) const
 {
 	CMaxCard maxCard = exprhdl.DeriveMaxCard(0);
 	CMaxCard maxCardInner = exprhdl.DeriveMaxCard(1);
@@ -61,26 +62,18 @@ CLogicalLeftOuterJoin::DeriveMaxCard(CMemoryPool *,	 // mp
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CLogicalLeftOuterJoin::PxfsCandidates
+//		CLogicalRightOuterJoin::PxfsCandidates
 //
 //	@doc:
 //		Get candidate xforms
 //
 //---------------------------------------------------------------------------
 CXformSet *
-CLogicalLeftOuterJoin::PxfsCandidates(CMemoryPool *mp) const
+CLogicalRightOuterJoin::PxfsCandidates(CMemoryPool *mp) const
 {
 	CXformSet *xform_set = GPOS_NEW(mp) CXformSet(mp);
 
-	(void) xform_set->ExchangeSet(CXform::ExfPushDownLeftOuterJoin);
-	(void) xform_set->ExchangeSet(CXform::ExfSimplifyLeftOuterJoin);
-	(void) xform_set->ExchangeSet(CXform::ExfLeftOuterJoin2NLJoin);
-	(void) xform_set->ExchangeSet(CXform::ExfLeftOuterJoin2HashJoin);
-	(void) xform_set->ExchangeSet(
-		CXform::ExfLeftOuter2InnerUnionAllLeftAntiSemiJoin);
-	(void) xform_set->ExchangeSet(CXform::ExfJoin2BitmapIndexGetApply);
-	(void) xform_set->ExchangeSet(CXform::ExfJoin2IndexGetApply);
-	(void) xform_set->ExchangeSet(CXform::ExfLeftJoin2RightJoin);
+	(void) xform_set->ExchangeSet(CXform::ExfRightOuterJoin2HashJoin);
 
 	return xform_set;
 }
