@@ -1068,7 +1068,8 @@ CUtils::FPhysicalOuterJoin(COperator *pop)
 	return COperator::EopPhysicalLeftOuterNLJoin == pop->Eopid() ||
 		   COperator::EopPhysicalLeftOuterIndexNLJoin == pop->Eopid() ||
 		   COperator::EopPhysicalLeftOuterHashJoin == pop->Eopid() ||
-		   COperator::EopPhysicalCorrelatedLeftOuterNLJoin == pop->Eopid();
+		   COperator::EopPhysicalCorrelatedLeftOuterNLJoin == pop->Eopid() ||
+		   COperator::EopPhysicalRightOuterHashJoin == pop->Eopid();
 }
 
 // check if a given operator is a physical agg
