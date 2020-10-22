@@ -124,6 +124,7 @@ public:
 		EopLogicalLeftAntiSemiCorrelatedApply,
 		EopLogicalLeftAntiSemiApplyNotIn,
 		EopLogicalLeftAntiSemiCorrelatedApplyNotIn,
+		EopLogicalRightOuterJoin,
 		EopLogicalConstTableGet,
 		EopLogicalDynamicGet,
 		EopLogicalDynamicIndexGet,
@@ -220,6 +221,7 @@ public:
 		EopPhysicalLeftSemiHashJoin,
 		EopPhysicalLeftAntiSemiHashJoin,
 		EopPhysicalLeftAntiSemiHashJoinNotIn,
+		EopPhysicalRightOuterHashJoin,
 
 		EopPhysicalMotionGather,
 		EopPhysicalMotionBroadcast,

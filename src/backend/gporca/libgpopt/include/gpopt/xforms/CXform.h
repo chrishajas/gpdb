@@ -222,6 +222,8 @@ public:
 		ExfIndexGet2IndexOnlyScan,
 		ExfJoin2BitmapIndexGetApply,
 		ExfJoin2IndexGetApply,
+		ExfLeftJoin2RightJoin,
+		ExfRightOuterJoin2HashJoin,
 		ExfInvalid,
 		ExfSentinel = ExfInvalid
 	};
