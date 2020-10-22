@@ -74,13 +74,6 @@ private:
 		CDistributionSpec *pdsInput, ULONG child_index,
 		CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq, CReqdPropPlan *prppInput);
 
-	// create (singleton, singleton) optimization request
-	CDistributionSpec *PdsRequiredSingleton(CMemoryPool *mp,
-											CExpressionHandle &exprhdl,
-											CDistributionSpec *pdsInput,
-											ULONG child_index,
-											CDrvdPropArray *pdrgpdpCtxt) const;
-
 	// create a child hashed distribution request based on input hashed distribution,
 	// return NULL if no such request can be created
 	CDistributionSpecHashed *PdshashedPassThru(
@@ -98,8 +91,21 @@ protected:
 		CMemoryPool *mp, CDistributionSpecHashed *pdshashed,
 		ULONG ulSourceChild) const;
 
+	// create (singleton, singleton) optimization request
+	CDistributionSpec *PdsRequiredSingleton(CMemoryPool *mp,
+											CExpressionHandle &exprhdl,
+											CDistributionSpec *pdsInput,
+											ULONG child_index,
+											CDrvdPropArray *pdrgpdpCtxt) const;
+
 	// check whether the hash keys from one child are nullable
 	BOOL FNullableHashKeys(CColRefSet *pcrsNotNullInner, BOOL fInner) const;
+
+	ULONG
+	NumDistrReq() const
+	{
+		return m_pdrgpdsRedistributeRequests->Size();
+	}
 
 public:
 	// ctor
