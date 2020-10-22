@@ -221,6 +221,10 @@ public:
 		ExfIndexGet2IndexOnlyScan,
 		ExfJoin2BitmapIndexGetApply,
 		ExfJoin2IndexGetApply,
+		ExfMultiExternalGet2MultiExternalScan___removed,
+		ExfExpandDynamicGetWithExternalPartitions___removed,
+		ExfLeftJoin2RightJoin,
+		ExfRightOuterJoin2HashJoin,
 		ExfInvalid,
 		ExfSentinel = ExfInvalid
 	};

@@ -63,6 +63,7 @@
 #include "gpopt/xforms/CXformLeftAntiSemiJoinNotIn2NLJoinNotIn.h"
 #include "gpopt/xforms/CXformLeftAntiSemiJoin2HashJoin.h"
 #include "gpopt/xforms/CXformLeftAntiSemiJoinNotIn2HashJoinNotIn.h"
+#include "gpopt/xforms/CXformRightOuterJoin2HashJoin.h"
 
 #include "gpopt/xforms/CXformJoinCommutativity.h"
 #include "gpopt/xforms/CXformJoinAssociativity.h"
@@ -90,6 +91,7 @@
 #include "gpopt/xforms/CXformLeftSemiJoin2InnerJoin.h"
 #include "gpopt/xforms/CXformLeftSemiJoin2InnerJoinUnderGb.h"
 #include "gpopt/xforms/CXformLeftSemiJoin2CrossProduct.h"
+#include "gpopt/xforms/CXformLeftJoin2RightJoin.h"
 
 #include "gpopt/xforms/CXformCTEAnchor2Sequence.h"
 #include "gpopt/xforms/CXformCTEAnchor2TrivialSelect.h"
