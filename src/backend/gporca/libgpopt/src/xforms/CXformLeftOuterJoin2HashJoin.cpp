@@ -14,9 +14,11 @@
 #include "gpopt/operators/CLogicalLeftOuterJoin.h"
 #include "gpopt/operators/CPatternLeaf.h"
 #include "gpopt/operators/CPhysicalLeftOuterHashJoin.h"
+#include "gpopt/operators/CPhysicalRightOuterHashJoin.h"
 #include "gpopt/operators/CPredicateUtils.h"
 #include "gpopt/xforms/CXformLeftOuterJoin2HashJoin.h"
 #include "gpopt/xforms/CXformUtils.h"
+
 
 using namespace gpopt;
 
@@ -78,6 +80,21 @@ CXformLeftOuterJoin2HashJoin::Transform(CXformContext *pxfctxt,
 
 	CXformUtils::ImplementHashJoin<CPhysicalLeftOuterHashJoin>(pxfctxt, pxfres,
 															   pexpr);
+//	CExpression *pexprLeft = (*pexpr)[0];
+//	CExpression *pexprRight = (*pexpr)[1];
+//	CExpression *pexprScalar = (*pexpr)[2];
+//	COperator *pop = pexpr->Pop();
+//	pop->AddRef();
+//	pexprLeft->AddRef();
+//	pexprRight->AddRef();
+//	pexprScalar->AddRef();
+//
+//	CMemoryPool *mp = pxfctxt->Pmp();
+//	CExpression *pexprRightJoin =
+//		GPOS_NEW(mp) CExpression(mp, pop, pexprRight, pexprLeft, pexprScalar);
+//	CXformUtils::ImplementHashJoin<CPhysicalRightOuterHashJoin>(pxfctxt, pxfres,
+//															   pexprRightJoin);
+	
 }
 
 

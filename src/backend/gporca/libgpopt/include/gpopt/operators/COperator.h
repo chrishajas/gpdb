@@ -220,6 +220,7 @@ public:
 		EopPhysicalLeftSemiHashJoin,
 		EopPhysicalLeftAntiSemiHashJoin,
 		EopPhysicalLeftAntiSemiHashJoinNotIn,
+		EopPhysicalRightOuterHashJoin,
 
 		EopPhysicalMotionGather,
 		EopPhysicalMotionBroadcast,

@@ -140,6 +140,7 @@
 #include "gpopt/operators/CPhysicalCorrelatedLeftAntiSemiNLJoin.h"
 #include "gpopt/operators/CPhysicalLeftAntiSemiNLJoinNotIn.h"
 #include "gpopt/operators/CPhysicalCorrelatedNotInLeftAntiSemiNLJoin.h"
+#include "gpopt/operators/CPhysicalRightOuterHashJoin.h"
 #include "gpopt/operators/CPhysicalHashAgg.h"
 #include "gpopt/operators/CPhysicalHashAggDeduplicate.h"
 #include "gpopt/operators/CPhysicalStreamAgg.h"
