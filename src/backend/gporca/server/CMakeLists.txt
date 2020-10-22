@@ -219,7 +219,8 @@ PartTbl-DPE PartTbl-DPE-WindowFunction PartTbl-DPE-GroupBy PartTbl-DPE-Limit
 DPE-with-unsupported-pred DPE-SemiJoin DPE-IN DPE-NOT-IN HJN-DPE-Bitmap-Outer-Child
 NLJ-Broadcast-DPE-Outer-Child PartTbl-MultiWayJoinWithDPE PartTbl-MultiWayJoinWithDPE-2
 PartTbl-LeftOuterHashJoin-DPE-IsNull PartTbl-LeftOuterNLJoin-DPE-IsNull
-PartTbl-List-DPE-Varchar-Predicates PartTbl-List-DPE-Int-Predicates;
+PartTbl-List-DPE-Varchar-Predicates PartTbl-List-DPE-Int-Predicates
+PartTbl-RightOuterHashJoin-DPE-IsNull;
 
 CSetop1Test:
 ValueScanWithDuplicateAndSelfComparison PushGbBelowNaryUnionAll
@@ -338,7 +339,10 @@ Subq2PartialDecorrelate Subq2CorrSQInLOJOn Subq2NotInWhereLOJ Subq2OuterRef2InJo
 Index-Join-With-Subquery-In-Pred;
 
 CIndexOnlyScanTest:
-IndexOnlyScan-NoDistKeyInIndex
+IndexOnlyScan-NoDistKeyInIndex;
+
+CRightJoinTest:
+RightJoinHashed RightJoinRedistribute RightJoinReplicated RightJoinDPS RightJoinNoDPSNonDistKey
 ")
 
 set(mdp_dir "../data/dxl/minidump/")

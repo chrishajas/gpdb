@@ -283,7 +283,7 @@ CPhysicalHashJoin::PdsMatch(CMemoryPool *mp, CDistributionSpec *pds,
 
 	EChildExecOrder eceo = Eceo();
 
-	// check the type of distribution delivered by first child
+	// check the type of distribution delivered by first (inner) child
 	switch (pds->Edt())
 	{
 		case CDistributionSpec::EdtUniversal:
@@ -310,6 +310,12 @@ CPhysicalHashJoin::PdsMatch(CMemoryPool *mp, CDistributionSpec *pds,
 			{
 				GPOS_ASSERT(1 == ulSourceChildIndex);
 
+				// inner child is replicated, for ROJ outer must be executed on a single (non-master) segment to avoid duplicates
+				if (this->Eopid() == EopPhysicalRightOuterHashJoin)
+				{
+					return GPOS_NEW(mp) CDistributionSpecSingleton(
+						CDistributionSpecSingleton::EstSegment);
+				}
 				// inner child is replicated, request outer child to have non-singleton distribution
 				return GPOS_NEW(mp) CDistributionSpecNonSingleton();
 			}
