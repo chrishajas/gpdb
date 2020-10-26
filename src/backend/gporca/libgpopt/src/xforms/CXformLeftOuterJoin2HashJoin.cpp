@@ -80,20 +80,21 @@ CXformLeftOuterJoin2HashJoin::Transform(CXformContext *pxfctxt,
 
 	CXformUtils::ImplementHashJoin<CPhysicalLeftOuterHashJoin>(pxfctxt, pxfres,
 															   pexpr);
-//	CExpression *pexprLeft = (*pexpr)[0];
-//	CExpression *pexprRight = (*pexpr)[1];
-//	CExpression *pexprScalar = (*pexpr)[2];
-//	COperator *pop = pexpr->Pop();
-//	pop->AddRef();
-//	pexprLeft->AddRef();
-//	pexprRight->AddRef();
-//	pexprScalar->AddRef();
-//
-//	CMemoryPool *mp = pxfctxt->Pmp();
-//	CExpression *pexprRightJoin =
-//		GPOS_NEW(mp) CExpression(mp, pop, pexprRight, pexprLeft, pexprScalar);
-//	CXformUtils::ImplementHashJoin<CPhysicalRightOuterHashJoin>(pxfctxt, pxfres,
-//															   pexprRightJoin);
+	CExpression *pexprLeft = (*pexpr)[0];
+	CExpression *pexprRight = (*pexpr)[1];
+	CExpression *pexprScalar = (*pexpr)[2];
+	COperator *pop = pexpr->Pop();
+	pop->AddRef();
+	pexprLeft->AddRef();
+	pexprRight->AddRef();
+	pexprScalar->AddRef();
+
+	CMemoryPool *mp = pxfctxt->Pmp();
+	CExpression *pexprRightJoin =
+		GPOS_NEW(mp) CExpression(mp, pop, pexprRight, pexprLeft, pexprScalar);
+	pexprRightJoin->PdpDerive();
+	CXformUtils::ImplementHashJoin<CPhysicalRightOuterHashJoin>(pxfctxt, pxfres,
+															   pexprRightJoin);
 	
 }
 
