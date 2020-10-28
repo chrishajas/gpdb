@@ -6420,7 +6420,7 @@
         </dxl:Comparison>
       </dxl:LogicalJoin>
     </dxl:Query>
-    <dxl:Plan Id="0" SpaceSize="88">
+    <dxl:Plan Id="0" SpaceSize="34">
       <dxl:GatherMotion InputSegments="0,1,2" OutputSegments="-1">
         <dxl:Properties>
           <dxl:Cost StartupCost="0" TotalCost="332399.482486" Rows="1007575254.937694" Width="32"/>
