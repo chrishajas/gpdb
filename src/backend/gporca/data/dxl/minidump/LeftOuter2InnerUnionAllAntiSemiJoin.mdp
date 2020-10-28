@@ -765,7 +765,7 @@ and ei.entity_id  = i.ad_id;
                     <dxl:Ident ColId="50" ColName="event_time" TypeMdid="0.1114.1.0"/>
                   </dxl:ProjElem>
                   <dxl:ProjElem ColId="78" Alias="ad_id">
-                    <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="true" IsByValue="true"/>
+                    <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="true"/>
                   </dxl:ProjElem>
                 </dxl:ProjList>
                 <dxl:Filter/>
