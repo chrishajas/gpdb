@@ -283,11 +283,11 @@ CPhysicalHashJoin::PdsMatch(CMemoryPool *mp, CDistributionSpec *pds,
 
 	EChildExecOrder eceo = Eceo();
 
-	// check the type of distribution delivered by first child
+	// check the type of distribution delivered by first (inner) child
 	switch (pds->Edt())
 	{
 		case CDistributionSpec::EdtUniversal:
-			// first child is universal, request second child to execute on a single host to avoid duplicates
+			// first c2hild is universal, request second child to execute on a single host to avoid duplicates
 			return GPOS_NEW(mp) CDistributionSpecSingleton();
 
 		case CDistributionSpec::EdtSingleton:
@@ -308,6 +308,10 @@ CPhysicalHashJoin::PdsMatch(CMemoryPool *mp, CDistributionSpec *pds,
 			{
 				GPOS_ASSERT(1 == ulSourceChildIndex);
 
+				//				if (this->Eopid() == EopPhysicalRightOuterHashJoin)
+				//				{
+				//					return GPOS_NEW(mp) CDistributionSpecReplicated();
+				//				}
 				// inner child is replicated, request outer child to have non-singleton distribution
 				return GPOS_NEW(mp) CDistributionSpecNonSingleton();
 			}
@@ -501,7 +505,6 @@ CPhysicalHashJoin::PdsRequiredReplicate(
 
 	if (1 == child_index)
 	{
-		// require inner child to be replicated
 		return GPOS_NEW(mp) CDistributionSpecReplicated();
 	}
 	GPOS_ASSERT(0 == child_index);
@@ -513,9 +516,9 @@ CPhysicalHashJoin::PdsRequiredReplicate(
 
 	if (CDistributionSpec::EdtUniversal == pdsInner->Edt())
 	{
-		// first child is universal, request second child to execute on a single host to avoid duplicates
 		return GPOS_NEW(mp) CDistributionSpecSingleton();
 	}
+
 
 	if (ulOptReq == m_pdrgpdsRedistributeRequests->Size() &&
 		CDistributionSpec::EdtHashed == pdsInput->Edt())
@@ -531,7 +534,7 @@ CPhysicalHashJoin::PdsRequiredReplicate(
 	}
 
 	// otherwise, require second child to deliver non-singleton distribution
-	GPOS_ASSERT(CDistributionSpec::EdtReplicated == pdsInner->Edt());
+	//GPOS_ASSERT(CDistributionSpec::EdtSingleton == pdsInner->Edt());
 	return GPOS_NEW(mp) CDistributionSpecNonSingleton();
 }
 
@@ -745,8 +748,9 @@ CPhysicalHashJoin::PdsRequired(
 		return pds;
 	}
 
-	if (ulOptReq == ulHashDistributeRequests ||
-		ulOptReq == ulHashDistributeRequests + 1)
+	if ((ulOptReq == ulHashDistributeRequests ||
+		 ulOptReq == ulHashDistributeRequests + 1) &&
+		this->Eopid() != EopPhysicalRightOuterHashJoin)
 	{
 		// requests N+1, N+2 are (hashed/non-singleton, replicate)
 
@@ -761,7 +765,7 @@ CPhysicalHashJoin::PdsRequired(
 		return pds;
 	}
 
-	GPOS_ASSERT(ulOptReq == ulHashDistributeRequests + 2);
+	//	GPOS_ASSERT(ulOptReq == ulHashDistributeRequests + 2);
 
 	// requests N+3 is (singleton, singleton)
 

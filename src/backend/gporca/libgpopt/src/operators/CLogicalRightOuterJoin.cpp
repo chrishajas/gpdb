@@ -47,14 +47,14 @@ CMaxCard
 CLogicalRightOuterJoin::DeriveMaxCard(CMemoryPool *,  // mp
 									  CExpressionHandle &exprhdl) const
 {
-	CMaxCard maxCard = exprhdl.DeriveMaxCard(0);
-	CMaxCard maxCardInner = exprhdl.DeriveMaxCard(1);
+	CMaxCard maxCardOuter = exprhdl.DeriveMaxCard(0);
+	CMaxCard maxCard = exprhdl.DeriveMaxCard(1);
 
-	// if the inner has a max card of 0, that will not make the LOJ's
+	// if the outer has a max card of 0, that will not make the ROJ's
 	// max card go to 0
-	if (0 < maxCardInner.Ull())
+	if (0 < maxCardOuter.Ull())
 	{
-		maxCard *= maxCardInner;
+		maxCard *= maxCardOuter;
 	}
 
 	return CLogical::Maxcard(exprhdl, 2 /*ulScalarIndex*/, maxCard);
