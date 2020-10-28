@@ -3,7 +3,7 @@
 //	Copyright (C) 2012 EMC Corp.
 //
 //	@filename:
-//		CXformLeftOuterJoin2HashJoin.cpp
+//		CXformRightOuterJoin2HashJoin.cpp
 //
 //	@doc:
 //		Implementation of transform
@@ -11,12 +11,12 @@
 
 #include "gpos/base.h"
 
-#include "gpopt/operators/CLogicalLeftOuterJoin.h"
+#include "gpopt/operators/CLogicalRightOuterJoin.h"
 #include "gpopt/operators/CPatternLeaf.h"
-#include "gpopt/operators/CPhysicalLeftOuterHashJoin.h"
+#include "gpopt/operators/CPhysicalRightOuterHashJoin.h"
 #include "gpopt/operators/CPhysicalRightOuterHashJoin.h"
 #include "gpopt/operators/CPredicateUtils.h"
-#include "gpopt/xforms/CXformLeftOuterJoin2HashJoin.h"
+#include "gpopt/xforms/CXformRightOuterJoin2HashJoin.h"
 #include "gpopt/xforms/CXformUtils.h"
 
 
@@ -25,16 +25,16 @@ using namespace gpopt;
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CXformLeftOuterJoin2HashJoin::CXformLeftOuterJoin2HashJoin
+//		CXformRightOuterJoin2HashJoin::CXformRightOuterJoin2HashJoin
 //
 //	@doc:
 //		ctor
 //
 //---------------------------------------------------------------------------
-CXformLeftOuterJoin2HashJoin::CXformLeftOuterJoin2HashJoin(CMemoryPool *mp)
+CXformRightOuterJoin2HashJoin::CXformRightOuterJoin2HashJoin(CMemoryPool *mp)
 	:  // pattern
 	  CXformImplementation(GPOS_NEW(mp) CExpression(
-		  mp, GPOS_NEW(mp) CLogicalLeftOuterJoin(mp),
+		  mp, GPOS_NEW(mp) CLogicalRightOuterJoin(mp),
 		  GPOS_NEW(mp)
 			  CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // left child
 		  GPOS_NEW(mp)
@@ -48,14 +48,14 @@ CXformLeftOuterJoin2HashJoin::CXformLeftOuterJoin2HashJoin(CMemoryPool *mp)
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CXformLeftOuterJoin2HashJoin::Exfp
+//		CXformRightOuterJoin2HashJoin::Exfp
 //
 //	@doc:
 //		Compute xform promise for a given expression handle;
 //
 //---------------------------------------------------------------------------
 CXform::EXformPromise
-CXformLeftOuterJoin2HashJoin::Exfp(CExpressionHandle &exprhdl) const
+CXformRightOuterJoin2HashJoin::Exfp(CExpressionHandle &exprhdl) const
 {
 	return CXformUtils::ExfpLogicalJoin2PhysicalJoin(exprhdl);
 }
@@ -63,38 +63,23 @@ CXformLeftOuterJoin2HashJoin::Exfp(CExpressionHandle &exprhdl) const
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CXformLeftOuterJoin2HashJoin::Transform
+//		CXformRightOuterJoin2HashJoin::Transform
 //
 //	@doc:
 //		actual transformation
 //
 //---------------------------------------------------------------------------
 void
-CXformLeftOuterJoin2HashJoin::Transform(CXformContext *pxfctxt,
-										CXformResult *pxfres,
-										CExpression *pexpr) const
+CXformRightOuterJoin2HashJoin::Transform(CXformContext *pxfctxt,
+										 CXformResult *pxfres,
+										 CExpression *pexpr) const
 {
 	GPOS_ASSERT(NULL != pxfctxt);
 	GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
 	GPOS_ASSERT(FCheckPattern(pexpr));
 
-	CXformUtils::ImplementHashJoin<CPhysicalLeftOuterHashJoin>(pxfctxt, pxfres,
-															   pexpr);
-	//	CExpression *pexprLeft = (*pexpr)[0];
-	//	CExpression *pexprRight = (*pexpr)[1];
-	//	CExpression *pexprScalar = (*pexpr)[2];
-	//	COperator *pop = pexpr->Pop();
-	//	pop->AddRef();
-	//	pexprLeft->AddRef();
-	//	pexprRight->AddRef();
-	//	pexprScalar->AddRef();
-	//
-	//	CMemoryPool *mp = pxfctxt->Pmp();
-	//	CExpression *pexprRightJoin =
-	//		GPOS_NEW(mp) CExpression(mp, pop, pexprRight, pexprLeft, pexprScalar);
-	//	pexprRightJoin->PdpDerive();
-	//	CXformUtils::ImplementHashJoin<CPhysicalRightOuterHashJoin>(pxfctxt, pxfres,
-	//															   pexprRightJoin);
+	CXformUtils::ImplementHashJoin<CPhysicalRightOuterHashJoin>(pxfctxt, pxfres,
+																pexpr);
 }
 
 

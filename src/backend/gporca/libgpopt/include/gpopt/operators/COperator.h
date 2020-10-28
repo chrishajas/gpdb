@@ -124,6 +124,7 @@ public:
 		EopLogicalLeftAntiSemiCorrelatedApply,
 		EopLogicalLeftAntiSemiApplyNotIn,
 		EopLogicalLeftAntiSemiCorrelatedApplyNotIn,
+		EopLogicalRightOuterJoin,
 		EopLogicalConstTableGet,
 		EopLogicalDynamicGet,
 		EopLogicalDynamicIndexGet,

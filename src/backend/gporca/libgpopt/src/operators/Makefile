@@ -65,6 +65,7 @@ OBJS        = CExpression.o \
               CLogicalNAryJoin.o \
               CLogicalPartitionSelector.o \
               CLogicalProject.o \
+              CLogicalRightOuterJoin.o \
               CLogicalRowTrigger.o \
               CLogicalSelect.o \
               CLogicalSequence.o \

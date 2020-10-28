@@ -78,6 +78,7 @@
 #include "gpopt/operators/CLogicalLeftAntiSemiJoin.h"
 #include "gpopt/operators/CLogicalLeftAntiSemiJoinNotIn.h"
 #include "gpopt/operators/CLogicalFullOuterJoin.h"
+#include "gpopt/operators/CLogicalRightOuterJoin.h"
 #include "gpopt/operators/CLogicalGbAgg.h"
 #include "gpopt/operators/CLogicalGbAggDeduplicate.h"
 #include "gpopt/operators/CLogicalLimit.h"

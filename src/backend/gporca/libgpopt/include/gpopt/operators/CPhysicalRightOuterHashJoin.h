@@ -33,9 +33,9 @@ private:
 public:
 	// ctor
 	CPhysicalRightOuterHashJoin(CMemoryPool *mp,
-							   CExpressionArray *pdrgpexprOuterKeys,
-							   CExpressionArray *pdrgpexprInnerKeys,
-							   IMdIdArray *hash_opfamilies = NULL);
+								CExpressionArray *pdrgpexprOuterKeys,
+								CExpressionArray *pdrgpexprInnerKeys,
+								IMdIdArray *hash_opfamilies = NULL);
 
 	// dtor
 	virtual ~CPhysicalRightOuterHashJoin();
