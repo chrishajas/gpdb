@@ -46,4 +46,5 @@ CPhysicalRightOuterHashJoin::~CPhysicalRightOuterHashJoin()
 {
 }
 
+
 // EOF

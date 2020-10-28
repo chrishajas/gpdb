@@ -490,6 +490,12 @@ CPhysicalHashJoin::PdsRequiredReplicate(
 	CMemoryPool *mp, CExpressionHandle &exprhdl, CDistributionSpec *pdsInput,
 	ULONG child_index, CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const
 {
+	BOOL right_join = false;
+	if (this->Eopid() == EopPhysicalRightOuterHashJoin)
+	{
+		right_join = true;
+	}
+
 	EChildExecOrder eceo = Eceo();
 	if (EceoLeftToRight == eceo)
 	{
@@ -502,6 +508,10 @@ CPhysicalHashJoin::PdsRequiredReplicate(
 	if (1 == child_index)
 	{
 		// require inner child to be replicated
+		if (right_join)
+		{
+			return GPOS_NEW(mp) CDistributionSpecSingleton();
+		}
 		return GPOS_NEW(mp) CDistributionSpecReplicated();
 	}
 	GPOS_ASSERT(0 == child_index);
@@ -514,6 +524,10 @@ CPhysicalHashJoin::PdsRequiredReplicate(
 	if (CDistributionSpec::EdtUniversal == pdsInner->Edt())
 	{
 		// first child is universal, request second child to execute on a single host to avoid duplicates
+		if (right_join)
+		{
+			return GPOS_NEW(mp) CDistributionSpecReplicated();
+		}
 		return GPOS_NEW(mp) CDistributionSpecSingleton();
 	}
 
@@ -531,7 +545,7 @@ CPhysicalHashJoin::PdsRequiredReplicate(
 	}
 
 	// otherwise, require second child to deliver non-singleton distribution
-	GPOS_ASSERT(CDistributionSpec::EdtReplicated == pdsInner->Edt());
+	//GPOS_ASSERT(CDistributionSpec::EdtSingleton == pdsInner->Edt());
 	return GPOS_NEW(mp) CDistributionSpecNonSingleton();
 }
 
@@ -750,7 +764,7 @@ CPhysicalHashJoin::PdsRequired(
 	{
 		// requests N+1, N+2 are (hashed/non-singleton, replicate)
 
-		CDistributionSpec *pds = PdsRequiredReplicate(
+		CDistributionSpec *pds = this->PdsRequiredReplicate(
 			mp, exprhdl, pdsInput, child_index, pdrgpdpCtxt, ulOptReq);
 		if (CDistributionSpec::EdtHashed == pds->Edt())
 		{
