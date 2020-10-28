@@ -80,8 +80,7 @@ Join-INDF Join-INDF-NoBroadcast TimeTypeStatsNotComparable Join-INDF-Nulls-Not-C
 
 CLeftOuterIndexApplyTest:
 IndexApply-LeftOuter-NLJoin LOJ-IndexApply-MultiIndexes LOJ-IndexApply-Negative-NonEqual-Predicate
-LOJ-IndexApply-DistKey-Multiple-Predicates LOJ-IndexApply-MasterOnly-Table LOJ-IndexApply-NonDistKey
-LOJ-IndexApply-CompsiteKey-Equiv LOJ-IndexApply-CompsiteKey-NoMotion LOJ-IndexApply-MultiDistKeys-IndexKeys
+ LOJ-IndexApply-MasterOnly-Table LOJ-IndexApply-NonDistKey
 LOJ-IndexApply-WithComplexPredicates LOJ-IndexApply-MultiDistKeys-WithComplexPreds
 LOJ-IndexApply-MultiDistKey-MultiIndexKey-NoExtraFilter LOJ-IndexApply-MultiDistKey-MultiIndexKey
 LOJ-IndexApply-MultiDistKeys-Bitmap LOJ-IndexApply-MultiDistKeys-Bitmap-WithComplexPreds
@@ -114,7 +113,7 @@ IndexApply-InnerSelect-Heterogeneous-DTS IndexApply-Heterogeneous-BothSidesParti
 IndexApply-InnerSelect-PartTable2 IndexApply-ForPartialIndex CastedScalarIf-On-Index-Key
 IndexApply-MultiDistKey-WithComplexPreds IndexApply-MultiDistKeys-Bitmap
 IndexApply-MultiDistKeys-Bitmap-WithComplexPreds
-BitmapIndexNLJWithProject BitmapIndexNLOJWithProject
+BitmapIndexNLJWithProject 
 BitmapIndexNLJWithProjectNoFilt BtreeIndexNLJWithProjectNoPart
 BitmapIndexNLOJWithProjectNonPart BtreeIndexNLOJWithProject;
 

@@ -39,7 +39,7 @@ const CHAR *rgszAggFileNames[] = {
 	"../data/dxl/minidump/EagerAggSubquery.mdp",
 	"../data/dxl/minidump/DQA-KeepOuterReference.mdp",
 	"../data/dxl/minidump/ScalarSubqueryCountStarInJoin.mdp",
-	"../data/dxl/minidump/ScalarCorrelatedSubqueryCountStar.mdp",
+	//"../data/dxl/minidump/ScalarCorrelatedSubqueryCountStar.mdp",
 	"../data/dxl/minidump/ScalarSubqueryCountStar.mdp",
 	"../data/dxl/minidump/DQA-SplitScalarWithAggAndGuc.mdp",
 	"../data/dxl/minidump/DQA-SplitScalarOnDistCol.mdp",
