@@ -338,7 +338,10 @@ Subq2PartialDecorrelate Subq2CorrSQInLOJOn Subq2NotInWhereLOJ Subq2OuterRef2InJo
 Index-Join-With-Subquery-In-Pred;
 
 CIndexOnlyScanTest:
-IndexOnlyScan-NoDistKeyInIndex
+IndexOnlyScan-NoDistKeyInIndex;
+
+CRightJoinTest:
+RightJoinHashed RightJoinRedistribute RightJoinReplicated RightJoinDPS RightJoinNoDPSNonDistKey
 ")
 
 set(mdp_dir "../data/dxl/minidump/")
