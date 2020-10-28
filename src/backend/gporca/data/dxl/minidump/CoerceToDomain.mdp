@@ -1931,7 +1931,7 @@ SELECT * FROM information_schema.tables;
         </dxl:LogicalJoin>
       </dxl:LogicalProject>
     </dxl:Query>
-    <dxl:Plan Id="0" SpaceSize="36">
+    <dxl:Plan Id="0" SpaceSize="60">
       <dxl:Result>
         <dxl:Properties>
           <dxl:Cost StartupCost="0" TotalCost="36.095703" Rows="2.800000" Width="96"/>

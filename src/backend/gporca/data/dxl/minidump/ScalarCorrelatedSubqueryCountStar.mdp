@@ -301,7 +301,7 @@ EXPLAIN SELECT (SELECT count(*) FROM bar where c = a) FROM foo;
       </dxl:LogicalGet>
     </dxl:LogicalProject>
   </dxl:Query>
-  <dxl:Plan Id="0" SpaceSize="20">
+  <dxl:Plan Id="0" SpaceSize="40">
     <dxl:GatherMotion InputSegments="0,1,2" OutputSegments="-1">
       <dxl:Properties>
         <dxl:Cost StartupCost="0" TotalCost="862.000673" Rows="1.000000" Width="8"/>
