@@ -78,6 +78,15 @@ CXformRightOuterJoin2HashJoin::Transform(CXformContext *pxfctxt,
 	GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
 	GPOS_ASSERT(FCheckPattern(pexpr));
 
+	// If the inner side is larger than the outer, don't generate a ROJ alternative.
+	// Although the ROJ may still be better due to partition selection, which isn't considered here,
+	// we're more cautious so we don't increase optimization time too much.
+	CDouble outerRows = (*pexpr)[0]->Pstats()->Rows();
+	CDouble innerRows = (*pexpr)[1]->Pstats()->Rows();
+	if (innerRows > outerRows)
+	{
+		return;
+	}
 	CXformUtils::ImplementHashJoin<CPhysicalRightOuterHashJoin>(pxfctxt, pxfres,
 																pexpr);
 }

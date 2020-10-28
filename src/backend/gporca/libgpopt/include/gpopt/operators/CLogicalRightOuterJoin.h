@@ -69,8 +69,14 @@ public:
 	DeriveNotNullColumns(CMemoryPool *,	 // mp
 						 CExpressionHandle &exprhdl) const
 	{
-		// left outer join passes through not null columns from outer child only
-		return PcrsDeriveNotNullPassThruOuter(exprhdl);
+		// right outer join passes through not null columns from outer child only
+		// may have additional children that are ignored, e.g., scalar children
+		GPOS_ASSERT(1 <= exprhdl.Arity());
+
+		CColRefSet *pcrs = exprhdl.DeriveNotNullColumns(1);
+		pcrs->AddRef();
+
+		return pcrs;
 	}
 
 	// derive max card
@@ -83,6 +89,17 @@ public:
 							 CExpressionHandle &exprhdl) const
 	{
 		return PpcDeriveConstraintPassThru(exprhdl, 0 /*ulChild*/);
+	}
+
+	// promise level for stat derivation
+	virtual EStatPromise
+	Esp(CExpressionHandle &	 //exprhdl
+	) const
+	{
+		// Disable stats derivation for CLogicalRightOuterJoin because it is
+		// currently not implemented. Instead rely on stats coming from the
+		// equivalent LOJ expression.
+		return EspLow;
 	}
 
 	//-------------------------------------------------------------------------------------
