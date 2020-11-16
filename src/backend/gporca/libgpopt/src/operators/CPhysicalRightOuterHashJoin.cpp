@@ -97,20 +97,15 @@ CPhysicalRightOuterHashJoin::PdsRequired(
 	ULONG ulOptReq	// identifies which optimization request should be created
 ) const
 {
-	GPOS_ASSERT(ulOptReq < UlDistrRequests());
-
-	if (!FFirstChildToOptimize(child_index))
+	// create the following requests:
+	// 1) hash-hash
+	// 2) singleton-singleton
+	// We also could create a replicated-hashed and replicated-non-singleton request, but that doesn't seem like a promising alternative as we would be broadcasting the outer side. The inner side must not ever be replicated or we'll get duplicates (unless the outer is also replicated)
+	if (ulOptReq >= NumDistrReq())
 	{
-		CDistributionSpec *pdsFirst =
-			CDrvdPropPlan::Pdpplan((*pdrgpdpCtxt)[0])->Pds();
-		if (0 == child_index &&
-			pdsFirst->Edt() == CDistributionSpec::EdtReplicated)
-		{
-			// we need to replicate the outer if the inner table is replicated, otherwise we'll get duplicate results
-			return GPOS_NEW(mp) CDistributionSpecReplicated();
-		}
+		return CPhysicalHashJoin::PdsRequiredSingleton(
+			mp, exprhdl, pdsInput, child_index, pdrgpdpCtxt);
 	}
-
 	return CPhysicalHashJoin::PdsRequired(mp, exprhdl, pdsInput, child_index,
 										  pdrgpdpCtxt, ulOptReq);
 }
