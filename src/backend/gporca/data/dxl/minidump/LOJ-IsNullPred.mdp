@@ -12159,7 +12159,7 @@
         </dxl:LogicalJoin>
       </dxl:LogicalSelect>
     </dxl:Query>
-    <dxl:Plan Id="0" SpaceSize="9">
+    <dxl:Plan Id="0" SpaceSize="6">
       <dxl:GatherMotion InputSegments="0,1" OutputSegments="-1">
         <dxl:Properties>
           <dxl:Cost StartupCost="0" TotalCost="1980639.835413" Rows="2818278.671879" Width="251"/>
