@@ -12247,17 +12247,17 @@ EXPLAIN SELECT a, b FROM atab_old_hash FULL JOIN btab_old_hash ON a |=| b;
                      ->  Materialize  (cost=0.00..431.00 rows=2 width=1)
                            ->  Seq Scan on btab_old_hash  (cost=0.00..431.00 rows=2 width=34)
                ->  Append  (cost=0.00..1724.00 rows=4 width=8)
-                     ->  Hash Left Join  (cost=0.00..862.00 rows=2 width=8)
-                           Hash Cond: (share0_ref2.a |=| share1_ref2.b)
-                           ->  Redistribute Motion 3:3  (slice1; segments: 3)  (cost=0.00..431.00 rows=1 width=4)
-                                 Hash Key: share0_ref2.a
-                                 ->  Result  (cost=0.00..431.00 rows=1 width=4)
-                                       ->  Shared Scan (share slice:id 1:0)  (cost=0.00..431.00 rows=1 width=4)
-                           ->  Hash  (cost=431.00..431.00 rows=2 width=4)
-                                 ->  Redistribute Motion 3:3  (slice2; segments: 3)  (cost=0.00..431.00 rows=2 width=4)
-                                       Hash Key: share1_ref2.b
-                                       ->  Result  (cost=0.00..431.00 rows=2 width=4)
-                                             ->  Shared Scan (share slice:id 2:1)  (cost=0.00..431.00 rows=2 width=4)
+                     ->  Hash Right Join  (cost=0.00..862.00 rows=2 width=8)
+                           Hash Cond: (share1_ref2.b |=| share0_ref2.a)
+                           ->  Redistribute Motion 3:3  (slice1; segments: 3)  (cost=0.00..431.00 rows=2 width=4)
+                                 Hash Key: share1_ref2.b
+                                 ->  Result  (cost=0.00..431.00 rows=2 width=4)
+                                       ->  Shared Scan (share slice:id 1:1)  (cost=0.00..431.00 rows=2 width=4)
+                           ->  Hash  (cost=431.00..431.00 rows=1 width=4)
+                                 ->  Redistribute Motion 3:3  (slice2; segments: 3)  (cost=0.00..431.00 rows=1 width=4)
+                                       Hash Key: share0_ref2.a
+                                       ->  Result  (cost=0.00..431.00 rows=1 width=4)
+                                             ->  Shared Scan (share slice:id 2:0)  (cost=0.00..431.00 rows=1 width=4)
                      ->  Result  (cost=0.00..862.00 rows=2 width=8)
                            ->  Hash Anti Join  (cost=0.00..862.00 rows=2 width=4)
                                  Hash Cond: (share1_ref3.b |=| share0_ref3.a)
