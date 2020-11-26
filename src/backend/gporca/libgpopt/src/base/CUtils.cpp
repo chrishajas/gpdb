@@ -1059,17 +1059,16 @@ CUtils::FPhysicalJoin(COperator *pop)
 	return FHashJoin(pop) || FNLJoin(pop);
 }
 
-// check if a given operator is a physical outer join
+// check if a given operator is a physical left outer join
 BOOL
-CUtils::FPhysicalOuterJoin(COperator *pop)
+CUtils::FPhysicalLeftOuterJoin(COperator *pop)
 {
 	GPOS_ASSERT(NULL != pop);
 
 	return COperator::EopPhysicalLeftOuterNLJoin == pop->Eopid() ||
 		   COperator::EopPhysicalLeftOuterIndexNLJoin == pop->Eopid() ||
 		   COperator::EopPhysicalLeftOuterHashJoin == pop->Eopid() ||
-		   COperator::EopPhysicalCorrelatedLeftOuterNLJoin == pop->Eopid() ||
-		   COperator::EopPhysicalRightOuterHashJoin == pop->Eopid();
+		COperator::EopPhysicalCorrelatedLeftOuterNLJoin == pop->Eopid();
 }
 
 // check if a given operator is a physical agg
