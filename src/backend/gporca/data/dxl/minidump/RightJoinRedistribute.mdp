@@ -9,6 +9,8 @@
 
 	 INSERT INTO foo SELECT i, i from generate_series(1,1000)i; 
 	 INSERT INTO bar SELECT i, i from generate_series(1,10)i; 
+	 analyze foo;
+	 analyze bar;
 
 	 explain select * from foo right join bar on foo.a=bar.b;
 

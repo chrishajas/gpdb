@@ -87,24 +87,29 @@ CPhysicalRightOuterHashJoin::PppsRequired(
 //		Compute required distribution of the n-th child
 //
 //---------------------------------------------------------------------------
-CDistributionSpec *
-CPhysicalRightOuterHashJoin::PdsRequired(
-	CMemoryPool *mp, CExpressionHandle &exprhdl, CDistributionSpec *pdsInput,
-	ULONG child_index, CDrvdPropArray *pdrgpdpCtxt,
-	ULONG ulOptReq	// identifies which optimization request should be created
-) const
+CEnfdDistribution *
+CPhysicalRightOuterHashJoin::Ped(CMemoryPool *mp, CExpressionHandle &exprhdl,
+								 CReqdPropPlan *prppInput, ULONG child_index,
+								 CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq)
 {
 	// create the following requests:
 	// 1) hash-hash (provided by CPhysicalHashJoin::PdsRequired)
 	// 2) singleton-singleton
 	// We also could create a replicated-hashed and replicated-non-singleton request, but that doesn't seem like a promising alternative as we would be broadcasting the outer side. The inner side must not ever be replicated or we'll get duplicates (unless the outer is also replicated)
+
+	CDistributionSpec *const pdsInput = prppInput->Ped()->PdsRequired();
 	if (ulOptReq >= NumDistrReq())
 	{
-		return CPhysicalHashJoin::PdsRequiredSingleton(
-			mp, exprhdl, pdsInput, child_index, pdrgpdpCtxt);
+		CEnfdDistribution::EDistributionMatching dmatch =
+			Edm(prppInput, child_index, pdrgpdpCtxt, ulOptReq);
+
+		return GPOS_NEW(mp)
+			CEnfdDistribution(PdsRequiredSingleton(mp, exprhdl, pdsInput,
+												   child_index, pdrgpdpCtxt),
+							  dmatch);
 	}
-	return CPhysicalHashJoin::PdsRequired(mp, exprhdl, pdsInput, child_index,
-										  pdrgpdpCtxt, ulOptReq);
+	return CPhysicalHashJoin::Ped(mp, exprhdl, prppInput, child_index,
+								  pdrgpdpCtxt, ulOptReq);
 }
 
 // EOF
