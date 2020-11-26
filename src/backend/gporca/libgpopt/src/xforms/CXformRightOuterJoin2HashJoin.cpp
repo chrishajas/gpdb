@@ -83,9 +83,12 @@ CXformRightOuterJoin2HashJoin::Transform(CXformContext *pxfctxt,
 	// poor cardinality estimation. This is admittedly conservative, but mis-estimating the hash side
 	// of a ROJ can cause spilling.
 	CDouble outerRows = (*pexpr)[0]->Pstats()->Rows();
+	CDouble outerWidth = (*pexpr)[0]->Pstats()->Width();
 	CDouble innerRows = (*pexpr)[1]->Pstats()->Rows();
+	CDouble innerWidth = (*pexpr)[1]->Pstats()->Width();
+
 	CDouble confidenceFactor = 2 * (*pexpr)[1]->DeriveJoinDepth();
-	if (innerRows * confidenceFactor > outerRows)
+	if (innerRows * innerWidth * confidenceFactor > outerRows * outerWidth)
 	{
 		return;
 	}

@@ -58,9 +58,17 @@ CXformLeftJoin2RightJoin::CXformLeftJoin2RightJoin(CMemoryPool *mp)
 //
 //---------------------------------------------------------------------------
 CXform::EXformPromise
-CXformLeftJoin2RightJoin::Exfp(CExpressionHandle &) const
+CXformLeftJoin2RightJoin::Exfp(CExpressionHandle &exprhdl) const
 {
-	return ExfpHigh;
+	// if scalar predicate has a subquery, we must have an
+	// equivalent logical Apply expression created during exploration;
+	// no need for generating a physical join
+	if (exprhdl.DeriveHasSubquery(2))
+	{
+		return CXform::ExfpNone;
+	}
+
+	return CXform::ExfpHigh;
 }
 
 
