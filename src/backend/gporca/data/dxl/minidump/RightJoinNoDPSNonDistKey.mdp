@@ -7,6 +7,8 @@
 	create table foo (a int, b int);
 	insert into bar select i,i%9 from generate_series(1,1000)i;
 	insert into foo select i,i from generate_series(1,10)i;
+	analyze foo;
+	analyze bar;
 
 	explain select * from bar right join foo on foo.a=bar.b;
  ---------------------------------------------------------------------------------------------------------------

@@ -10,7 +10,7 @@
     analyze t1;
     analyze t2;
     
-    test=# explain select * from t2 left outer join t1 on t1.b = t2.d where t1.b is null;
+    explain select * from t2 left outer join t1 on t1.b = t2.d where t1.b is null;
                                                       QUERY PLAN
     --------------------------------------------------------------------------------------------------------------
      Result  (cost=0.00..862.00 rows=1 width=16)

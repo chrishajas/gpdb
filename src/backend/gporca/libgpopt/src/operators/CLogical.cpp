@@ -1070,8 +1070,7 @@ CLogical::Maxcard(CExpressionHandle &exprhdl, ULONG ulScalarIndex,
 		if ((CUtils::FScalarConstFalse(pexprScalar) &&
 			 COperator::EopLogicalFullOuterJoin != exprhdl.Pop()->Eopid() &&
 			 COperator::EopLogicalLeftOuterJoin != exprhdl.Pop()->Eopid() &&
-			 COperator::EopLogicalRightOuterJoin != exprhdl.Pop()->Eopid()
-			 ) ||
+			 COperator::EopLogicalRightOuterJoin != exprhdl.Pop()->Eopid()) ||
 			exprhdl.DerivePropertyConstraint()->FContradiction())
 		{
 			return CMaxCard(0 /*ull*/);
