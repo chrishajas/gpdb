@@ -310,11 +310,11 @@ CPhysicalHashJoin::PdsMatch(CMemoryPool *mp, CDistributionSpec *pds,
 			{
 				GPOS_ASSERT(1 == ulSourceChildIndex);
 
-				// inner child is replicated, for ROJ outer must also be replicated to prevent duplicates
+				// inner child is replicated, for ROJ outer must be executed on a single (non-master) segment to avoid duplicates
 				if (this->Eopid() == EopPhysicalRightOuterHashJoin)
 				{
-					return GPOS_NEW(mp) CDistributionSpecReplicated(
-						CDistributionSpec::EdtReplicated);
+					return GPOS_NEW(mp) CDistributionSpecSingleton(
+						CDistributionSpecSingleton::EstSegment);
 				}
 				// inner child is replicated, request outer child to have non-singleton distribution
 				return GPOS_NEW(mp) CDistributionSpecNonSingleton();
