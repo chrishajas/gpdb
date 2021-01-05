@@ -3697,34 +3697,36 @@ left join
    using (join_key)
   ) foo3
 using (join_key);
-                            QUERY PLAN                            
-------------------------------------------------------------------
- Hash Right Join
+                               QUERY PLAN                               
+------------------------------------------------------------------------
+ Gather Motion 3:1  (slice2; segments: 3)
    Output: "Values".column1, int4_tbl.f1, "outer".bug_field
-   Hash Cond: (int4_tbl.f1 = "Values".column1)
-   ->  Gather Motion 3:1  (slice2; segments: 3)
-         Output: int4_tbl.f1, "outer".bug_field
-         ->  Hash Right Join
-               Output: int4_tbl.f1, "outer".bug_field
-               Hash Cond: (tenk1.unique2 = int4_tbl.f1)
-               ->  Redistribute Motion 3:3  (slice1; segments: 3)
-                     Output: tenk1.unique2
-                     Hash Key: tenk1.unique2
-                     ->  Seq Scan on public.tenk1
-                           Output: tenk1.unique2
-               ->  Hash
-                     Output: "outer".bug_field, int4_tbl.f1
-                     ->  Result
-                           Output: 666, int4_tbl.f1
-                           ->  Seq Scan on public.int4_tbl
-                                 Output: int4_tbl.f1
-   ->  Hash
-         Output: "Values".column1
-         ->  Values Scan on "Values"
+   ->  Hash Left Join
+         Output: "Values".column1, int4_tbl.f1, "outer".bug_field
+         Hash Cond: ("Values".column1 = int4_tbl.f1)
+         ->  Result
                Output: "Values".column1
+               ->  Values Scan on "Values"
+                     Output: "Values".column1
+         ->  Hash
+               Output: int4_tbl.f1, "outer".bug_field
+               ->  Hash Right Join
+                     Output: int4_tbl.f1, "outer".bug_field
+                     Hash Cond: (tenk1.unique2 = int4_tbl.f1)
+                     ->  Redistribute Motion 3:3  (slice1; segments: 3)
+                           Output: tenk1.unique2
+                           Hash Key: tenk1.unique2
+                           ->  Seq Scan on public.tenk1
+                                 Output: tenk1.unique2
+                     ->  Hash
+                           Output: "outer".bug_field, int4_tbl.f1
+                           ->  Result
+                                 Output: 666, int4_tbl.f1
+                                 ->  Seq Scan on public.int4_tbl
+                                       Output: int4_tbl.f1
  Optimizer: Pivotal Optimizer (GPORCA)
- Settings: optimizer=on
-(25 rows)
+ Settings: enable_seqscan=on, optimizer=on
+(27 rows)
 
 select foo1.join_key as foo1_id, foo3.join_key AS foo3_id, bug_field from
   (values (0),(1)) foo1(join_key)
