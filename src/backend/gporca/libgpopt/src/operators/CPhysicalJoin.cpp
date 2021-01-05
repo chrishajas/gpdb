@@ -351,6 +351,14 @@ CPhysicalJoin::PdsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const
 	CDistributionSpec *pdsOuter = exprhdl.Pdpplan(0 /*child_index*/)->Pds();
 	CDistributionSpec *pdsInner = exprhdl.Pdpplan(1 /*child_index*/)->Pds();
 
+	// Since the inner side is projected for a ROJ, we must use the inner side
+	// to derive the distrubtion spec rather than the outer
+	if (exprhdl.Pop()->Eopid() == EopPhysicalRightOuterHashJoin)
+	{
+		pdsOuter = exprhdl.Pdpplan(1 /*child_index*/)->Pds();
+		pdsInner = exprhdl.Pdpplan(0 /*child_index*/)->Pds();
+	}
+
 	CDistributionSpec *pds;
 
 	if (CDistributionSpec::EdtStrictReplicated == pdsOuter->Edt() ||
