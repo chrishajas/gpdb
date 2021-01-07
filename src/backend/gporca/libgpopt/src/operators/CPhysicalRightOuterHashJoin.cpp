@@ -12,6 +12,8 @@
 #include "gpos/base.h"
 #include "gpopt/operators/CPhysicalRightOuterHashJoin.h"
 #include "gpopt/operators/CExpressionHandle.h"
+#include "gpopt/base/CDistributionSpecReplicated.h"
+#include "gpopt/base/CDistributionSpecNonSingleton.h"
 
 
 using namespace gpopt;
@@ -31,6 +33,8 @@ CPhysicalRightOuterHashJoin::CPhysicalRightOuterHashJoin(
 	: CPhysicalHashJoin(mp, pdrgpexprOuterKeys, pdrgpexprInnerKeys,
 						hash_opfamilies)
 {
+	ULONG ulDistrReqs = 1 + NumDistrReq();
+	SetDistrRequests(ulDistrReqs);
 	SetPartPropagateRequests(2);
 }
 
@@ -93,23 +97,38 @@ CPhysicalRightOuterHashJoin::Ped(CMemoryPool *mp, CExpressionHandle &exprhdl,
 								 CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq)
 {
 	// create the following requests:
-	// 1) hash-hash (provided by CPhysicalHashJoin::PdsRequired)
+	// 1) hash-hash (provided by CPhysicalHashJoin::Ped)
 	// 2) singleton-singleton
-	// We also could create a replicated-hashed and replicated-non-singleton request, but that doesn't seem like a promising alternative as we would be broadcasting the outer side. The inner side must not ever be replicated or we'll get duplicates (unless the outer is also replicated)
+	// We also could create a replicated-hashed and replicated-non-singleton request, but that isn't a promising alternative as we would be broadcasting the outer side. In that case, an LOJ would be better. The inner side must not ever be replicated or we would get duplicates (unless the outer is also replicated)
 
 	CDistributionSpec *const pdsInput = prppInput->Ped()->PdsRequired();
-	if (ulOptReq >= NumDistrReq())
+	CEnfdDistribution::EDistributionMatching dmatch =
+		Edm(prppInput, child_index, pdrgpdpCtxt, ulOptReq);
+	if (exprhdl.NeedsSingletonExecution() || exprhdl.HasOuterRefs())
 	{
-		CEnfdDistribution::EDistributionMatching dmatch =
-			Edm(prppInput, child_index, pdrgpdpCtxt, ulOptReq);
-
-		return GPOS_NEW(mp)
-			CEnfdDistribution(PdsRequiredSingleton(mp, exprhdl, pdsInput,
-												   child_index, pdrgpdpCtxt),
-							  dmatch);
+		return GPOS_NEW(mp) CEnfdDistribution(
+			PdsRequireSingleton(mp, exprhdl, pdsInput, child_index), dmatch);
 	}
-	return CPhysicalHashJoin::Ped(mp, exprhdl, prppInput, child_index,
-								  pdrgpdpCtxt, ulOptReq);
+
+	const ULONG ulHashDistributeRequests = NumDistrReq();
+
+	if (ulOptReq < ulHashDistributeRequests)
+	{
+		// requests 1 .. N are (redistribute, redistribute)
+		CDistributionSpec *pds = PdsRequiredRedistribute(
+			mp, exprhdl, pdsInput, child_index, pdrgpdpCtxt, ulOptReq);
+		if (CDistributionSpec::EdtHashed == pds->Edt())
+		{
+			CDistributionSpecHashed *pdsHashed =
+				CDistributionSpecHashed::PdsConvert(pds);
+			pdsHashed->ComputeEquivHashExprs(mp, exprhdl);
+		}
+		return GPOS_NEW(mp) CEnfdDistribution(pds, dmatch);
+	}
+	GPOS_ASSERT(ulOptReq == NumDistrReq());
+	return GPOS_NEW(mp) CEnfdDistribution(
+		PdsRequiredSingleton(mp, exprhdl, pdsInput, child_index, pdrgpdpCtxt),
+		dmatch);
 }
 
 // EOF

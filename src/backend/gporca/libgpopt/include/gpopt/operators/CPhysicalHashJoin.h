@@ -56,11 +56,11 @@ private:
 	CDistributionSpec *PdsMatch(CMemoryPool *mp, CDistributionSpec *pds,
 								ULONG ulSourceChildIndex) const;
 
+protected:
 	// compute required hashed distribution from the n-th child
 	CDistributionSpecHashed *PdshashedRequired(CMemoryPool *mp,
 											   ULONG child_index,
 											   ULONG ulReqIndex) const;
-
 	// create (redistribute, redistribute) optimization request
 	CDistributionSpec *PdsRequiredRedistribute(CMemoryPool *mp,
 											   CExpressionHandle &exprhdl,
@@ -69,6 +69,7 @@ private:
 											   CDrvdPropArray *pdrgpdpCtxt,
 											   ULONG ulOptReq) const;
 
+private:
 	// create (non-singleton, replicate) optimization request
 	CDistributionSpec *PdsRequiredReplicate(
 		CMemoryPool *mp, CExpressionHandle &exprhdl,

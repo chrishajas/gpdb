@@ -698,10 +698,23 @@ CPhysicalHashJoin::PdsRequiredRedistribute(CMemoryPool *mp,
 	return pdsMatch;
 }
 
+CDistributionSpec *
+CPhysicalHashJoin::PdsRequired(
+	CMemoryPool * /*mp*/, CExpressionHandle & /*exprhdl*/,
+	CDistributionSpec * /*pdsInput*/, ULONG /*child_index*/,
+	CDrvdPropArray * /*pdrgpdpCtxt*/,
+	ULONG /*ulOptReq*/	// identifies which optimization request should be created
+) const
+{
+	GPOS_RAISE(
+		CException::ExmaInvalid, CException::ExmiInvalid,
+		GPOS_WSZ_LIT("PdsRequired should not be called for CPhysicalHashJoin"));
+	return NULL;
+}
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalHashJoin::PdsRequired
+//		CPhysicalHashJoin::Ped
 //
 //	@doc:
 //		Compute required distribution of the n-th child;
@@ -721,20 +734,6 @@ CPhysicalHashJoin::PdsRequiredRedistribute(CMemoryPool *mp,
 //
 //
 //---------------------------------------------------------------------------
-CDistributionSpec *
-CPhysicalHashJoin::PdsRequired(
-	CMemoryPool * /*mp*/, CExpressionHandle & /*exprhdl*/,
-	CDistributionSpec * /*pdsInput*/, ULONG /*child_index*/,
-	CDrvdPropArray * /*pdrgpdpCtxt*/,
-	ULONG /*ulOptReq*/	// identifies which optimization request should be created
-) const
-{
-	GPOS_RAISE(
-		CException::ExmaInvalid, CException::ExmiInvalid,
-		GPOS_WSZ_LIT("PdsRequired should not be called for CPhysicalHashJoin"));
-	return NULL;
-}
-
 CEnfdDistribution *
 CPhysicalHashJoin::Ped(CMemoryPool *mp, CExpressionHandle &exprhdl,
 					   CReqdPropPlan *prppInput, ULONG child_index,

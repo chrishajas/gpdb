@@ -342,7 +342,7 @@ CIndexOnlyScanTest:
 IndexOnlyScan-NoDistKeyInIndex;
 
 CRightJoinTest:
-RightJoinHashed RightJoinRedistribute RightJoinReplicated RightJoinDPS RightJoinNoDPSNonDistKey
+RightJoinHashed RightJoinRedistribute RightJoinReplicated RightJoinBothReplicated RightJoinDPS RightJoinNoDPSNonDistKey RightJoinTVF
 ")
 
 set(mdp_dir "../data/dxl/minidump/")

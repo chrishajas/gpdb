@@ -349,8 +349,8 @@ CPhysicalJoin::PdsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const
 	CDistributionSpec *pdsOuter = exprhdl.Pdpplan(0 /*child_index*/)->Pds();
 	CDistributionSpec *pdsInner = exprhdl.Pdpplan(1 /*child_index*/)->Pds();
 
-	// For right join, the hash side is the non-nullable side, so we should use
-	// the hash side for deriving the distribution spec.
+	// We must use the non-nullable side for the distribution spec for outer joins.
+	// For right join, the hash side is the non-nullable side, so we swap the inner/outer.
 	if (exprhdl.Pop()->Eopid() == EopPhysicalRightOuterHashJoin)
 	{
 		pdsOuter = exprhdl.Pdpplan(1 /*child_index*/)->Pds();
