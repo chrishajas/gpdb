@@ -12,6 +12,7 @@
 #define GPOS_CLogicalRightOuterJoin_H
 
 #include "gpos/base.h"
+
 #include "gpopt/operators/CLogicalJoin.h"
 
 namespace gpopt

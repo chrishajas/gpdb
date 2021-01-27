@@ -9,11 +9,13 @@
 //		Implementation of right outer hash join operator
 //---------------------------------------------------------------------------
 
-#include "gpos/base.h"
 #include "gpopt/operators/CPhysicalRightOuterHashJoin.h"
-#include "gpopt/operators/CExpressionHandle.h"
-#include "gpopt/base/CDistributionSpecReplicated.h"
+
+#include "gpos/base.h"
+
 #include "gpopt/base/CDistributionSpecNonSingleton.h"
+#include "gpopt/base/CDistributionSpecReplicated.h"
+#include "gpopt/operators/CExpressionHandle.h"
 
 
 using namespace gpopt;

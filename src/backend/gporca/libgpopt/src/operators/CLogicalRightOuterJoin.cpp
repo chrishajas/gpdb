@@ -9,13 +9,13 @@
 //		Implementation of right outer join operator
 //---------------------------------------------------------------------------
 
+#include "gpopt/operators/CLogicalRightOuterJoin.h"
+
 #include "gpos/base.h"
 
 #include "gpopt/base/CColRefSet.h"
 #include "gpopt/operators/CExpression.h"
 #include "gpopt/operators/CExpressionHandle.h"
-
-#include "gpopt/operators/CLogicalRightOuterJoin.h"
 
 using namespace gpopt;
 

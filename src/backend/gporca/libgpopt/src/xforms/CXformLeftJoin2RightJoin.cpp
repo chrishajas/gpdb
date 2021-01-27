@@ -9,6 +9,8 @@
 //		Implementation of transform
 //---------------------------------------------------------------------------
 
+#include "gpopt/xforms/CXformLeftJoin2RightJoin.h"
+
 #include "gpos/base.h"
 #include "gpos/memory/CAutoMemoryPool.h"
 
@@ -17,7 +19,6 @@
 #include "gpopt/operators/CPatternLeaf.h"
 #include "gpopt/operators/CPredicateUtils.h"
 #include "gpopt/operators/CScalarProjectList.h"
-#include "gpopt/xforms/CXformLeftJoin2RightJoin.h"
 
 
 
