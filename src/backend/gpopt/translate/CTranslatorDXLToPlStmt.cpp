@@ -3675,6 +3675,37 @@ CTranslatorDXLToPlStmt::TranslateDXLAppend(
 	GPOS_ASSERT(EdxlappendIndexFirstChild < arity);
 	append->appendplans = NIL;
 
+	// translate table descriptor into a range table entry
+	CDXLPhysicalAppend *phy_append_dxlop =
+		CDXLPhysicalAppend::Cast(append_dxlnode->GetOperator());
+
+	// If this append was create from a DynamicTableScan node in ORCA, it will
+	// contain the table descriptor of the root partitioned table. Add that to
+	// the range table in the PlStmt.
+	if (phy_append_dxlop->GetScanId() != -1)
+	{
+		GPOS_ASSERT(nullptr != phy_append_dxlop->GetDXLTableDesc());
+
+		// translation context for column mappings in the base relation
+		CDXLTranslateContextBaseTable base_table_context(m_mp);
+		// we will add the new range table entry as the last element of the range table
+		Index index =
+			gpdb::ListLength(m_dxl_to_plstmt_context->GetRTableEntriesList()) +
+			1;
+		RangeTblEntry *rte = TranslateDXLTblDescrToRangeTblEntry(
+			phy_append_dxlop->GetDXLTableDesc(), index, &base_table_context);
+		GPOS_ASSERT(NULL != rte);
+		rte->requiredPerms |= ACL_SELECT;
+
+		m_dxl_to_plstmt_context->AddRTE(rte);
+
+		// FIXME: Actually pass through the params used from ORCA!
+		// We will need a map from PartitionSelector::id -> Param; Save all such ids in the Append node
+		ULONG param_id = m_dxl_to_plstmt_context->GetNextParamId(0);
+		// param_id should also be 0, but that's only for this hack!
+		append->join_prune_paramids = ListMake1Int(param_id);
+	}
+
 	// translate children
 	CDXLTranslateContext child_context(m_mp, false,
 									   output_context->GetColIdToParamIdMap());

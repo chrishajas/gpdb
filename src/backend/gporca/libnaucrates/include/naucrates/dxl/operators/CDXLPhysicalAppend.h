@@ -17,6 +17,7 @@
 #include "gpos/base.h"
 
 #include "naucrates/dxl/operators/CDXLPhysical.h"
+#include "naucrates/dxl/operators/CDXLTableDescr.h"
 
 namespace gpdxl
 {
@@ -41,10 +42,16 @@ class CDXLPhysicalAppend : public CDXLPhysical
 {
 private:
 	// is the append node used in an update/delete statement
-	BOOL m_used_in_upd_del;
+	BOOL m_used_in_upd_del = false;
 
 	// TODO:  - Apr 12, 2011; find a better name (and comments) for this variable
-	BOOL m_is_zapped;
+	BOOL m_is_zapped = false;
+
+	// scan id from the CPhysicalDynamicTableScan (a.k.a part_index_id)
+	INT m_scan_id = -1;
+
+	// table descr of the root partitioned table (when translated from a CPhysicalDynamicTableScan)
+	CDXLTableDescr *m_dxl_table_descr = nullptr;
 
 public:
 	CDXLPhysicalAppend(const CDXLPhysicalAppend &) = delete;
@@ -52,12 +59,37 @@ public:
 	// ctor/dtor
 	CDXLPhysicalAppend(CMemoryPool *mp, BOOL fIsTarget, BOOL fIsZapped);
 
+	// ctor for partitioned table scan
+	CDXLPhysicalAppend(CMemoryPool *mp, BOOL fIsTarget, BOOL fIsZapped,
+					   INT scan_id, CDXLTableDescr *dxl_table_desc);
+
+	// dtor
+	~CDXLPhysicalAppend();
+
 	// accessors
 	Edxlopid GetDXLOperator() const override;
 	const CWStringConst *GetOpNameStr() const override;
 
 	BOOL IsUsedInUpdDel() const;
 	BOOL IsZapped() const;
+
+	CDXLTableDescr *
+	GetDXLTableDesc() const
+	{
+		return m_dxl_table_descr;
+	}
+
+	void
+	SetDXLTableDesc(CDXLTableDescr *dxl_table_desc)
+	{
+		m_dxl_table_descr = dxl_table_desc;
+	}
+
+	INT
+	GetScanId()
+	{
+		return m_scan_id;
+	}
 
 	// serialize operator in DXL format
 	void SerializeToDXL(CXMLSerializer *xml_serializer,

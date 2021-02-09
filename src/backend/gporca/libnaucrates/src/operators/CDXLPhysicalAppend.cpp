@@ -32,6 +32,21 @@ CDXLPhysicalAppend::CDXLPhysicalAppend(CMemoryPool *mp, BOOL fIsTarget,
 {
 }
 
+CDXLPhysicalAppend::CDXLPhysicalAppend(CMemoryPool *mp, BOOL fIsTarget,
+									   BOOL fIsZapped, INT scan_id,
+									   CDXLTableDescr *dxl_table_desc)
+	: CDXLPhysical(mp),
+	  m_used_in_upd_del(fIsTarget),
+	  m_is_zapped(fIsZapped),
+	  m_scan_id(scan_id),
+	  m_dxl_table_descr(dxl_table_desc)
+{
+}
+
+CDXLPhysicalAppend::~CDXLPhysicalAppend()
+{
+	CRefCount::SafeRelease(m_dxl_table_descr);
+}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -111,9 +126,18 @@ CDXLPhysicalAppend::SerializeToDXL(CXMLSerializer *xml_serializer,
 		CDXLTokens::GetDXLTokenStr(EdxltokenAppendIsTarget), m_used_in_upd_del);
 	xml_serializer->AddAttribute(
 		CDXLTokens::GetDXLTokenStr(EdxltokenAppendIsZapped), m_is_zapped);
+	xml_serializer->AddAttribute(
+		CDXLTokens::GetDXLTokenStr(EdxltokenPartIndexId), m_scan_id);
+
 
 	// serialize properties
 	dxlnode->SerializePropertiesToDXL(xml_serializer);
+
+	if (m_dxl_table_descr != nullptr)
+	{
+		GPOS_ASSERT(m_scan_id != -1);
+		m_dxl_table_descr->SerializeToDXL(xml_serializer);
+	}
 
 	// serialize children
 	dxlnode->SerializeChildrenToDXL(xml_serializer);

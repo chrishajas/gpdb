@@ -1352,6 +1352,8 @@ CTranslatorExprToDXL::PdxlnDynamicTableScan(
 	// construct projection list for top-level Append node
 	CColRefSet *pcrsOutput = pexprDTS->Prpp()->PcrsRequired();
 	CDXLNode *pdxlnPrLAppend = PdxlnProjList(pcrsOutput, colref_array);
+	CDXLTableDescr *root_dxl_table_descr = MakeDXLTableDescr(
+		popDTS->Ptabdesc(), popDTS->PdrgpcrOutput(), pexprDTS->Prpp());
 
 	// Construct the Append node - even when there is only one child partition.
 	// This is done for two reasons:
@@ -1370,8 +1372,9 @@ CTranslatorExprToDXL::PdxlnDynamicTableScan(
 	//
 	// GPDB_12_MERGE_FIXME: An Append on a single TableScan can be removed in
 	// CTranslatorDXLToPlstmt since these points do not apply there.
-	CDXLNode *pdxlnAppend = GPOS_NEW(m_mp)
-		CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLPhysicalAppend(m_mp, false, false));
+	CDXLNode *pdxlnAppend = GPOS_NEW(m_mp) CDXLNode(
+		m_mp, GPOS_NEW(m_mp) CDXLPhysicalAppend(
+				  m_mp, false, false, popDTS->ScanId(), root_dxl_table_descr));
 	pdxlnAppend->SetProperties(pdxlpropDTS);
 	pdxlnAppend->AddChild(pdxlnPrLAppend);
 	pdxlnAppend->AddChild(PdxlnFilter(nullptr));
