@@ -180,7 +180,8 @@ private:
 	// check if ayn of the given property enforcing types prohibits enforcement
 	static BOOL FProhibited(CEnfdProp::EPropEnforcingType epetOrder,
 							CEnfdProp::EPropEnforcingType epetDistribution,
-							CEnfdProp::EPropEnforcingType epetRewindability);
+							CEnfdProp::EPropEnforcingType epetRewindability,
+							CEnfdProp::EPropEnforcingType epetPropagation);
 
 	// check whether the given memo groups can be marked as duplicates. This is
 	// true only if they have the same logical properties
@@ -189,7 +190,13 @@ private:
 	// check if optimization is possible under the given property enforcing types
 	static BOOL FOptimize(CEnfdProp::EPropEnforcingType epetOrder,
 						  CEnfdProp::EPropEnforcingType epetDistribution,
-						  CEnfdProp::EPropEnforcingType epetRewindability);
+						  CEnfdProp::EPropEnforcingType epetRewindability,
+						  CEnfdProp::EPropEnforcingType epetPropagation);
+
+	// check if partition propagation resolver is passed an empty part
+	// propagation spec
+	static BOOL FCheckReqdPartPropagation(CPhysical *pop,
+										  CEnfdPartitionPropagation *pepp);
 
 	// unrank the plan with the given 'plan_id' from the memo
 	CExpression *PexprUnrank(ULLONG plan_id);
@@ -259,6 +266,12 @@ public:
 	BOOL FCheckEnfdProps(CMemoryPool *mp, CGroupExpression *pgexpr,
 						 COptimizationContext *poc, ULONG ulOptReq,
 						 COptimizationContextArray *pdrgpoc);
+
+	// check if the given expression has valid cte and partition properties
+	// with respect to the given requirements
+	BOOL FValidCTEAndPartitionProperties(CMemoryPool *mp,
+										 CExpressionHandle &exprhdl,
+										 CReqdPropPlan *prpp);
 
 #ifdef GPOS_DEBUG
 	// apply all exploration xforms

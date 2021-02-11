@@ -22,6 +22,7 @@
 
 #include "gpopt/base/CCostContext.h"
 #include "gpopt/base/CDrvdPropCtxtPlan.h"
+#include "gpopt/base/CEnfdPartitionPropagation.h"
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/base/COptimizationContext.h"
 #include "gpopt/base/CQueryContext.h"
@@ -2078,7 +2079,7 @@ CEngine::FCheckEnfdProps(CMemoryPool *mp, CGroupExpression *pgexpr,
 
 	// check whether the current physical operator satisfies the CTE requirements
 	// and whether it is a motion over unresolved part consumers
-	if (!popPhysical->FProvidesReqdCTEs(exprhdl, prpp->Pcter()))
+	if (!FValidCTEAndPartitionProperties(mp, exprhdl, prpp))
 	{
 		pcc->Release();
 		return false;
@@ -2094,6 +2095,10 @@ CEngine::FCheckEnfdProps(CMemoryPool *mp, CGroupExpression *pgexpr,
 
 	BOOL fRewindabilityReqd = !GPOS_FTRACE(EopttraceDisableSpool) &&
 							  (prpp->Per()->PrsRequired()->IsCheckRequired());
+
+	BOOL fPartPropagationReqd =
+		!GPOS_FTRACE(EopttraceDisablePartPropagation) &&
+		prpp->Pepp()->PppsRequired()->FPartPropagationReqd();
 
 	// Determine if adding an enforcer to the group is required, optional,
 	// unnecessary or prohibited over the group expression and given the current
@@ -2111,6 +2116,10 @@ CEngine::FCheckEnfdProps(CMemoryPool *mp, CGroupExpression *pgexpr,
 	CEnfdProp::EPropEnforcingType epetRewindability =
 		prpp->Per()->Epet(exprhdl, popPhysical, fRewindabilityReqd);
 
+	// get partition propagation enforcing type
+	CEnfdProp::EPropEnforcingType epetPartitionPropagation =
+		prpp->Pepp()->Epet(exprhdl, popPhysical, fPartPropagationReqd);
+
 	// Skip adding enforcers entirely if any property determines it to be
 	// 'prohibited'. In this way, a property may veto out the creation of an
 	// enforcer for the current group expression and optimization context.
@@ -2119,7 +2128,8 @@ CEngine::FCheckEnfdProps(CMemoryPool *mp, CGroupExpression *pgexpr,
 	// expression G because it was prohibited, some other group expression H may
 	// decide to add it. And if E is added, it is possible for E to consider both
 	// G and H as its child.
-	if (FProhibited(epetOrder, epetDistribution, epetRewindability))
+	if (FProhibited(epetOrder, epetDistribution, epetRewindability,
+					epetPartitionPropagation))
 	{
 		pcc->Release();
 		return false;
@@ -2141,6 +2151,8 @@ CEngine::FCheckEnfdProps(CMemoryPool *mp, CGroupExpression *pgexpr,
 								 epetDistribution, exprhdl);
 	prpp->Per()->AppendEnforcers(mp, prpp, pdrgpexprEnforcers, pexpr,
 								 epetRewindability, exprhdl);
+	prpp->Pepp()->AppendEnforcers(mp, prpp, pdrgpexprEnforcers, pexpr,
+								  epetPartitionPropagation, exprhdl);
 
 	if (0 < pdrgpexprEnforcers->Size())
 	{
@@ -2150,7 +2162,38 @@ CEngine::FCheckEnfdProps(CMemoryPool *mp, CGroupExpression *pgexpr,
 	pexpr->Release();
 	pcc->Release();
 
-	return FOptimize(epetOrder, epetDistribution, epetRewindability);
+	return FOptimize(epetOrder, epetDistribution, epetRewindability,
+					 epetPartitionPropagation);
+}
+
+//---------------------------------------------------------------------------
+//	@function:
+//		CEngine::FValidCTEAndPartitionProperties
+//
+//	@doc:
+//		Check if the given expression has valid cte and partition properties
+//		with respect to the given requirements. This function returns true iff
+//		ALL the following conditions are met:
+//		1. The expression satisfies the CTE requirements
+//		2. The root of the expression is not a motion over an unresolved part consumer
+//		3. The expression does not have an unneeded part propagator
+//
+//---------------------------------------------------------------------------
+BOOL
+CEngine::FValidCTEAndPartitionProperties(CMemoryPool *, CExpressionHandle &,
+										 CReqdPropPlan *)
+{
+	//	CPhysical *popPhysical = CPhysical::PopConvert(exprhdl.Pop());
+	//	CPartIndexMap *ppimDrvd = CDrvdPropPlan::Pdpplan(exprhdl.Pdp())->Ppim();
+	//
+	//	return popPhysical->FProvidesReqdCTEs(exprhdl, prpp->Pcter()) &&
+	//		   !CUtils::FMotionOverUnresolvedPartConsumers(
+	//			   mp, exprhdl, prpp->Pepp()->PppsRequired()->Ppim()) &&
+	//		   !ppimDrvd->FContainsRedundantPartitionSelectors(
+	//			   prpp->Pepp()->PppsRequired()->Ppim());
+
+	// FIXME
+	return true;
 }
 
 //---------------------------------------------------------------------------
@@ -2190,11 +2233,13 @@ CEngine::FChildrenOptimized(COptimizationContextArray *pdrgpoc)
 BOOL
 CEngine::FOptimize(CEnfdProp::EPropEnforcingType epetOrder,
 				   CEnfdProp::EPropEnforcingType epetDistribution,
-				   CEnfdProp::EPropEnforcingType epetRewindability)
+				   CEnfdProp::EPropEnforcingType epetRewindability,
+				   CEnfdProp::EPropEnforcingType epetPropagation)
 {
 	return CEnfdProp::FOptimize(epetOrder) &&
 		   CEnfdProp::FOptimize(epetDistribution) &&
-		   CEnfdProp::FOptimize(epetRewindability);
+		   CEnfdProp::FOptimize(epetRewindability) &&
+		   CEnfdProp::FOptimize(epetPropagation);
 }
 
 //---------------------------------------------------------------------------
@@ -2208,11 +2253,13 @@ CEngine::FOptimize(CEnfdProp::EPropEnforcingType epetOrder,
 BOOL
 CEngine::FProhibited(CEnfdProp::EPropEnforcingType epetOrder,
 					 CEnfdProp::EPropEnforcingType epetDistribution,
-					 CEnfdProp::EPropEnforcingType epetRewindability)
+					 CEnfdProp::EPropEnforcingType epetRewindability,
+					 CEnfdProp::EPropEnforcingType epetPropagation)
 {
 	return (CEnfdProp::EpetProhibited == epetOrder ||
 			CEnfdProp::EpetProhibited == epetDistribution ||
-			CEnfdProp::EpetProhibited == epetRewindability);
+			CEnfdProp::EpetProhibited == epetRewindability ||
+			CEnfdProp::EpetProhibited == epetPropagation);
 }
 
 
@@ -2286,7 +2333,12 @@ CEngine::FCheckReqdProps(CExpressionHandle &exprhdl, CReqdPropPlan *prpp,
 		return false;
 	}
 
-	return true;
+	// FIXME: Why this?
+	BOOL fPartitionSpecCheckingReqd =
+		(NULL != prpp->Pepp()) ||
+		COperator::EopPhysicalPartitionSelector != popPhysical->Eopid();
+
+	return fPartitionSpecCheckingReqd;
 }
 
 UlongPtrArray *

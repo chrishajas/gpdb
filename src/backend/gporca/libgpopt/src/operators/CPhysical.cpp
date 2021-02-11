@@ -957,4 +957,45 @@ CPhysical::Ped(CMemoryPool *mp, CExpressionHandle &exprhdl,
 	;
 }
 
+CPartitionPropagationSpec *
+CPhysical::PppsRequired(CMemoryPool *, CExpressionHandle &,
+						CPartitionPropagationSpec *pps_required, ULONG,
+						CDrvdPropArray *, ULONG) const
+{
+	pps_required->AddRef();
+	return pps_required;
+}
+
+CEnfdProp::EPropEnforcingType
+CPhysical::EpetPartitionPropagation(
+	CExpressionHandle &exprhdl, const CEnfdPartitionPropagation *pps_reqd) const
+{
+	GPOS_ASSERT(NULL != pps_reqd);
+
+	// get distribution delivered by the physical node
+	CPartitionPropagationSpec *pps_drvd =
+		CDrvdPropPlan::Pdpplan(exprhdl.Pdp())->Ppps();
+	if (pps_reqd->FCompatible(pps_drvd))
+	{
+		// required distribution is already provided
+		return CEnfdProp::EpetUnnecessary;
+	}
+
+	// required distribution will be enforced on Assert's output
+	return CEnfdProp::EpetRequired;
+}
+
+CPartitionPropagationSpec *
+CPhysical::PppsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const
+{
+	// FIXME:
+	if (exprhdl.Arity() == 0)
+	{
+		return GPOS_NEW(mp) CPartitionPropagationSpec();
+	}
+	CPartitionPropagationSpec *pps = exprhdl.Pdpplan(0 /*child_index*/)->Ppps();
+	pps->AddRef();
+	return pps;
+}
+
 // EOF
