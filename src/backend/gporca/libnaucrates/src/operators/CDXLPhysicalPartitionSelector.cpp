@@ -25,11 +25,13 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLPhysicalPartitionSelector::CDXLPhysicalPartitionSelector(
-	CMemoryPool *mp, IMDId *mdid_rel, ULONG num_of_part_levels, ULONG scan_id)
+CDXLPhysicalPartitionSelector::CDXLPhysicalPartitionSelector(CMemoryPool *mp,
+															 IMDId *mdid_rel,
+															 ULONG selector_id,
+															 ULONG scan_id)
 	: CDXLPhysical(mp),
 	  m_rel_mdid(mdid_rel),
-	  m_num_of_part_levels(num_of_part_levels),
+	  m_selector_id(selector_id),
 	  m_scan_id(scan_id)
 {
 }
@@ -93,8 +95,8 @@ CDXLPhysicalPartitionSelector::SerializeToDXL(CXMLSerializer *xml_serializer,
 	m_rel_mdid->Serialize(xml_serializer,
 						  CDXLTokens::GetDXLTokenStr(EdxltokenRelationMdid));
 	xml_serializer->AddAttribute(
-		CDXLTokens::GetDXLTokenStr(EdxltokenPhysicalPartitionSelectorLevels),
-		m_num_of_part_levels);
+		CDXLTokens::GetDXLTokenStr(EdxltokenPhysicalPartitionSelectorId),
+		m_selector_id);
 	xml_serializer->AddAttribute(
 		CDXLTokens::GetDXLTokenStr(EdxltokenPhysicalPartitionSelectorScanId),
 		m_scan_id);

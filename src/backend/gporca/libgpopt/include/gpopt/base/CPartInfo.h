@@ -72,6 +72,7 @@ private:
 		~CPartInfoEntry() override;
 
 		// scan id
+		// FIXME: Change this to INT
 		virtual ULONG
 		ScanId() const
 		{

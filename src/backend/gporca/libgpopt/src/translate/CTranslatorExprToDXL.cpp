@@ -1325,6 +1325,18 @@ CTranslatorExprToDXL::PdxlnDynamicTableScan(
 	CPhysicalDynamicTableScan *popDTS =
 		CPhysicalDynamicTableScan::PopConvert(pexprDTS->Pop());
 
+	ULongPtrArray *selector_ids = GPOS_NEW(m_mp) ULongPtrArray(m_mp);
+	{
+		CPartitionPropagationSpec *pps_reqd =
+			pexprDTS->Prpp()->Pepp()->PppsRequired();
+		const CBitSet *bs = pps_reqd->SelectorIds(popDTS->ScanId());
+		CBitSetIter bsi(*bs);
+		for (ULONG ul = 0; bsi.Advance(); ul++)
+		{
+			selector_ids->Append(GPOS_NEW(m_mp) ULONG(bsi.Bit()));
+		}
+	}
+
 	// construct plan costs
 	CDXLPhysicalProperties *pdxlpropDTS = GetProperties(pexprDTS);
 
@@ -1368,8 +1380,9 @@ CTranslatorExprToDXL::PdxlnDynamicTableScan(
 	// GPDB_12_MERGE_FIXME: An Append on a single TableScan can be removed in
 	// CTranslatorDXLToPlstmt since these points do not apply there.
 	CDXLNode *pdxlnAppend = GPOS_NEW(m_mp) CDXLNode(
-		m_mp, GPOS_NEW(m_mp) CDXLPhysicalAppend(
-				  m_mp, false, false, popDTS->ScanId(), root_dxl_table_descr));
+		m_mp,
+		GPOS_NEW(m_mp) CDXLPhysicalAppend(m_mp, false, false, popDTS->ScanId(),
+										  root_dxl_table_descr, selector_ids));
 	pdxlnAppend->SetProperties(pdxlpropDTS);
 	pdxlnAppend->AddChild(pdxlnPrLAppend);
 	pdxlnAppend->AddChild(PdxlnFilter(nullptr));
@@ -4859,18 +4872,13 @@ CTranslatorExprToDXL::PdxlnPartitionSelector(
 		CTranslatorExprToDXLUtils::PdxlnProjListFromChildProjList(
 			m_mp, m_pcf, m_phmcrdxln, pdxlnPrLChild);
 
-	CDXLNode *pdxlnSelector = GPOS_NEW(m_mp) CDXLNode(
-		m_mp, GPOS_NEW(m_mp) CDXLPhysicalPartitionSelector(
-				  m_mp, popSelector->MDId(), 1, popSelector->ScanId()));
+	CDXLNode *pdxlnSelector = GPOS_NEW(m_mp)
+		CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLPhysicalPartitionSelector(
+						   m_mp, popSelector->MDId(), popSelector->SelectorId(),
+						   popSelector->ScanId()));
 	CExpression *pexprPrintable = popSelector->PexprCombinedPred();
 
-	// FIXME: This check is temporary
-	if (pexprPrintable == nullptr)
-	{
-		pexprPrintable = CUtils::PexprScalarConstBool(m_mp, true, false);
-	}
 	CDXLNode *pdxlnPrintable = PdxlnScalar(pexprPrintable);
-	pexprPrintable->Release();
 
 	CDXLPhysicalProperties *dxl_properties = GetProperties(pexprChild);
 	pdxlnSelector->SetProperties(dxl_properties);

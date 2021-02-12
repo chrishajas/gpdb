@@ -37,7 +37,7 @@ private:
 	IMDId *m_rel_mdid;
 
 	// number of partitioning levels
-	ULONG m_num_of_part_levels;
+	ULONG m_selector_id;
 
 	// scan id
 	ULONG m_scan_id;

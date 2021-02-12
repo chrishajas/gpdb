@@ -39,7 +39,7 @@ CParseHandlerPartitionSelector::CParseHandlerPartitionSelector(
 	CParseHandlerBase *parse_handler_root)
 	: CParseHandlerPhysicalOp(mp, parse_handler_mgr, parse_handler_root),
 	  m_rel_mdid(nullptr),
-	  m_num_of_part_levels(0),
+	  m_selector_id(0),
 	  m_scan_id(0)
 {
 }
@@ -86,12 +86,11 @@ CParseHandlerPartitionSelector::StartElement(
 				m_parse_handler_mgr->GetDXLMemoryManager(), attrs,
 				EdxltokenRelationMdid, EdxltokenPhysicalPartitionSelector);
 
-			// parse number of levels
-			m_num_of_part_levels =
-				CDXLOperatorFactory::ExtractConvertAttrValueToUlong(
-					m_parse_handler_mgr->GetDXLMemoryManager(), attrs,
-					EdxltokenPhysicalPartitionSelectorLevels,
-					EdxltokenPhysicalPartitionSelector);
+			// parse selector id
+			m_selector_id = CDXLOperatorFactory::ExtractConvertAttrValueToUlong(
+				m_parse_handler_mgr->GetDXLMemoryManager(), attrs,
+				EdxltokenPhysicalPartitionSelectorId,
+				EdxltokenPhysicalPartitionSelector);
 
 			// parse scan id
 			m_scan_id = CDXLOperatorFactory::ExtractConvertAttrValueToUlong(
@@ -225,8 +224,8 @@ CParseHandlerPartitionSelector::EndElement(
 	}
 
 	CDXLPhysicalPartitionSelector *dxl_op =
-		GPOS_NEW(m_mp) CDXLPhysicalPartitionSelector(
-			m_mp, m_rel_mdid, m_num_of_part_levels, m_scan_id);
+		GPOS_NEW(m_mp) CDXLPhysicalPartitionSelector(m_mp, m_rel_mdid,
+													 m_selector_id, m_scan_id);
 	m_dxl_node = GPOS_NEW(m_mp) CDXLNode(m_mp, dxl_op);
 
 	CParseHandlerProperties *prop_parse_handler =

@@ -78,4 +78,16 @@ CPhysicalDynamicTableScan::PstatsDerive(CMemoryPool *mp,
 	return CStatisticsUtils::DeriveStatsForDynamicScan(mp, exprhdl, ScanId());
 }
 
+
+CPartitionPropagationSpec *
+CPhysicalDynamicTableScan::PppsDerive(CMemoryPool *mp,
+									  CExpressionHandle &) const
+{
+	CPartitionPropagationSpec *pps = GPOS_NEW(mp) CPartitionPropagationSpec(mp);
+	pps->Insert(ScanId(), CPartitionPropagationSpec::EpptConsumer,
+				Ptabdesc()->MDId(), nullptr, nullptr);
+
+	return pps;
+}
+
 // EOF

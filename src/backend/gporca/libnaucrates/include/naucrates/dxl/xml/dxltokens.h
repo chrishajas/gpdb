@@ -108,7 +108,7 @@ enum Edxltoken
 	EdxltokenPhysicalTVF,
 	EdxltokenPhysicalWindow,
 	EdxltokenPhysicalPartitionSelector,
-	EdxltokenPhysicalPartitionSelectorLevels,
+	EdxltokenPhysicalPartitionSelectorId,
 	EdxltokenPhysicalPartitionSelectorScanId,
 	EdxltokenPhysicalValuesScan,
 
@@ -371,6 +371,7 @@ enum Edxltoken
 
 	EdxltokenAppendIsTarget,
 	EdxltokenAppendIsZapped,
+	EdxltokenSelectorIds,
 
 	EdxltokenOpNo,
 	EdxltokenOpName,

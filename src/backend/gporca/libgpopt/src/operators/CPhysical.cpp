@@ -958,12 +958,27 @@ CPhysical::Ped(CMemoryPool *mp, CExpressionHandle &exprhdl,
 }
 
 CPartitionPropagationSpec *
-CPhysical::PppsRequired(CMemoryPool *, CExpressionHandle &,
-						CPartitionPropagationSpec *pps_required, ULONG,
-						CDrvdPropArray *, ULONG) const
+CPhysical::PppsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
+						CPartitionPropagationSpec *pppsRequired,
+						ULONG child_index, CDrvdPropArray *, ULONG) const
 {
-	pps_required->AddRef();
-	return pps_required;
+	// pass through consumer<x> requests to the appropriate child.
+	// do not pass through any propagator<x> requests
+	CPartitionPropagationSpec *pps_result =
+		GPOS_NEW(mp) CPartitionPropagationSpec(mp);
+
+	CBitSet *allowed_scan_ids = GPOS_NEW(mp) CBitSet(mp);
+	CPartInfo *part_info = exprhdl.DerivePartitionInfo(child_index);
+	for (ULONG ul = 0; ul < part_info->UlConsumers(); ++ul)
+	{
+		ULONG scan_id = part_info->ScanId(ul);
+		allowed_scan_ids->ExchangeSet(scan_id);
+	}
+
+	pps_result->InsertAllowedConsumers(pppsRequired, allowed_scan_ids);
+	allowed_scan_ids->Release();
+
+	return pps_result;
 }
 
 CEnfdProp::EPropEnforcingType
@@ -988,14 +1003,20 @@ CPhysical::EpetPartitionPropagation(
 CPartitionPropagationSpec *
 CPhysical::PppsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const
 {
-	// FIXME:
-	if (exprhdl.Arity() == 0)
+	CPartitionPropagationSpec *pps_result =
+		GPOS_NEW(mp) CPartitionPropagationSpec(mp);
+
+	for (ULONG ul = 0; ul < exprhdl.Arity(); ++ul)
 	{
-		return GPOS_NEW(mp) CPartitionPropagationSpec();
+		if (exprhdl.FScalarChild(ul))
+		{
+			continue;
+		}
+		CPartitionPropagationSpec *pps = exprhdl.Pdpplan(ul)->Ppps();
+		pps_result->InsertAll(pps);
 	}
-	CPartitionPropagationSpec *pps = exprhdl.Pdpplan(0 /*child_index*/)->Ppps();
-	pps->AddRef();
-	return pps;
+
+	return pps_result;
 }
 
 // EOF

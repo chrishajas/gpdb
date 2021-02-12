@@ -230,7 +230,8 @@ CQueryContext::PqcGenerate(CMemoryPool *mp, CExpression *pexpr,
 		CRewindabilitySpec::ErtNone, CRewindabilitySpec::EmhtNoMotion);
 
 	// No partition propagation required at the top
-	CPartitionPropagationSpec *ppps = GPOS_NEW(mp) CPartitionPropagationSpec();
+	CPartitionPropagationSpec *ppps =
+		GPOS_NEW(mp) CPartitionPropagationSpec(mp);
 
 	// Ensure order, distribution and rewindability meet 'satisfy' matching at the top level
 	CEnfdOrder *peo = GPOS_NEW(mp) CEnfdOrder(pos, CEnfdOrder::EomSatisfy);

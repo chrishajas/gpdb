@@ -15,6 +15,8 @@
 #define GPDXL_CDXLPhysicalAppend_H
 
 #include "gpos/base.h"
+#include "gpos/common/CBitSet.h"
+#include "gpos/common/CDynamicPtrArray.h"
 
 #include "naucrates/dxl/operators/CDXLPhysical.h"
 #include "naucrates/dxl/operators/CDXLTableDescr.h"
@@ -53,6 +55,8 @@ private:
 	// table descr of the root partitioned table (when translated from a CPhysicalDynamicTableScan)
 	CDXLTableDescr *m_dxl_table_descr = nullptr;
 
+	ULongPtrArray *m_selector_ids = nullptr;
+
 public:
 	CDXLPhysicalAppend(const CDXLPhysicalAppend &) = delete;
 
@@ -61,7 +65,8 @@ public:
 
 	// ctor for partitioned table scan
 	CDXLPhysicalAppend(CMemoryPool *mp, BOOL fIsTarget, BOOL fIsZapped,
-					   INT scan_id, CDXLTableDescr *dxl_table_desc);
+					   INT scan_id, CDXLTableDescr *dxl_table_desc,
+					   ULongPtrArray *selector_ids);
 
 	// dtor
 	~CDXLPhysicalAppend();
@@ -89,6 +94,12 @@ public:
 	GetScanId()
 	{
 		return m_scan_id;
+	}
+
+	const ULongPtrArray *
+	GetSelectorIds() const
+	{
+		return m_selector_ids;
 	}
 
 	// serialize operator in DXL format

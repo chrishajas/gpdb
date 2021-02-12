@@ -34,6 +34,7 @@ CPhysicalPartitionSelector::CPhysicalPartitionSelector(
 	CExpression *pexprScalar)
 	: CPhysical(mp),
 	  m_scan_id(scan_id),
+	  m_selector_id(COptCtxt::PoctxtFromTLS()->NextPartSelectorId()),
 	  m_mdid(mdid),
 	  m_pdrgpdrgpcr(pdrgpdrgpcr),
 	  m_pexprCombinedPredicate(pexprScalar)
@@ -235,6 +236,20 @@ CPhysicalPartitionSelector::PcteRequired(CMemoryPool *,		   //mp,
 	return PcterPushThru(pcter);
 }
 
+CPartitionPropagationSpec *
+CPhysicalPartitionSelector::PppsRequired(
+	CMemoryPool *mp, CExpressionHandle &,
+	CPartitionPropagationSpec *pppsRequired,
+	ULONG child_index GPOS_ASSERTS_ONLY, CDrvdPropArray *, ULONG) const
+{
+	GPOS_ASSERT(child_index == 0);
+
+	CPartitionPropagationSpec *pps_result =
+		GPOS_NEW(mp) CPartitionPropagationSpec(mp);
+	pps_result->InsertAllExcept(pppsRequired, m_scan_id);
+	return pps_result;
+}
+
 //---------------------------------------------------------------------------
 //	@function:
 //		CPhysicalPartitionSelector::FProvidesReqdCols
@@ -295,6 +310,26 @@ CPhysicalPartitionSelector::PrsDerive(CMemoryPool *mp,
 									  CExpressionHandle &exprhdl) const
 {
 	return PrsDerivePassThruOuter(mp, exprhdl);
+}
+
+CPartitionPropagationSpec *
+CPhysicalPartitionSelector::PppsDerive(CMemoryPool *mp,
+									   CExpressionHandle &exprhdl) const
+{
+	CPartitionPropagationSpec *pps_result =
+		GPOS_NEW(mp) CPartitionPropagationSpec(mp);
+	CPartitionPropagationSpec *pps_child =
+		exprhdl.Pdpplan(0 /* child_index */)->Ppps();
+
+	CBitSet *selector_ids = GPOS_NEW(mp) CBitSet(mp);
+	selector_ids->ExchangeSet(m_selector_id);
+
+	pps_result->InsertAll(pps_child);
+	pps_result->Insert(m_scan_id, CPartitionPropagationSpec::EpptPropagator,
+					   m_mdid, selector_ids, nullptr);
+	selector_ids->Release();
+
+	return pps_result;
 }
 
 //---------------------------------------------------------------------------
@@ -383,7 +418,8 @@ CPhysicalPartitionSelector::EpetOrder(CExpressionHandle &,	// exprhdl,
 IOstream &
 CPhysicalPartitionSelector::OsPrint(IOstream &os) const
 {
-	os << SzId() << ", Scan Id: " << m_scan_id << ", Part Table: ";
+	os << SzId() << ", Id: " << SelectorId() << ", Scan Id: " << m_scan_id
+	   << ", Part Table: ";
 	MDId()->OsPrint(os);
 
 	return os;

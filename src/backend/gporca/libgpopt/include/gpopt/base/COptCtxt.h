@@ -98,6 +98,9 @@ private:
 	// does this plan have a direct dispatchable filter
 	CExpressionArray *m_direct_dispatchable_filters;
 
+	// partition selector ids - unique per PartitionSelector created
+	ULONG m_selector_id_counter;
+
 public:
 	COptCtxt(COptCtxt &) = delete;
 
@@ -248,6 +251,12 @@ public:
 	UlPartIndexNextVal()
 	{
 		return m_auPartId++;
+	}
+
+	ULONG
+	NextPartSelectorId()
+	{
+		return m_selector_id_counter++;
 	}
 
 	// required system columns
