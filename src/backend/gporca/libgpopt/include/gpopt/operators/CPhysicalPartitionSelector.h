@@ -30,7 +30,7 @@ namespace gpopt
 //---------------------------------------------------------------------------
 class CPhysicalPartitionSelector : public CPhysical
 {
-protected:
+private:
 	// Scan id
 	ULONG m_scan_id;
 
@@ -40,48 +40,8 @@ protected:
 	// partition keys
 	CColRef2dArray *m_pdrgpdrgpcr;
 
-	// part constraint map
-	UlongToPartConstraintMap *m_ppartcnstrmap;
-
-	// relation part constraint
-	CPartConstraint *m_part_constraint;
-
-	// expressions used in equality filters; for a filter of the form
-	// pk1 = expr, we only store the expr
-	UlongToExprMap *m_phmulexprEqPredicates;
-
-	// expressions used in general predicates; we store the whole predicate
-	// in this case (e.g. pk1 > 50)
-	UlongToExprMap *m_phmulexprPredicates;
-
-	// residual partition selection expression that cannot be split to
-	// individual levels (e.g. pk1 < 5 OR pk2 = 6)
-	CExpression *m_pexprResidual;
-
 	// combined partition selection predicate
 	CExpression *m_pexprCombinedPredicate;
-
-	// ctor
-	CPhysicalPartitionSelector(CMemoryPool *mp, IMDId *mdid,
-							   UlongToExprMap *phmulexprEqPredicates);
-
-	// return a single combined partition selection predicate
-	CExpression *PexprCombinedPartPred(CMemoryPool *mp) const;
-
-	// check whether two expression maps match
-	static BOOL FMatchExprMaps(UlongToExprMap *phmulexprFst,
-							   UlongToExprMap *phmulexprSnd);
-
-private:
-	// check whether part constraint maps match
-	BOOL FMatchPartCnstr(UlongToPartConstraintMap *ppartcnstrmap) const;
-
-	// check whether this operator has a partition selection filter
-	BOOL FHasFilter() const;
-
-	// check whether first part constraint map is contained in the second one
-	static BOOL FSubsetPartCnstr(UlongToPartConstraintMap *ppartcnstrmapFst,
-								 UlongToPartConstraintMap *ppartcnstrmapSnd);
 
 public:
 	CPhysicalPartitionSelector(const CPhysicalPartitionSelector &) = delete;
@@ -89,11 +49,7 @@ public:
 	// ctor
 	CPhysicalPartitionSelector(CMemoryPool *mp, ULONG scan_id, IMDId *mdid,
 							   CColRef2dArray *pdrgpdrgpcr,
-							   UlongToPartConstraintMap *ppartcnstrmap,
-							   CPartConstraint *ppartcnstr,
-							   UlongToExprMap *phmulexprEqPredicates,
-							   UlongToExprMap *phmulexprPredicates,
-							   CExpression *pexprResidual);
+							   CExpression *pexprScalar);
 
 	// dtor
 	~CPhysicalPartitionSelector() override;
@@ -133,30 +89,11 @@ public:
 		return m_pdrgpdrgpcr;
 	}
 
-	// number of partitioning levels
-	virtual ULONG UlPartLevels() const;
-
 	// return a combined printable version of the partition selection predicate
 	CExpression *
 	PexprCombinedPred() const
 	{
 		return m_pexprCombinedPredicate;
-	}
-
-	// return the equality filter expression for the given level
-	CExpression *PexprEqFilter(ULONG ulPartLevel) const;
-
-	// return the filter expression for the given level
-	CExpression *PexprFilter(ULONG ulPartLevel) const;
-
-	// return the partition selection predicate for the given level
-	CExpression *PexprPartPred(CMemoryPool *mp, ULONG ulPartLevel) const;
-
-	// return the residual predicate
-	CExpression *
-	PexprResidualPred() const
-	{
-		return m_pexprResidual;
 	}
 
 	// match function

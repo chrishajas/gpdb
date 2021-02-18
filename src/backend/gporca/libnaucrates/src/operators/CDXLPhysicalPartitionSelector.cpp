@@ -32,8 +32,6 @@ CDXLPhysicalPartitionSelector::CDXLPhysicalPartitionSelector(
 	  m_num_of_part_levels(num_of_part_levels),
 	  m_scan_id(scan_id)
 {
-	GPOS_ASSERT(mdid_rel->IsValid());
-	GPOS_ASSERT(0 < num_of_part_levels);
 }
 
 //---------------------------------------------------------------------------
@@ -46,7 +44,6 @@ CDXLPhysicalPartitionSelector::CDXLPhysicalPartitionSelector(
 //---------------------------------------------------------------------------
 CDXLPhysicalPartitionSelector::~CDXLPhysicalPartitionSelector()
 {
-	m_rel_mdid->Release();
 }
 
 //---------------------------------------------------------------------------
@@ -104,42 +101,19 @@ CDXLPhysicalPartitionSelector::SerializeToDXL(CXMLSerializer *xml_serializer,
 	dxlnode->SerializePropertiesToDXL(xml_serializer);
 
 	// serialize project list and filter lists
-	(*dxlnode)[EdxlpsIndexProjList]->SerializeToDXL(xml_serializer);
-	(*dxlnode)[EdxlpsIndexEqFilters]->SerializeToDXL(xml_serializer);
-	(*dxlnode)[EdxlpsIndexFilters]->SerializeToDXL(xml_serializer);
-
-	// serialize residual filter
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-		CDXLTokens::GetDXLTokenStr(EdxltokenScalarResidualFilter));
-	(*dxlnode)[EdxlpsIndexResidualFilter]->SerializeToDXL(xml_serializer);
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-		CDXLTokens::GetDXLTokenStr(EdxltokenScalarResidualFilter));
-
-	// serialize propagation expression
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-		CDXLTokens::GetDXLTokenStr(EdxltokenScalarPropagationExpr));
-	(*dxlnode)[EdxlpsIndexPropExpr]->SerializeToDXL(xml_serializer);
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-		CDXLTokens::GetDXLTokenStr(EdxltokenScalarPropagationExpr));
+	(*dxlnode)[0]->SerializeToDXL(xml_serializer);
 
 	// serialize printable filter
 	xml_serializer->OpenElement(
 		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
 		CDXLTokens::GetDXLTokenStr(EdxltokenScalarPrintableFilter));
-	(*dxlnode)[EdxlpsIndexPrintableFilter]->SerializeToDXL(xml_serializer);
+	(*dxlnode)[1]->SerializeToDXL(xml_serializer);
 	xml_serializer->CloseElement(
 		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
 		CDXLTokens::GetDXLTokenStr(EdxltokenScalarPrintableFilter));
 
 	// serialize relational child, if any
-	if (7 == dxlnode->Arity())
-	{
-		(*dxlnode)[EdxlpsIndexChild]->SerializeToDXL(xml_serializer);
-	}
+	(*dxlnode)[2]->SerializeToDXL(xml_serializer);
 
 	xml_serializer->CloseElement(
 		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
