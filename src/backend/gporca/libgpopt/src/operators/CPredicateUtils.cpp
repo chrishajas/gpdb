@@ -1318,27 +1318,12 @@ CPredicateUtils::PexprPartPruningPredicate(
 		if (nullptr != pcrsAllowedRefs &&
 			!GPOS_FTRACE(EopttraceAllowGeneralPredicatesforDPE))
 		{
-			// Only allow equal comparison exprs for dynamic partition selection.
-
-			// This will reduce long execution times for partition selection using
-			// non-equality predicates. These are expensive to execute since (at the
-			// moment) to determine the selected partitions, the executor must, for
-			// each row from its subtree, iterate over all the partition rules, and
-			// for each such rule, execute the non-equality predicate. So, in case of
-			// a large number of rows and/or large number of partitions the execution
-			// time of partition selection may outweigh any potential savings earned
-			// from skipping the scans of eliminated partitions.
 			if (FComparison(pexpr, pcrPartKey, pcrsAllowedRefs) &&
 				!pexpr->DeriveScalarFunctionProperties()
 					 ->NeedsSingletonExecution())
 			{
-				CScalarCmp *popCmp = CScalarCmp::PopConvert(pexpr->Pop());
-
-				if (popCmp->ParseCmpType() == IMDType::EcmptEq)
-				{
-					pexpr->AddRef();
-					pdrgpexprResult->Append(pexpr);
-				}
+				pexpr->AddRef();
+				pdrgpexprResult->Append(pexpr);
 			}
 
 			// pexprCol contains a predicate only on partKey, which is useless for
