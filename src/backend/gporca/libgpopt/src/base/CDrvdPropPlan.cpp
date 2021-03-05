@@ -132,13 +132,15 @@ CDrvdPropPlan::CopyCTEProducerPlanProps(CMemoryPool *mp, CDrvdPropCtxt *pdpctxt,
 														   true /*must_exist*/);
 		m_pds = pdpplan->Pds()->PdsCopyWithRemappedColumns(mp, colref_mapping,
 														   true /*must_exist*/);
-		// FIXME:
-		// m_ppps = pdpplan->Ppps()->PdsCopyWithRemappedColumns(mp, colref_mapping,
-		//												   true /*must_exist*/);
 		// rewindability and partition filter map do not need column remapping,
 		// we add-ref producer's properties directly
 		pdpplan->Prs()->AddRef();
 		m_prs = pdpplan->Prs();
+
+		// FIXME: Is the right thing to do?
+		// no need to copy the part index map. return an empty one. This is to
+		// distinguish between a CTE consumer and the inlined expression
+		m_ppps = GPOS_NEW(mp) CPartitionPropagationSpec(mp);
 
 		GPOS_ASSERT(CDistributionSpec::EdtAny != m_pds->Edt() &&
 					"CDistributionAny is a require-only, cannot be derived");
