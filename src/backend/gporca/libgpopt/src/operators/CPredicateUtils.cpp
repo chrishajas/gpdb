@@ -1289,6 +1289,47 @@ CPredicateUtils::FCompareIdentToConstArray(CExpression *pexpr)
 	return CUtils::FScalarConstArray(pexprArray);
 }
 
+CExpression *
+CPredicateUtils::ValidatePartPruningExpr(CMemoryPool *mp, CExpression *expr,
+										 CColRef *pcrPartKey,
+										 CColRefSet *pcrsAllowedRefs)
+{
+	GPOS_ASSERT(nullptr != expr);
+
+	if (expr->DeriveScalarFunctionProperties()->NeedsSingletonExecution() ||
+		COperator::EopScalarCmp != expr->Pop()->Eopid())
+	{
+		return nullptr;
+	}
+
+	CScalarCmp *sc_cmp = CScalarCmp::PopConvert(expr->Pop());
+
+	CExpression *expr_left = (*expr)[0];
+	CExpression *expr_right = (*expr)[1];
+
+	if ((CUtils::FScalarIdent(expr_left, pcrPartKey) ||
+		 CCastUtils::FBinaryCoercibleCastedScId(expr_left, pcrPartKey)) &&
+		FValidRefsOnly(expr_right, pcrsAllowedRefs))
+	{
+		expr->AddRef();
+		return expr;
+	}
+
+	if ((CUtils::FScalarIdent(expr_right, pcrPartKey) ||
+		 CCastUtils::FBinaryCoercibleCastedScId(expr_right, pcrPartKey)) &&
+		FValidRefsOnly(expr_left, pcrsAllowedRefs))
+	{
+		COperator *commuted_op = sc_cmp->PopCommutedOp(mp);
+		expr_left->AddRef();
+		expr_right->AddRef();
+		CExpression *swapped_expr =
+			GPOS_NEW(mp) CExpression(mp, commuted_op, expr_right, expr_left);
+		return swapped_expr;
+	}
+
+	return nullptr;
+}
+
 // Find a predicate that can be used for partition pruning with the given
 // part key in the array of expressions if one exists. Relevant predicates
 // are those that compare the partition key to expressions involving only
@@ -1318,12 +1359,12 @@ CPredicateUtils::PexprPartPruningPredicate(
 		if (nullptr != pcrsAllowedRefs &&
 			!GPOS_FTRACE(EopttraceAllowGeneralPredicatesforDPE))
 		{
-			if (FComparison(pexpr, pcrPartKey, pcrsAllowedRefs) &&
-				!pexpr->DeriveScalarFunctionProperties()
-					 ->NeedsSingletonExecution())
+			CExpression *canonical_expr =
+				ValidatePartPruningExpr(mp, pexpr, pcrPartKey, pcrsAllowedRefs);
+
+			if (nullptr != canonical_expr)
 			{
-				pexpr->AddRef();
-				pdrgpexprResult->Append(pexpr);
+				pdrgpexprResult->Append(canonical_expr);
 			}
 
 			// pexprCol contains a predicate only on partKey, which is useless for
@@ -1332,6 +1373,7 @@ CPredicateUtils::PexprPartPruningPredicate(
 		}
 		else
 		{
+			// FIXME: dead code!
 			// (NULL == pcrsAllowedRefs) implies static partition elimination, since
 			// the expressions we select can only contain the partition key
 			// If EopttraceAllowGeneralPredicatesforDPE is set, allow a larger set
