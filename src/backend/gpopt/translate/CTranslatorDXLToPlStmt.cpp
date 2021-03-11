@@ -3363,12 +3363,18 @@ CTranslatorDXLToPlStmt::TranslateDXLPartSelector(
 		m_dxl_to_plstmt_context->GetParamIdForSelector(
 			oid_type, partition_selector_dxlop->SelectorId());
 
+	// search the rtable for rtindex
+	// an Append node on the outer side of a parent HashJoin would already have
+	// beeen translated and would have populated the rtable with the root RTE
+	Index rtindex = m_dxl_to_plstmt_context->FindRTE(mdid->Oid());
+	GPOS_ASSERT(rtindex > 0);
+
 	// part_prune_info
 	CDXLNode *filterNode = (*partition_selector_dxlnode)[1];
 
 	ULongPtrArray *part_indexes = partition_selector_dxlop->Partitions();
 	List *prune_infos = CPartPruneStepsBuilder::CreatePartPruneInfos(
-		filterNode, relation.get(), part_indexes, &colid_var_mapping,
+		filterNode, relation.get(), rtindex, part_indexes, &colid_var_mapping,
 		m_translator_dxl_to_scalar);
 
 	partition_selector->part_prune_info = MakeNode(PartitionPruneInfo);

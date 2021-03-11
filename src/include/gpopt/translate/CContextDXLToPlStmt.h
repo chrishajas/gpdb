@@ -256,6 +256,8 @@ public:
 	void SetStaticPruneResult(ULONG scanId, List *static_prune_result);
 
 	ULONG GetParamIdForSelector(OID oid_type, const ULONG selectorId);
+
+	Index FindRTE(Oid reloid);
 };
 
 }  // namespace gpdxl

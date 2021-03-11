@@ -34,10 +34,11 @@ using namespace gpdxl;
 
 // ctor
 CPartPruneStepsBuilder::CPartPruneStepsBuilder(
-	Relation relation, ULongPtrArray *part_indexes,
+	Relation relation, Index rtindex, ULongPtrArray *part_indexes,
 	CMappingColIdVarPlStmt *colid_var_mapping,
 	CTranslatorDXLToScalar *translator_dxl_to_scalar)
 	: m_relation(relation),
+	  m_rtindex(rtindex),
 	  m_part_indexes(part_indexes),
 	  m_colid_var_mapping(colid_var_mapping),
 	  m_translator_dxl_to_scalar(translator_dxl_to_scalar)
@@ -46,12 +47,12 @@ CPartPruneStepsBuilder::CPartPruneStepsBuilder(
 
 List *
 CPartPruneStepsBuilder::CreatePartPruneInfos(
-	CDXLNode *filterNode, Relation relation, ULongPtrArray *part_indexes,
-	CMappingColIdVarPlStmt *colid_var_mapping,
+	CDXLNode *filterNode, Relation relation, Index rtindex,
+	ULongPtrArray *part_indexes, CMappingColIdVarPlStmt *colid_var_mapping,
 	CTranslatorDXLToScalar *translator_dxl_to_scalar)
 {
-	CPartPruneStepsBuilder builder(relation, part_indexes, colid_var_mapping,
-								   translator_dxl_to_scalar);
+	CPartPruneStepsBuilder builder(relation, rtindex, part_indexes,
+								   colid_var_mapping, translator_dxl_to_scalar);
 
 	// Since ORCA translates each DynamicTableScan to a different Append node,
 	// there is always only one partition heirarchy per Append node.
@@ -71,7 +72,7 @@ PartitionedRelPruneInfo *
 CPartPruneStepsBuilder::CreatePartPruneInfoForOneLevel(CDXLNode *filterNode)
 {
 	PartitionedRelPruneInfo *pinfo = MakeNode(PartitionedRelPruneInfo);
-	pinfo->rtindex = 1;
+	pinfo->rtindex = m_rtindex;
 	pinfo->nparts = m_relation->rd_partdesc->nparts;
 
 	pinfo->subpart_map = (int *) palloc(sizeof(int) * pinfo->nparts);

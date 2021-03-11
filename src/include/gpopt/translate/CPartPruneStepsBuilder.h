@@ -29,6 +29,9 @@ private:
 	// root partitioned tabled
 	Relation m_relation;
 
+	// index in the rtable
+	Index m_rtindex;
+
 	// list of pruned scan nodes denoted as an index of the relation's partition_mdids
 	ULongPtrArray *m_part_indexes;
 
@@ -39,7 +42,8 @@ private:
 	CTranslatorDXLToScalar *m_translator_dxl_to_scalar;
 
 	// ctor
-	CPartPruneStepsBuilder(Relation relation, ULongPtrArray *part_indexes,
+	CPartPruneStepsBuilder(Relation relation, Index rtindex,
+						   ULongPtrArray *part_indexes,
 						   CMappingColIdVarPlStmt *colid_var_mapping,
 						   CTranslatorDXLToScalar *translator_dxl_to_scalar);
 
@@ -50,8 +54,8 @@ public:
 	~CPartPruneStepsBuilder() = default;
 
 	static List *CreatePartPruneInfos(
-		CDXLNode *filterNode, Relation relation, ULongPtrArray *part_indexes,
-		CMappingColIdVarPlStmt *colid_var_mapping,
+		CDXLNode *filterNode, Relation relation, Index rtindex,
+		ULongPtrArray *part_indexes, CMappingColIdVarPlStmt *colid_var_mapping,
 		CTranslatorDXLToScalar *translator_dxl_to_scalar);
 
 	PartitionedRelPruneInfo *CreatePartPruneInfoForOneLevel(

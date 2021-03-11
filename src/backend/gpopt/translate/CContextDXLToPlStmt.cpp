@@ -548,4 +548,21 @@ CContextDXLToPlStmt::GetParamIdForSelector(OID oid_type, ULONG selectorId)
 	}
 	return *param_id;
 }
+
+Index
+CContextDXLToPlStmt::FindRTE(Oid reloid)
+{
+	ListCell *lc;
+	int idx = 0;
+
+	ForEachWithCount(lc, m_rtable_entries_list, idx)
+	{
+		RangeTblEntry *rte = (RangeTblEntry *) lfirst(lc);
+		if (rte->relid == reloid)
+		{
+			return idx + 1;
+		}
+	}
+	return -1;
+}
 // EOF
