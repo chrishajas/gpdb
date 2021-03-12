@@ -4883,6 +4883,7 @@ CTranslatorExprToDXL::PdxlnPartitionSelector(
 		parts->Append(GPOS_NEW(m_mp) ULONG(bsi.Bit()));
 	}
 
+	popSelector->MDId()->AddRef();
 	CDXLNode *pdxlnSelector = GPOS_NEW(m_mp)
 		CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLPhysicalPartitionSelector(
 						   m_mp, popSelector->MDId(), popSelector->SelectorId(),

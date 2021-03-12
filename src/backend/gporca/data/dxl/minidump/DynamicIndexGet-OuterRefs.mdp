@@ -26056,7 +26056,7 @@
         </dxl:Or>
       </dxl:LogicalJoin>
     </dxl:Query>
-    <dxl:Plan Id="0" SpaceSize="40199173">
+    <dxl:Plan Id="0" SpaceSize="34986333">
       <dxl:GatherMotion InputSegments="0,1,2" OutputSegments="-1">
         <dxl:Properties>
           <dxl:Cost StartupCost="0" TotalCost="1357145191.092772" Rows="1.000000" Width="1"/>
@@ -26474,7 +26474,7 @@
                                               </dxl:ProjList>
                                               <dxl:Filter/>
                                               <dxl:OneTimeFilter/>
-                                              <dxl:Append IsTarget="false" IsZapped="false">
+                                              <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
                                                 <dxl:Properties>
                                                   <dxl:Cost StartupCost="0" TotalCost="6.000831" Rows="1.000000" Width="8"/>
                                                 </dxl:Properties>
@@ -26550,7 +26550,7 @@
                                               </dxl:Append>
                                             </dxl:Result>
                                           </dxl:BroadcastMotion>
-                                          <dxl:Append IsTarget="false" IsZapped="false">
+                                          <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
                                             <dxl:Properties>
                                               <dxl:Cost StartupCost="0" TotalCost="6.000441" Rows="1.000000" Width="8"/>
                                             </dxl:Properties>
@@ -31853,7 +31853,7 @@
                           <dxl:JoinFilter>
                             <dxl:ConstValue TypeMdid="0.16.1.0" Value="true"/>
                           </dxl:JoinFilter>
-                          <dxl:Append IsTarget="false" IsZapped="false">
+                          <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
                             <dxl:Properties>
                               <dxl:Cost StartupCost="0" TotalCost="431.000042" Rows="1.000000" Width="4"/>
                             </dxl:Properties>
@@ -36301,7 +36301,7 @@
                               <dxl:ProjList/>
                               <dxl:Filter/>
                               <dxl:SortingColumnList/>
-                              <dxl:Append IsTarget="false" IsZapped="false">
+                              <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
                                 <dxl:Properties>
                                   <dxl:Cost StartupCost="0" TotalCost="431.000025" Rows="1.000000" Width="1"/>
                                 </dxl:Properties>

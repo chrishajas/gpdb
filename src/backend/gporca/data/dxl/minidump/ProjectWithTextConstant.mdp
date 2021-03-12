@@ -1900,7 +1900,7 @@
         </dxl:ProjList>
         <dxl:Filter/>
         <dxl:SortingColumnList/>
-        <dxl:Append IsTarget="false" IsZapped="false">
+        <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
           <dxl:Properties>
             <dxl:Cost StartupCost="0" TotalCost="1038.331535" Rows="998707.000000" Width="8"/>
           </dxl:Properties>

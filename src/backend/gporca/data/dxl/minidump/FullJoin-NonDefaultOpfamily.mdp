@@ -538,7 +538,7 @@
                 </dxl:TableDescriptor>
               </dxl:TableScan>
             </dxl:CTEProducer>
-            <dxl:Append IsTarget="false" IsZapped="false">
+            <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
               <dxl:Properties>
                 <dxl:Cost StartupCost="0" TotalCost="1724.001072" Rows="10.000000" Width="8"/>
               </dxl:Properties>

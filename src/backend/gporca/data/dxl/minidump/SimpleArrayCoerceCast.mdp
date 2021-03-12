@@ -120,7 +120,7 @@
       </dxl:UnionAll>
     </dxl:Query>
     <dxl:Plan Id="0" SpaceSize="3">
-      <dxl:Append IsTarget="false" IsZapped="false">
+      <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
         <dxl:Properties>
           <dxl:Cost StartupCost="0" TotalCost="0.000042" Rows="2.000000" Width="8"/>
         </dxl:Properties>

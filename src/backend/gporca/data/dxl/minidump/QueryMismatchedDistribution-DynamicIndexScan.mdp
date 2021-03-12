@@ -1015,7 +1015,7 @@ explain select i, count(j) from pt2  where k=5 group by i;
                     </dxl:SortingColumnList>
                     <dxl:LimitCount/>
                     <dxl:LimitOffset/>
-                    <dxl:Append IsTarget="false" IsZapped="false">
+                    <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
                       <dxl:Properties>
                         <dxl:Cost StartupCost="0" TotalCost="6.000159" Rows="1.000000" Width="24"/>
                       </dxl:Properties>

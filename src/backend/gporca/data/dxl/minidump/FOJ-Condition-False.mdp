@@ -371,7 +371,7 @@ select * from foo a full join foo b on false;
                 </dxl:TableDescriptor>
               </dxl:TableScan>
             </dxl:CTEProducer>
-            <dxl:Append IsTarget="false" IsZapped="false">
+            <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
               <dxl:Properties>
                 <dxl:Cost StartupCost="0" TotalCost="2155.002359" Rows="80.000000" Width="16"/>
               </dxl:Properties>

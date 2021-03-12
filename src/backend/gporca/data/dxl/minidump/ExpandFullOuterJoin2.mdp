@@ -410,7 +410,7 @@ select * from s full join s s1 on s.a = s1.a where s.a is null;
                   </dxl:TableDescriptor>
                 </dxl:TableScan>
               </dxl:CTEProducer>
-              <dxl:Append IsTarget="false" IsZapped="false">
+              <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
                 <dxl:Properties>
                   <dxl:Cost StartupCost="0" TotalCost="1724.001174" Rows="3.000000" Width="16"/>
                 </dxl:Properties>

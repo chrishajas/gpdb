@@ -6021,7 +6021,7 @@
                                 </dxl:ProjElem>
                               </dxl:ProjList>
                               <dxl:Filter/>
-                              <dxl:Append IsTarget="false" IsZapped="false">
+                              <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
                                 <dxl:Properties>
                                   <dxl:Cost StartupCost="0" TotalCost="12.304688" Rows="4.000000" Width="8"/>
                                 </dxl:Properties>
@@ -6044,7 +6044,7 @@
                                     </dxl:ProjElem>
                                   </dxl:ProjList>
                                   <dxl:Filter/>
-                                  <dxl:Append IsTarget="false" IsZapped="false">
+                                  <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
                                     <dxl:Properties>
                                       <dxl:Cost StartupCost="0" TotalCost="8.177734" Rows="3.000000" Width="8"/>
                                     </dxl:Properties>
@@ -6083,7 +6083,7 @@
                                             <dxl:Ident ColId="49" ColName="?column?" TypeMdid="0.23.1.0"/>
                                           </dxl:HashExpr>
                                         </dxl:HashExprList>
-                                        <dxl:Append IsTarget="false" IsZapped="false">
+                                        <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
                                           <dxl:Properties>
                                             <dxl:Cost StartupCost="0" TotalCost="3.066406" Rows="2.000000" Width="8"/>
                                           </dxl:Properties>

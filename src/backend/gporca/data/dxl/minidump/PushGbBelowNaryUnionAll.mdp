@@ -1692,7 +1692,7 @@ explain select id from uav group by id;
             </dxl:ProjElem>
           </dxl:ProjList>
           <dxl:Filter/>
-          <dxl:Append IsTarget="false" IsZapped="false">
+          <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
             <dxl:Properties>
               <dxl:Cost StartupCost="0" TotalCost="1307.847286" Rows="300.000000" Width="4"/>
             </dxl:Properties>

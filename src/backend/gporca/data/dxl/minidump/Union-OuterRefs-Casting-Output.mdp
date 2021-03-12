@@ -456,7 +456,7 @@ select * from x2 where a in (select a from y union select 1::int8);
                   </dxl:SortingColumnList>
                   <dxl:LimitCount/>
                   <dxl:LimitOffset/>
-                  <dxl:Append IsTarget="false" IsZapped="false">
+                  <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
                     <dxl:Properties>
                       <dxl:Cost StartupCost="0" TotalCost="431.000072" Rows="4.000000" Width="8"/>
                     </dxl:Properties>

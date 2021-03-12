@@ -663,7 +663,7 @@ and ei.entity_id  = i.ad_id;
                 </dxl:TableScan>
               </dxl:HashJoin>
             </dxl:CTEProducer>
-            <dxl:Append IsTarget="false" IsZapped="false">
+            <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
               <dxl:Properties>
                 <dxl:Cost StartupCost="0" TotalCost="1293.000766" Rows="2.000000" Width="20"/>
               </dxl:Properties>

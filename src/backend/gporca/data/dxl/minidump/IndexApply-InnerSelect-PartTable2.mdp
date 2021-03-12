@@ -585,7 +585,7 @@ select * from bar, (select * from foo where foo.a in (select h.a from bar h, bar
                 </dxl:Columns>
               </dxl:TableDescriptor>
             </dxl:TableScan>
-            <dxl:Append IsTarget="false" IsZapped="false">
+            <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
               <dxl:Properties>
                 <dxl:Cost StartupCost="0" TotalCost="6.000304" Rows="1.000000" Width="8"/>
               </dxl:Properties>

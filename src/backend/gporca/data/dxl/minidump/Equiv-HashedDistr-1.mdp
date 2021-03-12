@@ -2079,7 +2079,7 @@
               </dxl:HashJoin>
             </dxl:Aggregate>
           </dxl:CTEProducer>
-          <dxl:Append IsTarget="false" IsZapped="false">
+          <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
             <dxl:Properties>
               <dxl:Cost StartupCost="0" TotalCost="862.130246" Rows="19097.637457" Width="4"/>
             </dxl:Properties>

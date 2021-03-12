@@ -793,7 +793,7 @@
                       <dxl:Ident ColId="0" ColName="i" TypeMdid="0.23.1.0"/>
                     </dxl:HashExpr>
                   </dxl:HashExprList>
-                  <dxl:Append IsTarget="false" IsZapped="false">
+                  <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
                     <dxl:Properties>
                       <dxl:Cost StartupCost="0" TotalCost="431.000006" Rows="1.000000" Width="22"/>
                     </dxl:Properties>

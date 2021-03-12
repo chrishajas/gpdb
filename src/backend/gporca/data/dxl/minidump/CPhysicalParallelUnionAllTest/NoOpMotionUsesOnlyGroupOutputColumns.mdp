@@ -292,7 +292,7 @@ EXPLAIN SELECT b, a FROM foo UNION ALL SELECT b, a FROM foo INTERSECT ALL SELECT
         </dxl:ProjList>
         <dxl:Filter/>
         <dxl:SortingColumnList/>
-        <dxl:Append IsTarget="false" IsZapped="false">
+        <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
           <dxl:Properties>
             <dxl:Cost StartupCost="0" TotalCost="862.001294" Rows="1.000000" Width="8"/>
           </dxl:Properties>

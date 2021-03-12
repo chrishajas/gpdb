@@ -606,7 +606,7 @@
                 </dxl:GatherMotion>
               </dxl:Aggregate>
             </dxl:CTEProducer>
-            <dxl:Append IsTarget="false" IsZapped="false">
+            <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
               <dxl:Properties>
                 <dxl:Cost StartupCost="0" TotalCost="2648064.129786" Rows="3.000000" Width="8"/>
               </dxl:Properties>
@@ -930,7 +930,7 @@
                       </dxl:Aggregate>
                     </dxl:RandomMotion>
                   </dxl:CTEProducer>
-                  <dxl:Append IsTarget="false" IsZapped="false">
+                  <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
                     <dxl:Properties>
                       <dxl:Cost StartupCost="0" TotalCost="2648064.059808" Rows="3.000000" Width="4"/>
                     </dxl:Properties>

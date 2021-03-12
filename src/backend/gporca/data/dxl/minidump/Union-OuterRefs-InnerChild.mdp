@@ -398,7 +398,7 @@ select * from y where m in (select 1 union select n from x);
                   </dxl:SortingColumnList>
                   <dxl:LimitCount/>
                   <dxl:LimitOffset/>
-                  <dxl:Append IsTarget="false" IsZapped="false">
+                  <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
                     <dxl:Properties>
                       <dxl:Cost StartupCost="0" TotalCost="431.000054" Rows="4.000000" Width="4"/>
                     </dxl:Properties>

@@ -8925,7 +8925,7 @@
               <dxl:Ident ColId="82" ColName="c_customer_sk" TypeMdid="0.23.1.0"/>
             </dxl:Comparison>
           </dxl:HashCondList>
-          <dxl:Append IsTarget="false" IsZapped="false">
+          <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
             <dxl:Properties>
               <dxl:Cost StartupCost="0" TotalCost="1022.560577" Rows="2163263.000000" Width="4"/>
             </dxl:Properties>

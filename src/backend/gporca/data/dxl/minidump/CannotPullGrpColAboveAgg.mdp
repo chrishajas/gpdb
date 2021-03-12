@@ -3817,7 +3817,7 @@ The SQL along with the DDL are in TINC repo. In the aggregates directory under q
                 <dxl:ProjList/>
                 <dxl:Filter/>
                 <dxl:SortingColumnList/>
-                <dxl:Append IsTarget="false" IsZapped="false">
+                <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
                   <dxl:Properties>
                     <dxl:Cost StartupCost="0" TotalCost="14145.462473" Rows="120443.000000" Width="1"/>
                   </dxl:Properties>
@@ -3980,7 +3980,7 @@ The SQL along with the DDL are in TINC repo. In the aggregates directory under q
                                         </dxl:ProjList>
                                         <dxl:Filter/>
                                         <dxl:OneTimeFilter/>
-                                        <dxl:Append IsTarget="false" IsZapped="false">
+                                        <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
                                           <dxl:Properties>
                                             <dxl:Cost StartupCost="0" TotalCost="892.522602" Rows="120443.000000" Width="1"/>
                                           </dxl:Properties>
@@ -4391,7 +4391,7 @@ The SQL along with the DDL are in TINC repo. In the aggregates directory under q
                                                   </dxl:ProjList>
                                                   <dxl:Filter/>
                                                   <dxl:OneTimeFilter/>
-                                                  <dxl:Append IsTarget="false" IsZapped="false">
+                                                  <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
                                                     <dxl:Properties>
                                                       <dxl:Cost StartupCost="0" TotalCost="892.522602" Rows="120443.000000" Width="1"/>
                                                     </dxl:Properties>

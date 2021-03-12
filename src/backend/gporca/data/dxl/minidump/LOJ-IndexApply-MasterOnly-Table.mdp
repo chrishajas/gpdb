@@ -804,7 +804,7 @@ union all
       </dxl:UnionAll>
     </dxl:Query>
     <dxl:Plan Id="0" SpaceSize="4">
-      <dxl:Append IsTarget="false" IsZapped="false">
+      <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
         <dxl:Properties>
           <dxl:Cost StartupCost="0" TotalCost="874.433340" Rows="1.000000" Width="20"/>
         </dxl:Properties>

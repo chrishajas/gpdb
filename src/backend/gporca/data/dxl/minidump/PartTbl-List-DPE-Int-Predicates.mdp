@@ -476,7 +476,7 @@ select * from foo where b is not null;
         </dxl:ProjList>
         <dxl:Filter/>
         <dxl:SortingColumnList/>
-        <dxl:Append IsTarget="false" IsZapped="false">
+        <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
           <dxl:Properties>
             <dxl:Cost StartupCost="0" TotalCost="1724.000277" Rows="1.000000" Width="8"/>
           </dxl:Properties>

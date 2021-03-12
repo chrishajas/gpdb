@@ -16004,7 +16004,7 @@ with results as
                                     </dxl:SortingColumnList>
                                     <dxl:LimitCount/>
                                     <dxl:LimitOffset/>
-                                    <dxl:Append IsTarget="false" IsZapped="false">
+                                    <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
                                       <dxl:Properties>
                                         <dxl:Cost StartupCost="0" TotalCost="1293.000251" Rows="20.062500" Width="38"/>
                                       </dxl:Properties>

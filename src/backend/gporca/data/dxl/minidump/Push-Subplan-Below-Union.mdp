@@ -1076,7 +1076,7 @@ union
                       </dxl:SortingColumnList>
                       <dxl:LimitCount/>
                       <dxl:LimitOffset/>
-                      <dxl:Append IsTarget="false" IsZapped="false">
+                      <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
                         <dxl:Properties>
                           <dxl:Cost StartupCost="0" TotalCost="6034.002287" Rows="2.000000" Width="52"/>
                         </dxl:Properties>

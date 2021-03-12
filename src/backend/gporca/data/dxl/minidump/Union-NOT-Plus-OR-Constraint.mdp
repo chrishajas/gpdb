@@ -372,7 +372,7 @@ explain SELECT a.f3 FROM tb a JOIN tb b ON a.f1 = b.f1 AND NOT ( a.f2 = 0 OR a.f
                   </dxl:SortingColumnList>
                   <dxl:LimitCount/>
                   <dxl:LimitOffset/>
-                  <dxl:Append IsTarget="false" IsZapped="false">
+                  <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
                     <dxl:Properties>
                       <dxl:Cost StartupCost="0" TotalCost="862.001512" Rows="9.000000" Width="8"/>
                     </dxl:Properties>

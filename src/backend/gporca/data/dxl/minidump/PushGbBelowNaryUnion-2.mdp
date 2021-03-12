@@ -2353,7 +2353,7 @@
             </dxl:ProjElem>
           </dxl:ProjList>
           <dxl:Filter/>
-          <dxl:Append IsTarget="false" IsZapped="false">
+          <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
             <dxl:Properties>
               <dxl:Cost StartupCost="0" TotalCost="1307.967784" Rows="400.000000" Width="4"/>
             </dxl:Properties>

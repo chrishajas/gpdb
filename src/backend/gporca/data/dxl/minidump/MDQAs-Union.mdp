@@ -527,7 +527,7 @@ select a,count(distinct a), count(distinct b) from t1 group by a
             </dxl:ProjElem>
           </dxl:ProjList>
           <dxl:Filter/>
-          <dxl:Append IsTarget="false" IsZapped="false">
+          <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
             <dxl:Properties>
               <dxl:Cost StartupCost="0" TotalCost="2586.106268" Rows="134.000000" Width="20"/>
             </dxl:Properties>

@@ -173,7 +173,7 @@
               <dxl:OneTimeFilter/>
             </dxl:Result>
           </dxl:CTEProducer>
-          <dxl:Append IsTarget="false" IsZapped="false">
+          <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
             <dxl:Properties>
               <dxl:Cost StartupCost="0" TotalCost="2648064.218987" Rows="5.000000" Width="8"/>
             </dxl:Properties>

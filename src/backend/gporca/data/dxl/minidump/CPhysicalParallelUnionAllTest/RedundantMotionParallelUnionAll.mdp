@@ -382,7 +382,7 @@ select * from t, (select * from t union all select * from t) tt where t.c = tt.c
               <dxl:Ident ColId="0" ColName="c" TypeMdid="0.23.1.0"/>
             </dxl:Comparison>
           </dxl:HashCondList>
-          <dxl:Append IsTarget="false" IsZapped="false">
+          <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
             <dxl:Properties>
               <dxl:Cost StartupCost="0" TotalCost="431.000036" Rows="1.000000" Width="8"/>
             </dxl:Properties>

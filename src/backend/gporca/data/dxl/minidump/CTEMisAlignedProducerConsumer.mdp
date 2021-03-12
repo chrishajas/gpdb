@@ -417,7 +417,7 @@ SELECT 1 FROM (SELECT * FROM foo) t2 FULL JOIN (SELECT 1) t1 ON true;
                     <dxl:OneTimeFilter/>
                   </dxl:Result>
                 </dxl:CTEProducer>
-                <dxl:Append IsTarget="false" IsZapped="false">
+                <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
                   <dxl:Properties>
                     <dxl:Cost StartupCost="0" TotalCost="2648064.137410" Rows="3.000000" Width="1"/>
                   </dxl:Properties>

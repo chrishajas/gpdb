@@ -804,7 +804,7 @@
               </dxl:ProjElem>
             </dxl:ProjList>
             <dxl:Filter/>
-            <dxl:Append IsTarget="false" IsZapped="false">
+            <dxl:Append IsTarget="false" IsZapped="false" PartIndexId="-1" SelectorIds="">
               <dxl:Properties>
                 <dxl:Cost StartupCost="0" TotalCost="431.161720" Rows="10001.000000" Width="4"/>
               </dxl:Properties>
