@@ -516,12 +516,11 @@ CExpressionHandle::DeriveCostContextStats()
 		return;
 	}
 
-#if 0
 	CEnfdPartitionPropagation *pepp = m_pcc->Poc()->Prpp()->Pepp();
 	COperator *pop = Pop();
 	if (CUtils::FPhysicalScan(pop) &&
 		CPhysicalScan::PopConvert(pop)->FDynamicScan() &&
-		!pepp->PpfmDerived()->IsEmpty())
+		pepp->PppsRequired()->ContainsAnyConsumers())
 	{
 		// derive stats on dynamic table scan using stats of part selector
 		CPhysicalScan *popScan = CPhysicalScan::PopConvert(m_pgexpr->Pop());
@@ -544,7 +543,6 @@ CExpressionHandle::DeriveCostContextStats()
 
 		return;
 	}
-#endif
 
 	// release current stats since we will derive new stats
 	CRefCount::SafeRelease(m_pstats);

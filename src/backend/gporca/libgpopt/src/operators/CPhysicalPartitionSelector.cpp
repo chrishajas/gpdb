@@ -30,11 +30,11 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 CPhysicalPartitionSelector::CPhysicalPartitionSelector(
-	CMemoryPool *mp, ULONG scan_id, IMDId *mdid, CColRef2dArray *pdrgpdrgpcr,
+	CMemoryPool *mp, ULONG scan_id, ULONG selector_id, IMDId *mdid, CColRef2dArray *pdrgpdrgpcr,
 	CExpression *pexprScalar)
 	: CPhysical(mp),
 	  m_scan_id(scan_id),
-	  m_selector_id(COptCtxt::PoctxtFromTLS()->NextPartSelectorId()),
+	  m_selector_id(selector_id),
 	  m_mdid(mdid),
 	  m_pdrgpdrgpcr(pdrgpdrgpcr),
 	  m_pexprCombinedPredicate(pexprScalar)

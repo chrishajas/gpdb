@@ -18,6 +18,7 @@
 #include "gpopt/base/CCTEInfo.h"
 #include "gpopt/base/CColumnFactory.h"
 #include "gpopt/base/IComparator.h"
+#include "gpopt/base/SPartSelectorInfo.h"
 #include "gpopt/mdcache/CMDAccessor.h"
 
 namespace gpopt
@@ -115,8 +116,12 @@ private:
 	// child dxl nodes.
 	UlongToBitSetMap *m_scanid_to_part_map;
 
-	// partition selector ids - unique per PartitionSelector created
+	// unique id per partition selector in the memo
 	ULONG m_selector_id_counter;
+
+	// detailed info (filter expr, stats etc) per partition selector
+	// (required by CDynamicPhysicalScan for recomputing statistics for DPE)
+	SPartSelectorInfo *m_part_selector_info;
 
 public:
 	COptCtxt(COptCtxt &) = delete;
@@ -290,6 +295,10 @@ public:
 	{
 		return m_scanid_to_part_map->Find(&scanid);
 	}
+
+	BOOL AddPartSelectorInfo(ULONG selector_id, SPartSelectorInfoEntry* entry);
+
+	const SPartSelectorInfoEntry *GetPartSelectorInfo(ULONG selector_id) const;
 
 	// set required system columns
 	void

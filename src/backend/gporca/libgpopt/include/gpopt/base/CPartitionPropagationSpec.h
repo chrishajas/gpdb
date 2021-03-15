@@ -141,6 +141,8 @@ public:
 		return m_scan_ids->Get(scan_id);
 	}
 
+	BOOL ContainsAnyConsumers() const;
+
 	// equality function
 	BOOL Equals(const CPartitionPropagationSpec *ppps) const;
 

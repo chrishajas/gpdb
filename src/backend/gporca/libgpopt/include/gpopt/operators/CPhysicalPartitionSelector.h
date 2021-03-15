@@ -50,7 +50,8 @@ public:
 	CPhysicalPartitionSelector(const CPhysicalPartitionSelector &) = delete;
 
 	// ctor
-	CPhysicalPartitionSelector(CMemoryPool *mp, ULONG scan_id, IMDId *mdid,
+	CPhysicalPartitionSelector(CMemoryPool *mp, ULONG scan_id,
+							   ULONG selector_id, IMDId *mdid,
 							   CColRef2dArray *pdrgpdrgpcr,
 							   CExpression *pexprScalar);
 

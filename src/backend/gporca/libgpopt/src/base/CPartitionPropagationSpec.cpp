@@ -10,6 +10,7 @@
 //---------------------------------------------------------------------------
 
 #include "gpopt/base/CPartitionPropagationSpec.h"
+#include "gpopt/operators/CExpressionHandle.h"
 
 #include "gpos/memory/CAutoMemoryPool.h"
 
@@ -347,7 +348,8 @@ CPartitionPropagationSpec::FSatisfies(
 //
 //---------------------------------------------------------------------------
 void
-CPartitionPropagationSpec::AppendEnforcers(CMemoryPool *mp, CExpressionHandle &,
+CPartitionPropagationSpec::AppendEnforcers(CMemoryPool *mp,
+										   CExpressionHandle &exprhdl,
 										   CReqdPropPlan *,
 										   CExpressionArray *pdrgpexpr,
 										   CExpression *expr)
@@ -361,16 +363,28 @@ CPartitionPropagationSpec::AppendEnforcers(CMemoryPool *mp, CExpressionHandle &,
 			continue;
 		}
 
+		COptCtxt *opt_ctxt = COptCtxt::PoctxtFromTLS();
+		ULONG selector_id = opt_ctxt->NextPartSelectorId();
+
 		info->m_root_rel_mdid->AddRef();
 		info->m_filter_expr->AddRef();
 		expr->AddRef();
 		// FIXME: Compute partkeys correctly.
-		CExpression *part_selector = GPOS_NEW(mp)
-			CExpression(mp,
-						GPOS_NEW(mp) CPhysicalPartitionSelector(
-							mp, info->m_scan_id, info->m_root_rel_mdid,
-							nullptr /* part keys */, info->m_filter_expr),
-						expr);
+		CExpression *part_selector = GPOS_NEW(mp) CExpression(
+			mp,
+			GPOS_NEW(mp) CPhysicalPartitionSelector(
+				mp, info->m_scan_id, selector_id, info->m_root_rel_mdid,
+				nullptr /* part keys */, info->m_filter_expr),
+			expr);
+
+		IStatistics *stats = exprhdl.Pstats();
+
+		info->m_filter_expr->AddRef();
+		stats->AddRef();
+		opt_ctxt->AddPartSelectorInfo(
+			selector_id, GPOS_NEW(mp) SPartSelectorInfoEntry(
+							 selector_id, info->m_filter_expr, stats));
+
 
 		pdrgpexpr->Append(part_selector);
 	}
@@ -489,6 +503,27 @@ CPartitionPropagationSpec::OsPrint(IOstream &os) const
 		}
 	}
 	return os;
+}
+
+BOOL
+CPartitionPropagationSpec::ContainsAnyConsumers() const
+{
+	if (nullptr == m_part_prop_spec_infos)
+	{
+		return false;
+	}
+
+	for (ULONG ul = 0; ul < m_part_prop_spec_infos->Size(); ++ul)
+	{
+		SPartPropSpecInfo *info = (*m_part_prop_spec_infos)[ul];
+
+		if (info->m_type == CPartitionPropagationSpec::EpptConsumer)
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 // EOF
