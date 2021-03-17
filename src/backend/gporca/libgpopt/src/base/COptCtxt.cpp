@@ -51,6 +51,7 @@ COptCtxt::COptCtxt(CMemoryPool *mp, CColumnFactory *col_factory,
 	  m_has_master_only_tables(false),
 	  m_has_volatile_or_SQL_func(false),
 	  m_has_replicated_tables(false),
+		m_scanid_to_part_map(nullptr),
 	  m_selector_id_counter(0)
 {
 	GPOS_ASSERT(nullptr != mp);
@@ -64,6 +65,7 @@ COptCtxt::COptCtxt(CMemoryPool *mp, CColumnFactory *col_factory,
 	m_pcteinfo = GPOS_NEW(m_mp) CCTEInfo(m_mp);
 	m_cost_model = optimizer_config->GetCostModel();
 	m_direct_dispatchable_filters = GPOS_NEW(mp) CExpressionArray(mp);
+	m_scanid_to_part_map = GPOS_NEW(m_mp) UlongToBitSetMap(m_mp);
 }
 
 
@@ -85,6 +87,7 @@ COptCtxt::~COptCtxt()
 	m_optimizer_config->Release();
 	CRefCount::SafeRelease(m_pdrgpcrSystemCols);
 	CRefCount::SafeRelease(m_direct_dispatchable_filters);
+	m_scanid_to_part_map->Release();
 }
 
 
@@ -148,4 +151,16 @@ COptCtxt::FAllEnforcersEnabled()
 		GPOS_FTRACE(EopttraceDisablePartPropagation);
 
 	return !fEnforcerDisabled;
+}
+
+void
+COptCtxt::AddPartForScanId(ULONG scanid, ULONG index)
+{
+	CBitSet *parts = m_scanid_to_part_map->Find(&scanid);
+	if (nullptr == parts)
+	{
+		parts = GPOS_NEW(m_mp) CBitSet(m_mp);
+		m_scanid_to_part_map->Insert(GPOS_NEW(m_mp) ULONG(scanid), parts);
+	}
+	parts->ExchangeSet(index);
 }

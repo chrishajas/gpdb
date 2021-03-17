@@ -13,6 +13,7 @@
 #define GPDXL_CDXLPhysicalPartitionSelector_H
 
 #include "gpos/base.h"
+#include "gpos/common/CBitSet.h"
 
 #include "naucrates/dxl/operators/CDXLPhysical.h"
 
@@ -51,12 +52,15 @@ private:
 	// scan id
 	ULONG m_scan_id;
 
+	ULongPtrArray *m_parts;
+
 public:
 	CDXLPhysicalPartitionSelector(CDXLPhysicalPartitionSelector &) = delete;
 
 	// ctor
 	CDXLPhysicalPartitionSelector(CMemoryPool *mp, IMDId *mdid_rel,
-								  ULONG selector_id, ULONG scan_id);
+								  ULONG selector_id, ULONG scan_id,
+								  ULongPtrArray *parts);
 
 	// dtor
 	~CDXLPhysicalPartitionSelector() override;
@@ -86,6 +90,12 @@ public:
 	ScanId() const
 	{
 		return m_scan_id;
+	}
+
+	ULongPtrArray *
+	Partitions() const
+	{
+		return m_parts;
 	}
 
 	// serialize operator in DXL format

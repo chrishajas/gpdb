@@ -42,6 +42,9 @@ private:
 	// scan id
 	ULONG m_scan_id;
 
+	// partitions
+	ULongPtrArray *m_partitions;
+
 	// process the start of an element
 	void StartElement(
 		const XMLCh *const element_uri,			// URI of element's namespace
@@ -65,6 +68,8 @@ public:
 	CParseHandlerPartitionSelector(CMemoryPool *mp,
 								   CParseHandlerManager *parse_handler_mgr,
 								   CParseHandlerBase *parse_handler_root);
+
+	~CParseHandlerPartitionSelector();
 };
 }  // namespace gpdxl
 

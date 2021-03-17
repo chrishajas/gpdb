@@ -210,7 +210,8 @@ CPartitionPropagationSpec::InsertAllowedConsumers(
 		SPartPropSpecInfo *other_info = (*pps->m_part_prop_spec_infos)[ul];
 
 		// only process allowed_scan_ids ...
-		if (allowed_scan_ids != nullptr && !allowed_scan_ids->Get(other_info->m_scan_id))
+		if (allowed_scan_ids != nullptr &&
+			!allowed_scan_ids->Get(other_info->m_scan_id))
 		{
 			continue;
 		}

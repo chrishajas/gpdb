@@ -11,6 +11,9 @@
 
 #include "naucrates/dxl/operators/CDXLPhysicalPartitionSelector.h"
 
+#include "gpos/common/CBitSetIter.h"
+
+#include "naucrates/dxl/CDXLUtils.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
 #include "naucrates/dxl/xml/CXMLSerializer.h"
 
@@ -25,14 +28,14 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLPhysicalPartitionSelector::CDXLPhysicalPartitionSelector(CMemoryPool *mp,
-															 IMDId *mdid_rel,
-															 ULONG selector_id,
-															 ULONG scan_id)
+CDXLPhysicalPartitionSelector::CDXLPhysicalPartitionSelector(
+	CMemoryPool *mp, IMDId *mdid_rel, ULONG selector_id, ULONG scan_id,
+	ULongPtrArray *parts)
 	: CDXLPhysical(mp),
 	  m_rel_mdid(mdid_rel),
 	  m_selector_id(selector_id),
-	  m_scan_id(scan_id)
+	  m_scan_id(scan_id),
+	  m_parts(parts)
 {
 }
 
@@ -46,6 +49,7 @@ CDXLPhysicalPartitionSelector::CDXLPhysicalPartitionSelector(CMemoryPool *mp,
 //---------------------------------------------------------------------------
 CDXLPhysicalPartitionSelector::~CDXLPhysicalPartitionSelector()
 {
+	CRefCount::SafeRelease(m_parts);
 }
 
 //---------------------------------------------------------------------------
@@ -100,6 +104,13 @@ CDXLPhysicalPartitionSelector::SerializeToDXL(CXMLSerializer *xml_serializer,
 	xml_serializer->AddAttribute(
 		CDXLTokens::GetDXLTokenStr(EdxltokenPhysicalPartitionSelectorScanId),
 		m_scan_id);
+
+	CWStringDynamic *serialized_partitions =
+		CDXLUtils::Serialize(m_mp, m_parts);
+	xml_serializer->AddAttribute(
+		CDXLTokens::GetDXLTokenStr(EdxltokenPartitions), serialized_partitions);
+	GPOS_DELETE(serialized_partitions);
+
 	dxlnode->SerializePropertiesToDXL(xml_serializer);
 
 	// serialize project list and filter lists
@@ -113,7 +124,6 @@ CDXLPhysicalPartitionSelector::SerializeToDXL(CXMLSerializer *xml_serializer,
 	xml_serializer->CloseElement(
 		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
 		CDXLTokens::GetDXLTokenStr(EdxltokenScalarPrintableFilter));
-
 	// serialize relational child, if any
 	(*dxlnode)[2]->SerializeToDXL(xml_serializer);
 

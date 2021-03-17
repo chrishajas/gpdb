@@ -667,6 +667,8 @@ private:
 	BOOL FNeedsMaterializeUnderResult(CDXLNode *proj_list_dxlnode,
 									  CDXLNode *child_dxlnode);
 
+	void AddPartForScanId(ULONG scanid, ULONG index);
+
 	// helper to find subplan type from a correlated left outer join expression
 	static EdxlSubPlanType EdxlsubplantypeCorrelatedLOJ(
 		CExpression *pexprCorrelatedLOJ);

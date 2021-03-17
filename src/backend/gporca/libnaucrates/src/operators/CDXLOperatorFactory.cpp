@@ -403,9 +403,9 @@ CDXLOperatorFactory::MakeDXLAppend(CDXLMemoryManager *dxl_memory_manager,
 	ULongPtrArray *selector_ids = nullptr;
 	if (scan_id != -1)
 	{
-		ExtractConvertValuesToArray(dxl_memory_manager, attrs,
-									EdxltokenSelectorIds,
-									EdxltokenPhysicalAppend);
+		selector_ids = ExtractConvertValuesToArray(dxl_memory_manager, attrs,
+												   EdxltokenSelectorIds,
+												   EdxltokenPhysicalAppend);
 	}
 
 	return GPOS_NEW(mp) CDXLPhysicalAppend(mp, is_target, is_zapped, scan_id,

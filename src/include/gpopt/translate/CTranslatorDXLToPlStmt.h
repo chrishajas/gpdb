@@ -563,6 +563,30 @@ private:
 	static List *TranslateNestLoopParamList(
 		CDXLColRefArray *pdrgdxlcrOuterRefs, CDXLTranslateContext *dxltrctxLeft,
 		CDXLTranslateContext *dxltrctxRight);
+
+	List *CreatePartPruneInfos(CDXLNode *filterNode,
+							   gpdb::RelationWrapper &relation,
+							   CMappingColIdVarPlStmt &colid_var_mapping,
+							   ULongPtrArray *part_indexes);
+
+	PartitionedRelPruneInfo *CreatePartPruneInfoForOneLevel(
+		CDXLNode *filterNode, gpdb::RelationWrapper &relation,
+		CMappingColIdVarPlStmt &colid_var_mapping, ULongPtrArray *part_indexes);
+
+	List *PartPruneStepsFromFilter(CDXLNode *filterNode, INT *step_id,
+								   List *steps_list,
+								   gpdb::RelationWrapper &relation,
+								   CMappingColIdVarPlStmt &colid_var_mapping);
+
+	List *PartPruneStepFromScalarCmp(CDXLNode *node, INT *step_id,
+									 List *steps_list,
+									 gpdb::RelationWrapper &relation,
+									 CMappingColIdVarPlStmt &colid_var_mapping);
+
+	List *PartPruneStepFromScalarBoolExpr(
+		CDXLNode *node, INT *step_id, List *steps_list,
+		gpdb::RelationWrapper &relation,
+		CMappingColIdVarPlStmt &colid_var_mapping);
 };
 }  // namespace gpdxl
 

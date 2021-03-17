@@ -1157,9 +1157,9 @@ CTranslatorExprToDXLUtils::PdxlnPartitionSelector(
 	CDXLNode *pdxlnPropagation, CDXLNode *pdxlnPrintable,
 	CDXLNode *child_dxlnode)
 {
-	CDXLNode *pdxlnSelector =
-		GPOS_NEW(mp) CDXLNode(mp, GPOS_NEW(mp) CDXLPhysicalPartitionSelector(
-									  mp, mdid, ulPartLevels, scan_id));
+	CDXLNode *pdxlnSelector = GPOS_NEW(mp)
+		CDXLNode(mp, GPOS_NEW(mp) CDXLPhysicalPartitionSelector(
+						 mp, mdid, ulPartLevels, scan_id, nullptr));
 
 	pdxlnSelector->SetProperties(dxl_properties);
 	pdxlnSelector->AddChild(pdxlnPrL);
