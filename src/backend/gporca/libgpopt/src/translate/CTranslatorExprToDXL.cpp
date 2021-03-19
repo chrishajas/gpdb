@@ -108,6 +108,7 @@
 #include "naucrates/dxl/operators/CDXLPhysicalMaterialize.h"
 #include "naucrates/dxl/operators/CDXLPhysicalMergeJoin.h"
 #include "naucrates/dxl/operators/CDXLPhysicalNLJoin.h"
+#include "naucrates/dxl/operators/CDXLPhysicalPartitionSelector.h"
 #include "naucrates/dxl/operators/CDXLPhysicalRandomMotion.h"
 #include "naucrates/dxl/operators/CDXLPhysicalRedistributeMotion.h"
 #include "naucrates/dxl/operators/CDXLPhysicalResult.h"
