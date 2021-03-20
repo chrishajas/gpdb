@@ -584,8 +584,6 @@ CTranslatorDXLToExpr::PexprLogicalGet(const CDXLNode *dxlnode)
 	CColRefArray *colref_array = nullptr;
 
 	const IMDRelation *pmdrel = m_pmda->RetrieveRel(table_descr->MDId());
-	IMDRelation::Erelstoragetype root_storage_type =
-		pmdrel->RetrieveRelStorageType();
 	if (pmdrel->IsPartitioned())
 	{
 		GPOS_ASSERT(EdxlopLogicalGet == edxlopid);
@@ -595,13 +593,6 @@ CTranslatorDXLToExpr::PexprLogicalGet(const CDXLNode *dxlnode)
 		{
 			IMDId *part_mdid = (*partition_mdids)[ul];
 			const IMDRelation *partrel = m_pmda->RetrieveRel(part_mdid);
-			if (partrel->RetrieveRelStorageType() != root_storage_type)
-			{
-				GPOS_RAISE(
-					gpdxl::ExmaMD, gpdxl::ExmiMDObjUnsupported,
-					GPOS_WSZ_LIT(
-						"Partitioned table with heterogeneous storage types"));
-			}
 			if (partrel->IsPartitioned())
 			{
 				// Multi-level partitioned tables are unsupported - fall back

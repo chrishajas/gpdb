@@ -3184,8 +3184,6 @@ CTranslatorQueryToDXL::TranslateRTEToDXLLogicalGet(const RangeTblEntry *rte,
 	NoteDistributionPolicyOpclasses(rte);
 
 	IMdIdArray *partition_mdids = md_rel->ChildPartitionMdids();
-	IMDRelation::Erelstoragetype rel_storage_type =
-		IMDRelation::ErelstorageSentinel;
 	for (ULONG ul = 0; partition_mdids && ul < partition_mdids->Size(); ++ul)
 	{
 		IMDId *part_mdid = (*partition_mdids)[ul];
@@ -3198,19 +3196,13 @@ CTranslatorQueryToDXL::TranslateRTEToDXLLogicalGet(const RangeTblEntry *rte,
 					   GPOS_WSZ_LIT("Multi-level partitioned tables"));
 		}
 
-
-		if (partrel->RetrieveRelStorageType() != rel_storage_type)
+		if (partrel->RetrieveRelStorageType() == IMDRelation::ErelstorageExternal)
 		{
-			if (rel_storage_type == IMDRelation::ErelstorageSentinel)
-			{
-				rel_storage_type = partrel->RetrieveRelStorageType();
-				continue;
-			}
-
-			// Multi-level partitioned tables are unsupported - fall back
-			GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiQuery2DXLUnsupportedFeature,
-					   GPOS_WSZ_LIT("Heterogeneous partition storage types"));
+				// Partitioned tables with external/foreign partitions
+				GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiQuery2DXLUnsupportedFeature,
+								   GPOS_WSZ_LIT("External/foreign partition storage types"));
 		}
+
 	}
 
 	return dxl_node;
