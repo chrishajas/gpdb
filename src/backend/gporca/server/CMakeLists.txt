@@ -107,7 +107,8 @@ IndexScan-ORPredsNonPart IndexScan-ORPredsAOPart IndexScan-AndedIn;
 CBitmapScanTest:
 IndexedNLJBitmap BitmapIndex-ChooseHashJoin BitmapTableScan-AO-Btree-PickOnlyHighNDV
 BitmapIndex-Against-InList BitmapTableScan-AO-Btree-PickIndexWithNoGap
-BitmapTableScan-ComplexConjDisj BitmapTableScan-ConjDisjWithOuterRefs;
+BitmapTableScan-ComplexConjDisj BitmapTableScan-ConjDisjWithOuterRefs
+DTS-Hetrogeneous-Partitioned;
 
 CIndexApplyTest:
 IndexNLJ-IndexGet-OuterRef IndexApply_NestLoopWithNestParamTrue IndexApply1
@@ -202,7 +203,7 @@ PartTbl-ComplexPredicate4 PartTbl-ComplexPredicate5 LargeMultiColumnInList;
 CPartTbl5Test:
 PartTbl-IsNullPredicate PartTbl-IsNotNullPredicate PartTbl-IndexOnDefPartOnly
 PartTbl-SubqueryOuterRef PartTbl-CSQ-PartKey PartTbl-CSQ-NonPartKey
-PartTbl-AggWithExistentialSubquery PartPredsWithRandom;
+PartTbl-AggWithExistentialSubquery PartPredsWithRandom DTS-Hetrogeneous-Partitioned;
 
 CPartTbl6Test:
 PartTbl-PredicateWithCast PartTbl-IDFList PartTbl-IDFNull
