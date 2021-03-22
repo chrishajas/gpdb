@@ -460,8 +460,6 @@ enum Edxltoken
 	EdxltokenRelStorageHeap,
 	EdxltokenRelStorageAppendOnlyCols,
 	EdxltokenRelStorageAppendOnlyRows,
-	EdxltokenRelStorageAppendOnlyParquet,
-	EdxltokenRelStorageVirtual,
 	EdxltokenRelStorageMixedPartitioned,
 	EdxltokenRelStorageExternal,
 
