@@ -1,0 +1,5 @@
+Optimizer disabled. Using planner answer files
+Resource group disabled. Using default answer files
+test init                         ... FAILED     2302 ms
+test base_plan                    ... FAILED       57 ms
+test pg_hint_plan                 ... 
