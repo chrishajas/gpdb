@@ -260,7 +260,7 @@ populate_joinrel_with_paths(PlannerInfo *root, RelOptInfo *rel1,
 			if (is_dummy_rel(rel1) || is_dummy_rel(rel2) ||
 				restriction_is_constant_false(restrictlist, joinrel, false))
 			{
-				mark_dummy_rel(joinrel);
+				mark_dummy_rel(root,joinrel);
 				break;
 			}
 			add_paths_to_joinrel(root, joinrel, rel1, rel2,
@@ -274,12 +274,12 @@ populate_joinrel_with_paths(PlannerInfo *root, RelOptInfo *rel1,
 			if (is_dummy_rel(rel1) ||
 				restriction_is_constant_false(restrictlist, joinrel, true))
 			{
-				mark_dummy_rel(joinrel);
+				mark_dummy_rel(root,joinrel);
 				break;
 			}
 			if (restriction_is_constant_false(restrictlist, joinrel, false) &&
 				bms_is_subset(rel2->relids, sjinfo->syn_righthand))
-				mark_dummy_rel(rel2);
+				mark_dummy_rel(root,rel2);
 			add_paths_to_joinrel(root, joinrel, rel1, rel2,
 								 JOIN_LEFT, sjinfo,
 								 restrictlist);
@@ -291,7 +291,7 @@ populate_joinrel_with_paths(PlannerInfo *root, RelOptInfo *rel1,
 			if ((is_dummy_rel(rel1) && is_dummy_rel(rel2)) ||
 				restriction_is_constant_false(restrictlist, joinrel, true))
 			{
-				mark_dummy_rel(joinrel);
+				mark_dummy_rel(root,joinrel);
 				break;
 			}
 			add_paths_to_joinrel(root, joinrel, rel1, rel2,
@@ -327,7 +327,7 @@ populate_joinrel_with_paths(PlannerInfo *root, RelOptInfo *rel1,
 				if (is_dummy_rel(rel1) || is_dummy_rel(rel2) ||
 					restriction_is_constant_false(restrictlist, joinrel, false))
 				{
-					mark_dummy_rel(joinrel);
+					mark_dummy_rel(root,joinrel);
 					break;
 				}
 				add_paths_to_joinrel(root, joinrel, rel1, rel2,
@@ -350,7 +350,7 @@ populate_joinrel_with_paths(PlannerInfo *root, RelOptInfo *rel1,
 				if (is_dummy_rel(rel1) || is_dummy_rel(rel2) ||
 					restriction_is_constant_false(restrictlist, joinrel, false))
 				{
-					mark_dummy_rel(joinrel);
+					mark_dummy_rel(root,joinrel);
 					break;
 				}
 				add_paths_to_joinrel(root, joinrel, rel1, rel2,
@@ -365,12 +365,12 @@ populate_joinrel_with_paths(PlannerInfo *root, RelOptInfo *rel1,
 			if (is_dummy_rel(rel1) ||
 				restriction_is_constant_false(restrictlist, joinrel, true))
 			{
-				mark_dummy_rel(joinrel);
+				mark_dummy_rel(root,joinrel);
 				break;
 			}
 			if (restriction_is_constant_false(restrictlist, joinrel, false) &&
 				bms_is_subset(rel2->relids, sjinfo->syn_righthand))
-				mark_dummy_rel(rel2);
+				mark_dummy_rel(root,rel2);
 			add_paths_to_joinrel(root, joinrel, rel1, rel2,
 								 JOIN_ANTI, sjinfo,
 								 restrictlist);

@@ -10,10 +10,6 @@ CREATE TABLE hint_plan.hints (
 	hints				text	NOT NULL,
 	PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX hints_norm_and_app ON hint_plan.hints (
- 	norm_query_string,
-	application_name
-);
 
 SELECT pg_catalog.pg_extension_config_dump('hint_plan.hints','');
 SELECT pg_catalog.pg_extension_config_dump('hint_plan.hints_id_seq','');

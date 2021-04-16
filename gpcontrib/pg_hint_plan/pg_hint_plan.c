@@ -23,7 +23,6 @@
 #include "optimizer/appendinfo.h"
 #include "optimizer/clauses.h"
 #include "optimizer/cost.h"
-#include "optimizer/geqo.h"
 #include "optimizer/joininfo.h"
 #include "optimizer/optimizer.h"
 #include "optimizer/pathnode.h"
@@ -2776,24 +2775,6 @@ set_join_config_options(unsigned char enforce_mask, GucContext context)
 	SET_CONFIG_OPTION("enable_mergejoin", ENABLE_MERGEJOIN);
 	SET_CONFIG_OPTION("enable_hashjoin", ENABLE_HASHJOIN);
 
-	/*
-	 * Hash join may be rejected for the reason of estimated memory usage. Try
-	 * getting rid of that limitation. This change on work_mem is reverted just
-	 * after searching join path so no suginificant side-effects are expected.
-	 */
-	if (enforce_mask == ENABLE_HASHJOIN)
-	{
-		char			buf[32];
-
-		/* See final_cost_hashjoin(). */
-		if (work_mem < MAX_KILOBYTES)
-		{
-			snprintf(buf, sizeof(buf), UINT64_FORMAT, (uint64)MAX_KILOBYTES);
-			set_config_option_noerror("work_mem", buf,
-									  context, PGC_S_SESSION, GUC_ACTION_SAVE,
-									  true, ERROR);
-		}
-	}
 }
 
 /*
@@ -4568,18 +4549,10 @@ pg_hint_plan_join_search(PlannerInfo *root, int levels_needed,
 	{
 		if (prev_join_search)
 			return (*prev_join_search) (root, levels_needed, initial_rels);
-		else if (enable_geqo && levels_needed >= geqo_threshold)
-			return geqo(root, levels_needed, initial_rels);
 		else
 			return standard_join_search(root, levels_needed, initial_rels);
 	}
 
-	/*
-	 * In the case using GEQO, only scan method hints and Set hints have
-	 * effect.  Join method and join order is not controllable by hints.
-	 */
-	if (enable_geqo && levels_needed >= geqo_threshold)
-		return geqo(root, levels_needed, initial_rels);
 
 	nbaserel = get_num_baserels(initial_rels);
 	current_hint_state->join_hint_level =
@@ -4600,7 +4573,7 @@ pg_hint_plan_join_search(PlannerInfo *root, int levels_needed,
 	{
 		ListCell   *lc;
 		int 		nworkers = 0;
-	
+
 		foreach (lc, initial_rels)
 		{
 			ListCell *lcp;

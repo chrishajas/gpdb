@@ -954,12 +954,8 @@ CREATE FUNCTION reset_stats_and_wait() RETURNS void AS $$
 DECLARE
   rows int;
 BEGIN
-  rows = 1;
-  while rows > 0 LOOP
-   PERFORM pg_stat_reset();
-   PERFORM pg_sleep(0.5);
-   SELECT sum(seq_scan + idx_scan) from pg_stat_user_tables into rows;
-  END LOOP;
+  PERFORM pg_stat_reset();
+  PERFORM pg_sleep(0.5);
 END;
 $$ LANGUAGE plpgsql;
 
