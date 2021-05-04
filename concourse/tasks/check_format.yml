@@ -3,7 +3,7 @@ image_resource:
   type: registry-image
   source:
     repository: gcr.io/data-orca/clang-toolchain
-    tag: 0.1
+    tag: 0.2
 
 inputs:
   - name: gpdb_src
