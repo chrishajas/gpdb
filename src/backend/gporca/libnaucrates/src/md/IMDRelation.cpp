@@ -118,4 +118,10 @@ IMDRelation::IsPartialIndex(IMDId *	 // mdid
 	return false;
 }
 
+// check if supports index scan
+BOOL
+IMDRelation::SupportsIndexScan() const
+{
+	return true;
+}
 // EOF

@@ -125,6 +125,10 @@ private:
 	// oids of any external partitions (for partitioned tables only)
 	IMdIdArray *m_external_partitions;
 
+	// table does not support index scan if it is a partition table with
+	// mismatched underlying column layout between root and leaf for index columns, otherwise true
+	BOOL m_supports_index_scan;
+
 	// private copy ctor
 	CMDRelationGPDB(const CMDRelationGPDB &);
 
@@ -142,7 +146,7 @@ public:
 					IMdIdArray *mdid_triggers_array,
 					IMdIdArray *mdid_check_constraint_array,
 					IMDPartConstraint *mdpart_constraint, BOOL has_oids,
-					IMdIdArray *external_partitions);
+					IMdIdArray *external_partitions, BOOL supports_index_scan);
 
 	// dtor
 	virtual ~CMDRelationGPDB();
@@ -263,6 +267,8 @@ public:
 
 	// external partitions (for partitioned tables)
 	virtual IMdIdArray *GetExternalPartitions() const;
+
+	virtual BOOL SupportsIndexScan() const;
 
 #ifdef GPOS_DEBUG
 	// debug print of the metadata relation

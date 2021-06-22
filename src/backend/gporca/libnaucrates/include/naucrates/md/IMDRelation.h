@@ -217,6 +217,8 @@ public:
 		return st == ErelstorageAppendOnlyCols ||
 			   st == ErelstorageAppendOnlyRows;
 	}
+
+	virtual BOOL SupportsIndexScan() const;
 };
 
 // common structure over relation and external relation metadata for index info

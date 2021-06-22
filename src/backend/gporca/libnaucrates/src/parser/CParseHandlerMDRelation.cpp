@@ -333,7 +333,7 @@ CParseHandlerMDRelation::EndElement(const XMLCh *const,	 // element_uri,
 		m_partition_cols_array, m_str_part_types_array, m_num_of_partitions,
 		m_convert_hash_to_random, m_key_sets_arrays, md_index_info_array,
 		mdid_triggers_array, mdid_check_constraint_array, m_part_constraint,
-		m_has_oids, external_partitions);
+		m_has_oids, external_partitions, false /*CHRIS*/);
 
 	// deactivate handler
 	m_parse_handler_mgr->DeactivateHandler();

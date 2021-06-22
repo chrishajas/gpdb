@@ -39,7 +39,7 @@ CMDRelationGPDB::CMDRelationGPDB(
 	CMDIndexInfoArray *md_index_info_array, IMdIdArray *mdid_triggers_array,
 	IMdIdArray *mdid_check_constraint_array,
 	IMDPartConstraint *mdpart_constraint, BOOL has_oids,
-	IMdIdArray *external_partitions)
+	IMdIdArray *external_partitions, BOOL supports_index_scan)
 	: m_mp(mp),
 	  m_mdid(mdid),
 	  m_mdname(mdname),
@@ -64,7 +64,8 @@ CMDRelationGPDB::CMDRelationGPDB(
 	  m_colpos_nondrop_colpos_map(NULL),
 	  m_attrno_nondrop_col_pos_map(NULL),
 	  m_nondrop_col_pos_array(NULL),
-	  m_external_partitions(external_partitions)
+	  m_external_partitions(external_partitions),
+	  m_supports_index_scan(supports_index_scan)
 {
 	GPOS_ASSERT(mdid->IsValid());
 	GPOS_ASSERT(NULL != mdcol_array);
@@ -818,6 +819,13 @@ CMDRelationGPDB::Serialize(CXMLSerializer *xml_serializer) const
 		CDXLTokens::GetDXLTokenStr(EdxltokenRelation));
 
 	GPOS_CHECK_ABORT;
+}
+
+// check if relation supports index scan
+BOOL
+CMDRelationGPDB::SupportsIndexScan() const
+{
+	return m_supports_index_scan;
 }
 
 #ifdef GPOS_DEBUG

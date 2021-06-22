@@ -655,6 +655,7 @@ CTranslatorRelcacheToDXL::RetrieveRel(CMemoryPool *mp, CMDAccessor *md_accessor,
 	CMDPartConstraintGPDB *mdpart_constraint = RetrievePartConstraintForRel(
 		mp, md_accessor, oid, mdcol_array, construct_full_partcnstr_expr);
 
+	BOOL supports_index_scan = gpdb::CheckPartTblSupportsIndexScan(mp, oid);
 	if (IMDRelation::ErelstorageExternal == rel_storage_type)
 	{
 		ExtTableEntry *extentry = gpdb::GetExternalTableEntry(oid);
@@ -678,7 +679,7 @@ CTranslatorRelcacheToDXL::RetrieveRel(CMemoryPool *mp, CMDAccessor *md_accessor,
 			distr_cols, distr_op_families, part_keys, part_types,
 			num_leaf_partitions, convert_hash_to_random, keyset_array,
 			md_index_info_array, mdid_triggers_array, check_constraint_mdids,
-			mdpart_constraint, has_oids, external_partitions);
+			mdpart_constraint, has_oids, external_partitions, false /*CHRIS*/);
 	}
 
 	return md_rel;

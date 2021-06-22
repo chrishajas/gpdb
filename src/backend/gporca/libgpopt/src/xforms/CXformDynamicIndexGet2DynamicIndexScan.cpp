@@ -73,6 +73,13 @@ CXformDynamicIndexGet2DynamicIndexScan::Transform(CXformContext *pxfctxt,
 		CLogicalDynamicIndexGet::PopConvert(pexpr->Pop());
 	CMemoryPool *mp = pxfctxt->Pmp();
 
+	// find the indexes whose included columns meet the required columns
+	CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
+	const IMDRelation *pmdrel =
+		md_accessor->RetrieveRel(popIndexGet->Ptabdesc()->MDId());
+	if (!pmdrel->SupportsIndexScan()){
+		return;
+	}
 	// create/extract components for alternative
 	CName *pname = GPOS_NEW(mp) CName(mp, popIndexGet->Name());
 

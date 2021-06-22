@@ -78,7 +78,16 @@ CXformImplementDynamicBitmapTableGet::Transform(CXformContext *pxfctxt,
 	CLogicalDynamicBitmapTableGet *popLogical =
 		CLogicalDynamicBitmapTableGet::PopConvert(pexpr->Pop());
 
+
+
 	CTableDescriptor *ptabdesc = popLogical->Ptabdesc();
+
+	CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
+	const IMDRelation *pmdrel =
+		md_accessor->RetrieveRel(ptabdesc->MDId());
+	if (!pmdrel->SupportsIndexScan()){
+		return;
+	}
 	ptabdesc->AddRef();
 
 	CName *pname = GPOS_NEW(mp) CName(mp, popLogical->Name());
