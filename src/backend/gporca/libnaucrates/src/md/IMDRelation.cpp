@@ -118,4 +118,12 @@ IMDRelation::IsPartialIndex(IMDId *	 // mdid
 	return false;
 }
 
+// check if index has mismatched index col layout between root and leaf for given its mdid
+BOOL
+IMDRelation::IsIndexWithMismatchedIndexCols(IMDId *	 // mdid
+) const
+{
+	return false;
+}
+
 // EOF

@@ -593,6 +593,29 @@ CMDRelationGPDB::IsPartialIndex(IMDId *mdid) const
 	return false;
 }
 
+// check if index is partial given its mdid
+BOOL
+CMDRelationGPDB::IsIndexWithMismatchedIndexCols(IMDId *mdid) const
+{
+	if (!IsPartitioned())
+	{
+		return false;
+	}
+	const ULONG indexes = IndexCount();
+
+	for (ULONG ul = 0; ul < indexes; ++ul)
+	{
+		if (CMDIdGPDB::MDIdCompare(IndexMDidAt(ul), mdid))
+		{
+			return (*m_mdindex_info_array)[ul]->HasMismatchedIndexCols();
+		}
+	}
+
+	// Not found
+	GPOS_RAISE(ExmaMD, ExmiMDCacheEntryNotFound, mdid->GetBuffer());
+
+	return false;
+}
 
 //---------------------------------------------------------------------------
 //	@function:

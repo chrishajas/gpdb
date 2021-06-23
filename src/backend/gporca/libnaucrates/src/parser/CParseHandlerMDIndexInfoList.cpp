@@ -72,8 +72,15 @@ CParseHandlerMDIndexInfoList::StartElement(
 			m_parse_handler_mgr->GetDXLMemoryManager(), attrs,
 			EdxltokenIndexPartial, EdxltokenIndexInfo);
 
+		// parse index partial info
+		BOOL has_mismatched_cols =
+			CDXLOperatorFactory::ExtractConvertAttrValueToBool(
+				m_parse_handler_mgr->GetDXLMemoryManager(), attrs,
+				EdxltokenIndexMismatchedCols, EdxltokenIndexInfo,
+				true /* is_optional */, false /* default_value */);
+
 		CMDIndexInfo *md_index_info =
-			GPOS_NEW(m_mp) CMDIndexInfo(mdid, is_partial);
+			GPOS_NEW(m_mp) CMDIndexInfo(mdid, is_partial, has_mismatched_cols);
 		m_mdindex_info_array->Append(md_index_info);
 	}
 	else

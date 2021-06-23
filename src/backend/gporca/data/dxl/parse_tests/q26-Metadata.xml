@@ -33,8 +33,8 @@
         </dxl:Column>
       </dxl:Columns>
       <dxl:IndexInfoList>
-        <dxl:IndexInfo Mdid="0.2345.2.1" IsPartial="false"/>
-        <dxl:IndexInfo Mdid="0.2347.1.1" IsPartial="false"/>
+        <dxl:IndexInfo Mdid="0.2345.2.1" IsPartial="false" HasMismatchedCols="false"/>
+        <dxl:IndexInfo Mdid="0.2347.1.1" IsPartial="false" HasMismatchedCols="false"/>
       </dxl:IndexInfoList>
       <dxl:Triggers/>
       <dxl:CheckConstraints/>
@@ -54,7 +54,7 @@
         </dxl:Column>
       </dxl:Columns>
       <dxl:IndexInfoList>
-        <dxl:IndexInfo Mdid="0.2346.2.1" IsPartial="false"/>
+        <dxl:IndexInfo Mdid="0.2346.2.1" IsPartial="false" HasMismatchedCols="false"/>
       </dxl:IndexInfoList>
       <dxl:Triggers/>
       <dxl:CheckConstraints/>
@@ -89,7 +89,7 @@
         </dxl:Column>
       </dxl:Columns>
       <dxl:IndexInfoList>
-        <dxl:IndexInfo Mdid="0.2347.2.1" IsPartial="false"/>
+        <dxl:IndexInfo Mdid="0.2347.2.1" IsPartial="false" HasMismatchedCols="false"/>
       </dxl:IndexInfoList>
       <dxl:Triggers/>
       <dxl:CheckConstraints/>
@@ -106,7 +106,7 @@
         </dxl:Column>
       </dxl:Columns>
       <dxl:IndexInfoList>
-        <dxl:IndexInfo Mdid="0.2348.2.1" IsPartial="false"/>
+        <dxl:IndexInfo Mdid="0.2348.2.1" IsPartial="false" HasMismatchedCols="false"/>
       </dxl:IndexInfoList>
       <dxl:Triggers/>
       <dxl:CheckConstraints>
@@ -366,7 +366,7 @@
         </dxl:Column>
       </dxl:Columns>
       <dxl:IndexInfoList>
-        <dxl:IndexInfo Mdid="0.2347.2.1" IsPartial="false"/>
+        <dxl:IndexInfo Mdid="0.2347.2.1" IsPartial="false" HasMismatchedCols="false"/>
       </dxl:IndexInfoList>
       <dxl:Triggers/>
       <dxl:CheckConstraints/>

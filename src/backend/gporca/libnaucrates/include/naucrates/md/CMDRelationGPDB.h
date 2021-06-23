@@ -246,6 +246,9 @@ public:
 	// check if index is partial given its mdid
 	virtual BOOL IsPartialIndex(IMDId *mdid) const;
 
+	// check if index has mismatched index col layout between root and leaf for given its mdid
+	virtual BOOL IsIndexWithMismatchedIndexCols(IMDId *mdid) const;
+
 	// retrieve the id of the metadata cache trigger at the given position
 	virtual IMDId *TriggerMDidAt(ULONG pos) const;
 

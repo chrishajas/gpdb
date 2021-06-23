@@ -501,6 +501,7 @@ enum Edxltoken
 
 	EdxltokenIndexKeyCols,
 	EdxltokenIndexIncludedCols,
+	EdxltokenIndexMismatchedCols,
 	EdxltokenIndexClustered,
 	EdxltokenIndexPartial,
 	EdxltokenIndexType,

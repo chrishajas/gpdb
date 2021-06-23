@@ -710,6 +710,8 @@ uint32 HashName(Datum d);
 
 uint32 UUIDHash(Datum d);
 
+List *GetChildParts(Relation rel);
+
 void *GPDBMemoryContextAlloc(MemoryContext context, Size size);
 
 MemoryContext GPDBAllocSetContextCreate();

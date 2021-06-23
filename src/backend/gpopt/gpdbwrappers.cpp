@@ -30,6 +30,7 @@
 #include "naucrates/exception.h"
 extern "C" {
 #include "catalog/pg_collation.h"
+#include "catalog/pg_inherits_fn.h"
 #include "utils/memutils.h"
 }
 #define GP_WRAP_START                                            \
@@ -2725,6 +2726,17 @@ gpdb::UUIDHash(Datum d)
 		return DatumGetUInt32(DirectFunctionCall1(uuid_hash, d));
 	}
 	GP_WRAP_END;
+}
+
+List *
+gpdb::GetChildParts(Relation rel)
+{
+	GP_WRAP_START;
+	{
+		return find_all_inheritors(rel->rd_id, NoLock, NULL);
+	}
+	GP_WRAP_END;
+	return NIL;
 }
 
 void *

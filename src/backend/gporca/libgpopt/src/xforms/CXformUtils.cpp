@@ -2858,7 +2858,8 @@ CXformUtils::PexprBuildIndexPlan(
 			GPOS_NEW(mp) CWStringConst(mp, popGet->Name().Pstr()->GetBuffer());
 	}
 
-	if (!FIndexApplicable(mp, pmdindex, pmdrel, pdrgpcrOutput, pcrsReqd,
+	if (pmdrel->IsIndexWithMismatchedIndexCols(pmdindex->MDId()) ||
+		!FIndexApplicable(mp, pmdindex, pmdrel, pdrgpcrOutput, pcrsReqd,
 						  pcrsScalarExpr, emdindtype))
 	{
 		GPOS_DELETE(alias);
@@ -3274,6 +3275,7 @@ CXformUtils::PexprBitmapSelectBestIndex(
 			md_accessor->RetrieveIndex(pmdrel->IndexMDidAt(ul));
 
 		if (!pmdrel->IsPartialIndex(pmdindex->MDId()) &&
+			!pmdrel->IsIndexWithMismatchedIndexCols(pmdindex->MDId()) &&
 			CXformUtils::FIndexApplicable(mp, pmdindex, pmdrel, pdrgpcrOutput,
 										  pcrsReqd, pcrsScalar,
 										  IMDIndex::EmdindBitmap, altIndexType))
@@ -3885,7 +3887,8 @@ CXformUtils::PdrgpdrgppartdigCandidates(
 		const IMDIndex *pmdindex =
 			md_accessor->RetrieveIndex(pmdrel->IndexMDidAt(ul));
 
-		if (!CXformUtils::FIndexApplicable(
+		if (pmdrel->IsIndexWithMismatchedIndexCols(pmdindex->MDId()) ||
+			!CXformUtils::FIndexApplicable(
 				mp, pmdindex, pmdrel, pdrgpcrOutput, pcrsReqd, pcrsScalarExpr,
 				IMDIndex::EmdindBtree /*emdindtype*/) ||
 			!pmdrel->IsPartialIndex(pmdindex->MDId()))

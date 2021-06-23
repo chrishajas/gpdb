@@ -32,9 +32,14 @@ private:
 	// is the index partial
 	BOOL m_is_partial;
 
+	// set if index columns layout mismatches between root and leaf for partitioned tables,
+	// otherwise false
+	BOOL m_indexcols_mismatch_rootcols;
+
 public:
 	// ctor
-	CMDIndexInfo(IMDId *mdid, BOOL is_partial);
+	CMDIndexInfo(IMDId *mdid, BOOL is_partial,
+				 BOOL indexcols_mismatch_rootcols);
 
 	// dtor
 	virtual ~CMDIndexInfo();
@@ -44,6 +49,9 @@ public:
 
 	// is the index partial
 	BOOL IsPartial() const;
+
+	// has mismatched index columns layout between root and leaf
+	BOOL HasMismatchedIndexCols() const;
 
 	// serialize indexinfo in DXL format given a serializer object
 	virtual void Serialize(CXMLSerializer *) const;

@@ -257,11 +257,34 @@ CTranslatorRelcacheToDXL::RetrieveRelIndexInfoForPartTable(CMemoryPool *mp,
 
 	ListCell *lc = NULL;
 
+	List *child_oids = gpdb::GetChildParts(root_rel);
+
+	Bitmapset *root_index_bitmap =
+		RelationGetIndexAttrBitmap(root_rel, INDEX_ATTR_BITMAP_ALL);
+
 	ForEach(lc, plLogicalIndexInfo)
 	{
 		LogicalIndexInfo *logicalIndexInfo = (LogicalIndexInfo *) lfirst(lc);
 		OID index_oid = logicalIndexInfo->logicalIndexOid;
-
+		ListCell *lc_child = NULL;
+		// if any child partition (or intermediate partition) contains a column in the index
+		// that does not match the root, mark the index as having mismatched columns
+		BOOL has_mismatched_indexcols = false;
+		ForEach(lc_child, child_oids)
+		{
+			Oid oidChild = lfirst_oid(lc_child);
+			Relation rel_child = gpdb::GetRelation(oidChild);
+			Bitmapset *child_index_bitmap =
+				RelationGetIndexAttrBitmap(rel_child, INDEX_ATTR_BITMAP_ALL);
+			// compare index bitmaps
+			if (!bms_equal(root_index_bitmap, child_index_bitmap))
+			{
+				gpdb::CloseRelation(rel_child);
+				has_mismatched_indexcols = true;
+				break;
+			}
+			gpdb::CloseRelation(rel_child);
+		}
 		// only add supported indexes
 		Relation index_rel = gpdb::GetRelation(index_oid);
 
@@ -284,8 +307,8 @@ CTranslatorRelcacheToDXL::RetrieveRelIndexInfoForPartTable(CMemoryPool *mp,
 				CMDIdGPDB *mdid_index = GPOS_NEW(mp) CMDIdGPDB(index_oid);
 				BOOL is_partial = (NULL != logicalIndexInfo->partCons) ||
 								  (NIL != logicalIndexInfo->defaultLevels);
-				CMDIndexInfo *md_index_info =
-					GPOS_NEW(mp) CMDIndexInfo(mdid_index, is_partial);
+				CMDIndexInfo *md_index_info = GPOS_NEW(mp) CMDIndexInfo(
+					mdid_index, is_partial, has_mismatched_indexcols);
 				md_index_info_array->Append(md_index_info);
 			}
 
@@ -339,7 +362,8 @@ CTranslatorRelcacheToDXL::RetrieveRelIndexInfoForNonPartTable(CMemoryPool *mp,
 				CMDIdGPDB *mdid_index = GPOS_NEW(mp) CMDIdGPDB(index_oid);
 				// for a regular table, external table or leaf partition, an index is always complete
 				CMDIndexInfo *md_index_info = GPOS_NEW(mp)
-					CMDIndexInfo(mdid_index, false /* is_partial */);
+					CMDIndexInfo(mdid_index, false /* is_partial */,
+								 false /* m_indexcols_mismatch_rootcols */);
 				md_index_info_array->Append(md_index_info);
 			}
 
